@@ -1131,7 +1131,7 @@ export default function ProductDetailsPage() {
                                 </button>
                             ))}
                         </div>
-                        <div style={{ padding: '20px 24px', minHeight: '80px' }}>
+                        <div className="pd-info-content" style={{ padding: '20px 24px', minHeight: '80px' }}>
                             {activeInfoPanel === 'description' && (
                                 <div>
                                     {product.description ? (
@@ -1214,7 +1214,7 @@ export default function ProductDetailsPage() {
                             )}
                             {activeInfoPanel === 'others' && (
                                 <div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div className="pd-others-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                                         {product.category?.name && (
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
                                                 <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</span>
@@ -1454,8 +1454,12 @@ export default function ProductDetailsPage() {
                 /* ═══ MOBILE RESPONSIVE ═══ */
                 @media (max-width: 767px) {
 
-                    /* Main flex → column */
-                    .pd-main-flex { flex-direction: column !important; }
+                    /* Main flex → column, remove fixed height */
+                    .pd-main-flex {
+                        flex-direction: column !important;
+                        height: auto !important;
+                        overflow: visible !important;
+                    }
 
                     /* Left section → full width, wrap so inner cols reorder */
                     .pd-left-section {
@@ -1480,7 +1484,7 @@ export default function ProductDetailsPage() {
                         width: 100% !important; order: 2 !important;
                         flex-direction: row !important; flex-wrap: nowrap !important;
                         overflow-x: auto !important; overflow-y: hidden !important;
-                        gap: 6px !important; padding: 6px 0 !important;
+                        gap: 6px !important; padding: 6px 8px !important;
                         margin-left: 0 !important; align-items: center !important;
                     }
                     .pd-thumb-col > span { display: none !important; }
@@ -1489,7 +1493,7 @@ export default function ProductDetailsPage() {
                         flex-direction: row !important; flex-wrap: nowrap !important;
                         max-height: unset !important; overflow: visible !important; gap: 6px !important;
                     }
-                    .pd-thumb-col button { width: 56px !important; height: 56px !important; }
+                    .pd-thumb-col button { width: 56px !important; height: 56px !important; flex-shrink: 0 !important; }
 
                     /* ── Size → horizontal row, ORDER 3 ── */
                     .pd-size-col {
@@ -1524,7 +1528,10 @@ export default function ProductDetailsPage() {
                         border-top: 1px solid #e5e7eb !important; padding-left: 0 !important;
                         order: 10 !important;
                     }
-                    .pd-right-scroll { overflow-y: visible !important; flex: unset !important; padding: 8px 0 !important; }
+                    .pd-right-scroll {
+                        overflow-y: visible !important; flex: unset !important;
+                        padding: 12px 12px 8px !important;
+                    }
                     .pd-scroll-arrow { display: none !important; }
 
                     /* Action bar → full width, BEFORE description */
@@ -1538,21 +1545,44 @@ export default function ProductDetailsPage() {
                         flex: 1 1 auto !important; min-width: 100px !important; height: 42px !important;
                     }
 
-                    /* Info bar → full width, BEFORE description */
+                    /* Info tabs bar → scrollable horizontal strip */
                     .pd-info-bar {
-                        flex: 0 0 100% !important; max-width: 100% !important;
-                        height: auto !important; flex-wrap: wrap !important;
-                        margin-left: 0 !important; padding: 8px 0 0 0 !important; gap: 12px !important;
-                        order: 7 !important;
+                        height: auto !important;
+                        flex-wrap: nowrap !important;
+                        overflow-x: auto !important;
+                        -webkit-overflow-scrolling: touch !important;
+                        gap: 0 !important;
+                    }
+                    .pd-info-bar > button {
+                        flex: 0 0 auto !important;
+                        white-space: nowrap !important;
+                        padding: 10px 14px !important;
+                        font-size: 12px !important;
+                        min-width: max-content !important;
                     }
 
-                    .pd-stats-row { gap: 12px !important; flex-wrap: wrap !important; }
+                    /* Stats row */
+                    .pd-stats-row { gap: 8px !important; flex-wrap: wrap !important; font-size: 12px !important; }
+
+                    /* Related products → 2 columns */
                     .pd-related-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
                     .pd-title { font-size: 16px !important; }
                     .pd-price { font-size: 17px !important; }
 
                     /* Hide zoom modal sidebar thumbnails on mobile */
                     .pd-zoom-thumbs { display: none !important; }
+                }
+
+                /* ═══ SMALL MOBILE (≤480px) ═══ */
+                @media (max-width: 480px) {
+                    .pd-info-content { padding: 14px 12px !important; }
+                    .pd-others-grid { grid-template-columns: 1fr !important; }
+                    .pd-info-bar > button {
+                        padding: 8px 10px !important;
+                        font-size: 11px !important;
+                    }
+                    .pd-thumb-col button { width: 48px !important; height: 48px !important; }
                 }
             `}</style>
 
