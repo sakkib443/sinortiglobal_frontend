@@ -1,0 +1,461 @@
+"use client";
+
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import {
+    FiShoppingCart, FiCamera, FiChevronDown, FiSearch, FiMenu, FiX,
+    FiUpload, FiUser, FiHeart, FiSmartphone, FiHeadphones, FiGlobe
+} from 'react-icons/fi';
+import { useAppSelector, useAppDispatch } from '@/redux';
+import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
+
+import { setImageSearching, setImageSearchResults, clearImageSearch } from '@/redux/slices/imageSearchSlice';
+
+interface Category {
+    _id: string;
+    name: string;
+    slug: string;
+    icon?: string;
+}
+
+const Header: React.FC = () => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isImageSearchOpen, setIsImageSearchOpen] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
+    const [isCategoryHovered, setIsCategoryHovered] = useState(false);
+    const [isServicesHovered, setIsServicesHovered] = useState(false);
+    const categoryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const servicesTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const cartItems = useAppSelector((state) => state.cart.items);
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+
+    const { data: categoriesData } = useGetCategoriesQuery({});
+    const categories: Category[] = categoriesData?.data || [];
+
+    // Sticky scroll
+    const [scrolled, setScrolled] = useState(false);
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 10);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+    }, []);
+
+    // Category hover
+    const handleCategoryMouseEnter = () => {
+        if (categoryTimeoutRef.current) clearTimeout(categoryTimeoutRef.current);
+        setIsCategoryHovered(true);
+    };
+    const handleCategoryMouseLeave = () => {
+        categoryTimeoutRef.current = setTimeout(() => setIsCategoryHovered(false), 150);
+    };
+
+    // Services hover
+    const handleServicesMouseEnter = () => {
+        if (servicesTimeoutRef.current) clearTimeout(servicesTimeoutRef.current);
+        setIsServicesHovered(true);
+    };
+    const handleServicesMouseLeave = () => {
+        servicesTimeoutRef.current = setTimeout(() => setIsServicesHovered(false), 150);
+    };
+
+    // Image upload
+    const handleImageUpload = useCallback(async (file: File) => {
+        const imageUrl = URL.createObjectURL(file);
+        setSelectedImage(imageUrl);
+        setIsImageSearchOpen(false);
+        setIsSearching(true);
+        dispatch(setImageSearching(true));
+        try {
+            const { analyzeImage } = await import('@/utils/imageSearch');
+            const analysis = await analyzeImage(file);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search/image`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    labels: analysis.labels,
+                    colors: analysis.colors.map(c => c.name),
+                    colorHexes: analysis.colors.map(c => c.hex),
+                    keywords: analysis.keywords,
+                }),
+            });
+            const data = await response.json();
+            if (data.success) {
+                dispatch(setImageSearchResults({
+                    products: data.data.products,
+                    searchMeta: { ...data.data.searchMeta, colors: analysis.colors },
+                    previewImage: imageUrl,
+                }));
+                router.push('/products');
+            } else {
+                dispatch(setImageSearching(false));
+            }
+        } catch {
+            dispatch(setImageSearching(false));
+        } finally {
+            setIsSearching(false);
+        }
+    }, [dispatch, router]);
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) handleImageUpload(file);
+    };
+
+    const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
+    const handleDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault(); setIsDragging(false);
+        const file = e.dataTransfer.files?.[0];
+        if (file && file.type.startsWith('image/')) handleImageUpload(file);
+    };
+
+    const handlePaste = useCallback((e: ClipboardEvent) => {
+        if (!isImageSearchOpen) return;
+        const items = e.clipboardData?.items;
+        if (items) {
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    const file = items[i].getAsFile();
+                    if (file) { handleImageUpload(file); break; }
+                }
+            }
+        }
+    }, [isImageSearchOpen, handleImageUpload]);
+
+    useEffect(() => {
+        document.addEventListener('paste', handlePaste);
+        return () => document.removeEventListener('paste', handlePaste);
+    }, [handlePaste]);
+
+    const clearImage = () => { setSelectedImage(null); setIsSearching(false); };
+
+    const handleSearch = () => {
+        const trimmed = searchQuery.trim();
+        if (!trimmed) return;
+        dispatch(clearImageSearch());
+        router.push(`/products?q=${encodeURIComponent(trimmed)}`);
+    };
+
+    const handleGoHome = () => {
+        setSearchQuery('');
+        dispatch(clearImageSearch());
+    };
+
+    const serviceLinks = [
+        { label: 'Sourcing', href: '/services/sourcing' },
+        { label: 'Shipping', href: '/services/shipping' },
+        { label: 'Freight Forwarding', href: '/services/freight' },
+        { label: 'Customs Clearance', href: '/services/customs' },
+        { label: 'Warehousing', href: '/services/warehousing' },
+    ];
+
+    return (
+        <>
+            <header
+                style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 50,
+                    transition: 'box-shadow 0.3s ease',
+                    boxShadow: scrolled ? '0 2px 16px rgba(0,0,0,0.12)' : 'none',
+                }}
+            >
+                {/* ═══ TOP BAR ═══ */}
+                <div className="bg-[#f5f5f5] border-b border-gray-200 hidden md:block">
+                    <div className="container mx-auto px-2">
+                        <div className="flex items-center justify-between h-[34px] text-[12.5px] text-gray-600">
+                            {/* Left */}
+                            <div className="flex items-center gap-5">
+                                <Link href="/" className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                    <FiSmartphone size={13} />
+                                    <span>Sinotri App</span>
+                                </Link>
+                                <span className="text-gray-300">|</span>
+                                <Link href="/contact" className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                    <FiHeadphones size={13} />
+                                    <span>Support</span>
+                                </Link>
+                            </div>
+                            {/* Right */}
+                            <div className="flex items-center gap-5">
+                                <Link href="/wishlist" className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                    <FiHeart size={13} />
+                                    <span>Wishlist</span>
+                                </Link>
+                                <span className="text-gray-300">|</span>
+                                <button className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                    <span>Ship to</span>
+                                    <span className="text-base leading-none">🇧🇩</span>
+                                </button>
+                                <span className="text-gray-300">|</span>
+                                <button className="flex items-center gap-1 hover:text-[#0B4222] transition-colors">
+                                    <FiGlobe size={13} />
+                                    <span>EN/BDT</span>
+                                    <FiChevronDown size={11} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* ═══ MAIN HEADER ═══ */}
+                <div className="bg-white">
+                    <div className="container mx-auto px-2">
+                        <div className="flex items-center justify-between py-2.5 gap-3 lg:gap-5">
+
+                            {/* Mobile Menu Button */}
+                            <button
+                                className="lg:hidden text-gray-700 hover:text-[#0B4222] p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+                            </button>
+
+                            {/* Logo */}
+                            <Link href="/" className="flex items-center gap-2 shrink-0" onClick={handleGoHome}>
+                                <Image src="/logo.svg" alt="Sinotri Global" width={260} height={50} style={{ width: '200px', height: 'auto' }} priority />
+                            </Link>
+
+                            {/* Categories Button (Desktop) */}
+                            <div
+                                className="relative hidden lg:block shrink-0"
+                                onMouseEnter={handleCategoryMouseEnter}
+                                onMouseLeave={handleCategoryMouseLeave}
+                            >
+                                <button
+                                    className="flex items-center gap-2 bg-[#0B4222] text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-[#093a1d] transition-colors"
+                                    tabIndex={-1}
+                                >
+                                    <span>Categories</span>
+                                    <FiChevronDown
+                                        className={`transition-transform duration-200 ${isCategoryHovered ? 'rotate-180' : ''}`}
+                                        size={14}
+                                    />
+                                </button>
+                                {/* Category Dropdown */}
+                                <div
+                                    className={`absolute top-full left-0 mt-1 w-60 bg-white rounded-xl shadow-2xl z-50 border border-gray-100 overflow-hidden transition-all duration-200 origin-top ${isCategoryHovered
+                                        ? 'opacity-100 scale-y-100 translate-y-0 pointer-events-auto'
+                                        : 'opacity-0 scale-y-95 -translate-y-1 pointer-events-none'
+                                        }`}
+                                    onMouseEnter={handleCategoryMouseEnter}
+                                    onMouseLeave={handleCategoryMouseLeave}
+                                >
+                                    <Link
+                                        href="/products"
+                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-[#0B4222] hover:text-white transition-colors border-b border-gray-50 font-medium"
+                                        onClick={() => { setIsCategoryHovered(false); }}
+                                    >
+                                        <span>🛒</span> All Products
+                                    </Link>
+                                    {categories.length > 0 ? (
+                                        categories.map((category) => (
+                                            <Link
+                                                key={category._id}
+                                                href={`/products?category=${category._id}`}
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                onClick={() => setIsCategoryHovered(false)}
+                                            >
+                                                {category.icon && <span>{category.icon}</span>}
+                                                {category.name}
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <div className="px-4 py-3 text-sm text-gray-400">Loading...</div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Search Bar (Desktop) */}
+                            <div className="flex-1 max-w-2xl hidden md:flex items-center gap-0">
+                                <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
+
+                                {/* Search Input */}
+                                <div className="relative flex-1 h-[42px]">
+                                    {selectedImage && (
+                                        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
+                                            <div className="relative group">
+                                                <img src={selectedImage} alt="Search" className="w-7 h-7 rounded object-cover border border-gray-200" />
+                                                <button onClick={clearImage} className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                        placeholder={isSearching ? 'Searching by image...' : 'Search products...'}
+                                        className={`w-full h-full bg-white border border-gray-300 border-r-0 rounded-l-md ${selectedImage ? 'pl-12' : 'pl-4'} pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#0B4222] transition-all text-sm`}
+                                    />
+                                    {/* Image Search icon inside search bar */}
+                                    <button
+                                        onClick={() => setIsImageSearchOpen(true)}
+                                        title="Search by Image"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0B4222] transition-colors"
+                                    >
+                                        <FiCamera size={18} />
+                                    </button>
+                                </div>
+
+                                {/* Search Button */}
+                                <button
+                                    onClick={handleSearch}
+                                    className="h-[42px] px-5 bg-[#0B4222] text-white rounded-r-md hover:bg-[#093a1d] transition-colors flex items-center justify-center"
+                                    title="Search"
+                                >
+                                    {isSearching
+                                        ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        : <FiSearch size={18} />}
+                                </button>
+                            </div>
+
+                            {/* Right Actions */}
+                            <div className="flex items-center gap-1 lg:gap-2 shrink-0">
+
+                                {/* Services Link */}
+                                <Link href="/services" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0B4222] transition-colors">
+                                    Services
+                                </Link>
+
+                                {/* Cart */}
+                                <Link href="/cart" className="relative flex items-center justify-center w-9 h-9 text-gray-600 hover:text-[#0B4222] transition-colors">
+                                    <FiShoppingCart size={20} />
+                                    {cartItems.length > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold">
+                                            {cartItems.length}
+                                        </span>
+                                    )}
+                                </Link>
+
+                                {/* Divider */}
+                                <div className="hidden lg:block w-px h-6 bg-gray-200 mx-1"></div>
+
+                                {/* Sign In / Register */}
+                                <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0B4222] transition-colors">
+                                    <FiUser size={18} />
+                                    <span className="hidden lg:inline">Sign In/ Register</span>
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Mobile Search */}
+                        <div className="md:hidden pb-3">
+                            <div className="flex items-center gap-0">
+                                <div className="relative flex-1">
+                                    {selectedImage && (
+                                        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
+                                            <div className="relative group">
+                                                <img src={selectedImage} alt="Search" className="w-7 h-7 rounded object-cover border border-gray-200" />
+                                                <button onClick={clearImage} className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center">×</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                    <input
+                                        type="text"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                                        placeholder="Search products..."
+                                        className={`w-full bg-white border border-gray-300 rounded-l-md py-2.5 ${selectedImage ? 'pl-11' : 'pl-4'} pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm`}
+                                    />
+                                </div>
+                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[#0B4222] text-white flex items-center">
+                                    <FiSearch size={16} />
+                                </button>
+                                <button onClick={() => setIsImageSearchOpen(true)} className="h-[42px] px-3 bg-gray-100 border border-l-0 border-gray-300 rounded-r-md text-gray-500">
+                                    <FiCamera size={15} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile Menu */}
+                        {isMobileMenuOpen && (
+                            <div className="lg:hidden border-t border-gray-200 py-4">
+                                <div className="space-y-1">
+                                    <button
+                                        className="w-full flex items-center justify-between px-3 py-2 text-gray-700 font-semibold text-sm"
+                                        onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
+                                    >
+                                        <span>Categories</span>
+                                        <FiChevronDown className={`transition-transform ${isMobileCategoryOpen ? 'rotate-180' : ''}`} size={14} />
+                                    </button>
+                                    {isMobileCategoryOpen && (
+                                        <div className="pl-2 space-y-1">
+                                            <Link href="/products" className="block px-4 py-2 text-gray-600 hover:text-[#0B4222] text-sm" onClick={() => { setIsMobileMenuOpen(false); }}>
+                                                All Products
+                                            </Link>
+                                            {categories.map((cat) => (
+                                                <Link key={cat._id} href={`/products?category=${cat._id}`} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#0B4222] rounded-lg text-sm transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                                                    {cat.icon && <span>{cat.icon}</span>}
+                                                    {cat.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <Link href="/services" className="block px-3 py-2 text-gray-600 hover:text-[#0B4222] text-sm font-semibold">Services</Link>
+                                    <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[#0B4222] text-sm font-semibold">Support</Link>
+                                    <Link href="/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[#0B4222] text-sm font-semibold">Wishlist</Link>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+
+            </header>
+
+            {/* Image Search Modal */}
+            {isImageSearchOpen && (
+                <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-24">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsImageSearchOpen(false)} />
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 animate-fadeIn overflow-hidden">
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                            <h3 className="text-base font-semibold text-gray-800">Search products by Image</h3>
+                            <button onClick={() => setIsImageSearchOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
+                                <FiX size={18} />
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <div
+                                onDragOver={handleDragOver}
+                                onDragLeave={handleDragLeave}
+                                onDrop={handleDrop}
+                                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging ? 'border-[#0B4222] bg-[#0B4222]/5 scale-[1.02]' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50'}`}
+                            >
+                                <div className="flex flex-col items-center gap-4">
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-[#0B4222]/10 text-[#0B4222]' : 'bg-gray-100 text-gray-400'}`}>
+                                        <FiUpload size={24} />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500 mb-1">
+                                            Paste with <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs font-mono">Ctrl</kbd> <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs font-mono">V</kbd>
+                                        </p>
+                                        <p className="text-sm text-gray-400">Drag and drop an image here, or click to browse</p>
+                                    </div>
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        className="px-8 py-2.5 bg-[#0B4222] text-white rounded-full text-sm font-semibold hover:bg-[#093519] transition-colors shadow-md hover:shadow-lg"
+                                    >
+                                        Browse File
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};
+
+
+export default Header;

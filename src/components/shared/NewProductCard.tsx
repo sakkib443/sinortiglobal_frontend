@@ -1,0 +1,690 @@
+"use client";
+
+import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
+
+import {
+    useGetProductReviewsQuery,
+    usePublicCreateReviewMutation,
+    useLikeReviewMutation,
+    useReplyToReviewMutation,
+    useLikeReplyMutation,
+} from '@/redux/api/reviewApi';
+import { useIncrementProductStatMutation } from '@/redux/api/productApi';
+import { useAppDispatch, useAppSelector } from '@/redux';
+import { addToCart } from '@/redux/slices/cartSlice';
+import { FiStar, FiX, FiCopy, FiCheck, FiSend, FiThumbsUp, FiCornerDownRight } from 'react-icons/fi';
+import {
+    FaFacebookF, FaFacebookMessenger, FaWhatsapp, FaTelegramPlane,
+    FaLinkedinIn, FaPinterestP, FaEnvelope, FaInstagram
+} from 'react-icons/fa';
+import { FaXTwitter, FaTiktok } from 'react-icons/fa6';
+
+interface Product {
+    _id?: string;
+    id: string | number;
+    slug?: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    mrp?: number;
+    discount?: number | string;
+    rating?: number;
+    reviews?: number;
+    categoryName?: string;
+    warranty?: string;
+    priceType?: 'negotiable' | 'fixed';
+    sold?: number;
+    soldCount?: number;
+    totalSold?: number;
+    likeCount?: number;
+    commentCount?: number;
+    shareCount?: number;
+    viewCount?: number;
+    reviewCount?: number;
+}
+
+interface NewProductCardProps {
+    product: Product;
+}
+
+const formatCount = (n: number): string => {
+    if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1) + 'K';
+    return String(n);
+};
+
+const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
+
+    const [isLiked, setIsLiked] = useState(false);
+    const [likeAnim, setLikeAnim] = useState(false);
+    const [showComments, setShowComments] = useState(false);
+    const [showShare, setShowShare] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
+
+    // Lock body scroll when any modal is open
+    useEffect(() => {
+        if (showComments || showShare) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [showComments, showShare]);
+    const [incrementStat] = useIncrementProductStatMutation();
+    const dispatch = useAppDispatch();
+    const productId = String(product._id || product.id);
+    const cartItems = useAppSelector((state: any) => state.cart.items);
+    const isInCart = cartItems.some((item: any) => item.id === productId);
+    const [cartAnim, setCartAnim] = useState(false);
+    const [showAlreadyAdded, setShowAlreadyAdded] = useState(false);
+
+    const productUrl = typeof window !== 'undefined'
+        ? `${window.location.origin}/product/${product.slug || product.id}`
+        : `/product/${product.slug || product.id}`;
+
+
+
+    // Like: calls API; optimistic cache update in the mutation keeps all pages in sync instantly.
+    const handleLike = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isLiked) {
+            incrementStat({ id: productId, field: 'likeCount' });
+            setIsLiked(true);
+            setLikeAnim(true);
+            setTimeout(() => setLikeAnim(false), 300);
+        }
+    };
+
+    const handleCommentsClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowComments(true);
+    };
+
+    const handleShareClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowShare(true);
+        incrementStat({ id: productId, field: 'shareCount' });
+    };
+
+    const handleCopyLink = () => {
+        navigator.clipboard.writeText(productUrl);
+        setLinkCopied(true);
+        setTimeout(() => setLinkCopied(false), 2000);
+    };
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isInCart) {
+            setShowAlreadyAdded(true);
+            setTimeout(() => setShowAlreadyAdded(false), 1500);
+            return;
+        }
+        dispatch(addToCart({
+            id: productId,
+            productId: productId,
+            name: product.name,
+            price: product.price,
+            mrp: product.originalPrice || product.mrp || product.price,
+            image: product.image,
+            category: product.categoryName || 'General',
+        }));
+        setCartAnim(true);
+        setTimeout(() => setCartAnim(false), 600);
+    };
+
+    const shareText = `${product.name} - Tk.${product.price}`;
+    const shareLinks = [
+        { name: 'Facebook', icon: FaFacebookF, color: '#1877F2', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}&quote=${encodeURIComponent(shareText)}` },
+        { name: 'WhatsApp', icon: FaWhatsapp, color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + productUrl)}` },
+        { name: 'Messenger', icon: FaFacebookMessenger, color: '#0078FF', url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(productUrl)}&app_id=966242223397117&redirect_uri=${encodeURIComponent(productUrl)}` },
+        { name: 'X', icon: FaXTwitter, color: '#000000', url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(shareText)}` },
+        { name: 'Telegram', icon: FaTelegramPlane, color: '#0088cc', url: `https://t.me/share/url?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(shareText)}` },
+        { name: 'LinkedIn', icon: FaLinkedinIn, color: '#0A66C2', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(productUrl)}` },
+        { name: 'Pinterest', icon: FaPinterestP, color: '#E60023', url: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(productUrl)}&media=${encodeURIComponent(product.image)}&description=${encodeURIComponent(shareText)}` },
+        { name: 'Instagram', icon: FaInstagram, color: '#E1306C', url: `https://www.instagram.com/` },
+        { name: 'TikTok', icon: FaTiktok, color: '#000000', url: `https://www.tiktok.com/` },
+        { name: 'Email', icon: FaEnvelope, color: '#555555', url: `mailto:?subject=${encodeURIComponent(product.name)}&body=${encodeURIComponent(shareText + '\n\n' + productUrl)}` },
+    ];
+
+    const currentPrice = product.price;
+    const oldPrice = product.mrp || product.originalPrice;
+    const discountPercent = oldPrice ? Math.round(((oldPrice - currentPrice) / oldPrice) * 100) : 0;
+    const priceType = product.priceType || 'negotiable';
+    const soldCount = product.sold || product.soldCount || product.totalSold || 0;
+
+    // reviewCount is the source of truth (post-save hook keeps it accurate)
+    const stats = useMemo(() => ({
+        likes: product.likeCount || 0,
+        comments: product.reviewCount ?? product.commentCount ?? 0,
+        shares: product.shareCount || 0,
+        views: product.viewCount || 0,
+    }), [product.likeCount, product.commentCount, product.reviewCount, product.shareCount, product.viewCount]);
+
+    return (
+        <>
+            <Link href={`/product/${product.slug || product.id}`}>
+                <div className='bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-all duration-300 group'>
+
+                    {/* Product Image */}
+                    <div className='aspect-[4/3] bg-gray-100 overflow-hidden relative'>
+                        {/* Discount badge */}
+                        {discountPercent > 0 && (
+                            <span className='absolute top-2 left-2 z-10 bg-[#FF6B35] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm'>
+                                {discountPercent}% Off
+                            </span>
+                        )}
+                        {/* Cart Button */}
+                        <button
+                            onClick={handleAddToCart}
+                            className='absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all hover:scale-110'
+                            title={isInCart ? 'Already in Cart' : 'Add to Cart'}
+                        >
+                            <img src="/ICON/cart.png" alt="Cart" className="w-4 h-4 opacity-60" />
+                            {isInCart && <span className='absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white' />}
+                        </button>
+                        {showAlreadyAdded && (
+                            <span className='absolute top-11 right-2 z-10 text-[10px] font-medium text-white bg-black/70 px-2 py-0.5 rounded'>
+                                Already Added
+                            </span>
+                        )}
+                        <img
+                            src={product.image || 'https://via.placeholder.com/300x300/E8957A/E8957A'}
+                            alt={product.name}
+                            className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x300/E8957A/E8957A';
+                            }}
+                        />
+                    </div>
+
+                    {/* Product Info */}
+                    <div className='p-2.5'>
+                        {/* Flag + Product Name */}
+                        <div className='flex items-start gap-1.5 mb-1'>
+                            <span className='text-sm leading-none mt-0.5'>🇧🇩</span>
+                            <h3 className='text-[13px] text-gray-800 font-medium line-clamp-2 leading-[1.3] group-hover:text-[#0B4222] transition-colors'>
+                                {product.name}
+                            </h3>
+                        </div>
+
+                        {/* Rating + Sold */}
+                        <div className='flex items-center gap-2 mb-1.5'>
+                            {(product.rating ?? 0) > 0 && (
+                                <div className='flex items-center gap-0.5'>
+                                    <FiStar size={11} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
+                                    <span className='text-[11px] text-gray-500 font-medium'>{(product.rating ?? 0).toFixed(1)}</span>
+                                    {(product.reviews ?? 0) > 0 && (
+                                        <span className='text-[11px] text-gray-400'>({formatCount(product.reviews ?? 0)})</span>
+                                    )}
+                                </div>
+                            )}
+                            {soldCount > 0 && (
+                                <span className='text-[11px] text-gray-400'>{formatCount(soldCount)} Sold</span>
+                            )}
+                        </div>
+
+                        {/* Price */}
+                        <div className='flex items-baseline gap-1.5'>
+                            <span className='text-[15px] font-bold text-gray-900'>৳{currentPrice.toLocaleString()}</span>
+                            {oldPrice && (
+                                <span className='text-[11px] line-through text-gray-400'>৳{oldPrice.toLocaleString()}</span>
+                            )}
+                        </div>
+
+                        {/* Shipping info */}
+                        <div className='flex items-center gap-1 mt-1.5'>
+                            <span className='text-[10px] text-gray-400'>🇨🇳 US to BD: 20-25 days</span>
+                        </div>
+                    </div>
+                </div>
+            </Link>
+
+            {/* ═══════════════════════════════════════ */}
+            {/* ═══ COMMENTS / REVIEWS POPUP ═══ */}
+            {/* ═══════════════════════════════════════ */}
+            {showComments && (
+                <CommentsPopup
+                    productId={productId}
+                    productName={product.name}
+                    productImage={product.image}
+                    onClose={() => setShowComments(false)}
+                />
+            )}
+
+            {/* ═══════════════════════════════════════ */}
+            {/* ═══ SHARE POPUP ═══ */}
+            {/* ═══════════════════════════════════════ */}
+            {showShare && (
+                <div
+                    className='fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4'
+                    onClick={() => setShowShare(false)}
+                >
+                    <div
+                        className='bg-white rounded-lg w-full max-w-[620px] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl'
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ animation: 'fbModalIn 0.2s ease-out' }}
+                    >
+                        {/* Header */}
+                        <div className='flex items-center justify-between px-4 py-2.5 border-b border-gray-200 shrink-0'>
+                            <h3 className='text-[15px] font-bold text-gray-900 truncate pr-4'>{product.name}</h3>
+                            <button
+                                onClick={() => setShowShare(false)}
+                                className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors shrink-0'
+                            >
+                                <FiX size={18} />
+                            </button>
+                        </div>
+
+                        {/* Product Image — full view like comments popup */}
+                        <div className='shrink-0 border-b border-gray-200'>
+                            <div className='w-full bg-gray-50 flex items-center justify-center' style={{ maxHeight: '280px' }}>
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className='w-full object-contain'
+                                    style={{ maxHeight: '280px' }}
+                                    onError={(e) => {
+                                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/620x200/f3f4f6/9ca3af?text=No+Image';
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Share With label */}
+                        <div className='px-4 pt-3 pb-1'>
+                            <p className='text-[13px] font-bold text-gray-900'>Share With</p>
+                        </div>
+
+                        {/* Social Media Grid */}
+                        <div className='px-4 py-2 overflow-y-auto flex-1'>
+                            <div className='grid grid-cols-5 gap-3'>
+                                {shareLinks.map((social) => (
+                                    <a
+                                        key={social.name}
+                                        href={social.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className='flex flex-col items-center gap-1.5 py-2 rounded-lg hover:bg-gray-50 transition-colors'
+                                    >
+                                        <div
+                                            className='w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110'
+                                            style={{ background: social.color }}
+                                        >
+                                            <social.icon size={16} />
+                                        </div>
+                                        <span className='text-[10px] font-medium text-gray-600'>{social.name}</span>
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Copy Link Bar */}
+                        <div className='px-4 py-3 border-t border-gray-100 shrink-0'>
+                            <div className='flex items-center bg-gray-100 rounded-lg overflow-hidden'>
+                                <input
+                                    type="text"
+                                    readOnly
+                                    value={productUrl}
+                                    className='flex-1 bg-transparent text-xs text-gray-600 outline-none px-3 py-2.5 truncate'
+                                />
+                                <button
+                                    onClick={handleCopyLink}
+                                    className='px-4 py-2.5 bg-[#0B4222] text-white text-xs font-semibold hover:bg-[#093519] transition-colors flex items-center gap-1.5 whitespace-nowrap'
+                                >
+                                    {linkCopied ? (
+                                        <><FiCheck size={13} /> Copied!</>
+                                    ) : (
+                                        <><FiCopy size={13} /> Copy</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <style>{`
+                        @keyframes fbModalIn {
+                            from { transform: scale(0.95) translateY(10px); opacity: 0; }
+                            to { transform: scale(1) translateY(0); opacity: 1; }
+                        }
+                    `}</style>
+                </div>
+            )}
+        </>
+    );
+};
+
+
+/* ═══════════════════════════════════════════════ */
+/* ═══ COMMENTS POPUP — with write comment ═══ */
+/* ═══════════════════════════════════════════════ */
+
+// localStorage helpers — track which reviews/replies this device has liked
+const LIKED_REVIEWS_KEY = 'dominion_liked_reviews';
+const LIKED_REPLIES_KEY = 'dominion_liked_replies';
+
+const getLikedSet = (key: string): Set<string> => {
+    if (typeof window === 'undefined') return new Set();
+    try {
+        const raw = localStorage.getItem(key);
+        return new Set(raw ? JSON.parse(raw) : []);
+    } catch { return new Set(); }
+};
+const addToLikedSet = (key: string, id: string) => {
+    if (typeof window === 'undefined') return;
+    const set = getLikedSet(key);
+    set.add(id);
+    localStorage.setItem(key, JSON.stringify(Array.from(set)));
+};
+
+const CommentsPopup: React.FC<{
+    productId: string;
+    productName: string;
+    productImage: string;
+    onClose: () => void;
+}> = ({ productId, productName, productImage, onClose }) => {
+    const { data: reviewsData, isLoading } = useGetProductReviewsQuery({ productId });
+    const [publicCreateReview] = usePublicCreateReviewMutation();
+    const [likeReview] = useLikeReviewMutation();
+    const [replyToReview] = useReplyToReviewMutation();
+    const [likeReply] = useLikeReplyMutation();
+    const reviews = reviewsData?.data || [];
+
+    const [newComment, setNewComment] = useState('');
+    const [newRating, setNewRating] = useState(5);
+    const [hoverRating, setHoverRating] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitSuccess, setSubmitSuccess] = useState(false);
+
+    // Like tracking (per-device via localStorage)
+    const [likedReviews, setLikedReviews] = useState<Set<string>>(() => getLikedSet(LIKED_REVIEWS_KEY));
+    const [likedReplies, setLikedReplies] = useState<Set<string>>(() => getLikedSet(LIKED_REPLIES_KEY));
+
+    // Reply UI state — which review has reply box open + text
+    const [replyingTo, setReplyingTo] = useState<string | null>(null);
+    const [replyText, setReplyText] = useState('');
+    const [isReplying, setIsReplying] = useState(false);
+
+    const handleSubmitComment = async () => {
+        if (!newComment.trim()) return;
+        setIsSubmitting(true);
+        try {
+            await publicCreateReview({
+                product: productId,
+                rating: newRating,
+                comment: newComment.trim(),
+                userName: 'Anonymous'
+            }).unwrap();
+            setNewComment('');
+            setNewRating(5);
+            setSubmitSuccess(true);
+            setTimeout(() => setSubmitSuccess(false), 3000);
+        } catch (err) {
+            console.error('Failed to submit review:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleLikeReview = async (reviewId: string) => {
+        if (likedReviews.has(reviewId)) return;
+        addToLikedSet(LIKED_REVIEWS_KEY, reviewId);
+        setLikedReviews(prev => new Set(prev).add(reviewId));
+        try { await likeReview(reviewId).unwrap(); } catch (e) { console.error(e); }
+    };
+
+    const handleLikeReply = async (reviewId: string, replyId: string) => {
+        const key = `${reviewId}_${replyId}`;
+        if (likedReplies.has(key)) return;
+        addToLikedSet(LIKED_REPLIES_KEY, key);
+        setLikedReplies(prev => new Set(prev).add(key));
+        try { await likeReply({ reviewId, replyId }).unwrap(); } catch (e) { console.error(e); }
+    };
+
+    const handleSubmitReply = async (reviewId: string) => {
+        const text = replyText.trim();
+        if (!text) return;
+        setIsReplying(true);
+        try {
+            await replyToReview({ reviewId, text, userName: 'Anonymous' }).unwrap();
+            setReplyText('');
+            setReplyingTo(null);
+        } catch (e) { console.error(e); }
+        finally { setIsReplying(false); }
+    };
+
+    return (
+        <div
+            className='fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4'
+            onClick={onClose}
+        >
+            <div
+                className='bg-white rounded-lg w-full max-w-[620px] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl'
+                onClick={(e) => e.stopPropagation()}
+                style={{ animation: 'fbModalIn 0.2s ease-out' }}
+            >
+                {/* ── Header ── */}
+                <div className='flex items-center justify-between px-4 py-2.5 border-b border-gray-200 shrink-0'>
+                    <h3 className='text-[15px] font-bold text-gray-900 truncate pr-4'>{productName}</h3>
+                    <button
+                        onClick={onClose}
+                        className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors shrink-0'
+                    >
+                        <FiX size={18} />
+                    </button>
+                </div>
+
+                {/* ── Product image — full view ── */}
+                <div className='shrink-0 border-b border-gray-200'>
+                    <div className='w-full bg-gray-50 flex items-center justify-center' style={{ maxHeight: '280px' }}>
+                        <img
+                            src={productImage}
+                            alt={productName}
+                            className='w-full object-contain'
+                            style={{ maxHeight: '280px' }}
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://via.placeholder.com/620x200/f3f4f6/9ca3af?text=No+Image';
+                            }}
+                        />
+                    </div>
+                    {/* Stats bar */}
+                    <div className='flex items-center justify-between px-4 py-1.5 text-xs text-gray-500'>
+                        <span>{reviews.length} {reviews.length === 1 ? 'Comment' : 'Comments'}</span>
+                    </div>
+                </div>
+
+                {/* ── Comments List — scrollable ── */}
+                <div className='flex-1 overflow-y-auto px-4 py-2 space-y-2.5' style={{ minHeight: '60px' }}>
+                    {isLoading ? (
+                        <div className='flex items-center justify-center py-8'>
+                            <div className='w-6 h-6 border-2 border-gray-200 border-t-[#0B4222] rounded-full animate-spin' />
+                        </div>
+                    ) : reviews.length > 0 ? (
+                        <>
+                            <p className='text-[11px] font-semibold text-gray-400 uppercase tracking-wide'>Most relevant</p>
+                            {reviews.map((review: any) => {
+                                const reviewId = review._id;
+                                const isLiked = likedReviews.has(reviewId);
+                                const likeCount = review.likes || 0;
+                                const replies = review.replies || [];
+                                const isReplyOpen = replyingTo === reviewId;
+
+                                return (
+                                    <div key={reviewId} className='flex gap-2'>
+                                        <div className='flex-1 min-w-0'>
+                                            <div className='bg-gray-100 rounded-2xl px-3 py-2'>
+                                                {review.comment && (
+                                                    <p className='text-[12px] text-gray-800 leading-snug'>{review.comment}</p>
+                                                )}
+                                            </div>
+                                            <div className='flex items-center gap-3 px-3 mt-0.5 text-[10px] text-gray-400'>
+                                                <span className='flex gap-0.5'>
+                                                    {[1, 2, 3, 4, 5].map(star => (
+                                                        <FiStar key={star} size={9} style={{
+                                                            color: '#f59e0b',
+                                                            fill: star <= (review.rating || 0) ? '#f59e0b' : 'none'
+                                                        }} />
+                                                    ))}
+                                                </span>
+                                                <button
+                                                    onClick={() => handleLikeReview(reviewId)}
+                                                    className={`font-medium hover:underline flex items-center gap-1 ${isLiked ? 'text-[#E4525C]' : ''}`}
+                                                    disabled={isLiked}
+                                                >
+                                                    <FiThumbsUp size={10} style={{ fill: isLiked ? '#E4525C' : 'none' }} />
+                                                    <span>Like{likeCount > 0 ? ` (${likeCount})` : ''}</span>
+                                                </button>
+                                                <button
+                                                    onClick={() => { setReplyingTo(isReplyOpen ? null : reviewId); setReplyText(''); }}
+                                                    className='font-medium hover:underline'
+                                                >
+                                                    Reply{replies.length > 0 ? ` (${replies.length})` : ''}
+                                                </button>
+                                            </div>
+
+                                            {/* ── Replies list ── */}
+                                            {replies.length > 0 && (
+                                                <div className='mt-1.5 ml-1 space-y-1.5'>
+                                                    {replies.map((reply: any) => {
+                                                        const replyKey = `${reviewId}_${reply._id}`;
+                                                        const isReplyLiked = likedReplies.has(replyKey);
+                                                        return (
+                                                            <div key={reply._id} className='flex gap-2'>
+                                                                <FiCornerDownRight size={12} className='text-gray-300 mt-1.5 shrink-0' />
+                                                                <div className='flex-1 min-w-0'>
+                                                                    <div className='bg-gray-50 rounded-2xl px-3 py-1.5'>
+                                                                        <p className='text-[11px] text-gray-800 leading-snug'>{reply.text}</p>
+                                                                    </div>
+                                                                    <div className='flex items-center gap-3 px-3 mt-0.5 text-[10px] text-gray-400'>
+                                                                        <button
+                                                                            onClick={() => handleLikeReply(reviewId, reply._id)}
+                                                                            className={`font-medium hover:underline flex items-center gap-1 ${isReplyLiked ? 'text-[#E4525C]' : ''}`}
+                                                                            disabled={isReplyLiked}
+                                                                        >
+                                                                            <FiThumbsUp size={9} style={{ fill: isReplyLiked ? '#E4525C' : 'none' }} />
+                                                                            <span>Like{reply.likes > 0 ? ` (${reply.likes})` : ''}</span>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+
+                                            {/* ── Reply input ── */}
+                                            {isReplyOpen && (
+                                                <div className='flex gap-2 mt-2 ml-1'>
+                                                    <FiCornerDownRight size={12} className='text-gray-300 mt-2 shrink-0' />
+                                                    <div className='flex-1 flex items-center bg-gray-100 rounded-full px-3 py-1'>
+                                                        <input
+                                                            type='text'
+                                                            autoFocus
+                                                            value={replyText}
+                                                            onChange={e => setReplyText(e.target.value)}
+                                                            onKeyDown={e => { if (e.key === 'Enter' && replyText.trim()) handleSubmitReply(reviewId); }}
+                                                            placeholder='Write a reply...'
+                                                            className='flex-1 bg-transparent text-[11px] text-gray-700 outline-none'
+                                                        />
+                                                        <button
+                                                            onClick={() => handleSubmitReply(reviewId)}
+                                                            disabled={!replyText.trim() || isReplying}
+                                                            className='text-[#0B4222] font-semibold text-[11px] ml-2 disabled:opacity-30 flex items-center gap-1'
+                                                        >
+                                                            {isReplying ? (
+                                                                <div className='w-3 h-3 border-2 border-gray-300 border-t-[#0B4222] rounded-full animate-spin' />
+                                                            ) : (
+                                                                <FiSend size={11} />
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </>
+                    ) : (
+                        <div className='text-center py-6'>
+                            <p className='text-sm text-gray-500'>No comments yet</p>
+                            <p className='text-xs text-gray-400 mt-1'>Be the first to comment!</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* ── Comment Input — bottom bar ── */}
+                <div className='border-t border-gray-200 px-4 py-2.5 shrink-0 bg-white'>
+                    {submitSuccess && (
+                        <div className='mb-2 text-center text-xs text-green-600 font-medium bg-green-50 py-1.5 rounded-lg'>
+                            ✅ Comment posted!
+                        </div>
+                    )}
+
+                    <div className='flex items-start gap-2.5'>
+                        {/* Comment + Rating */}
+                        <div className='flex-1 min-w-0 bg-gray-100 rounded-2xl px-3 py-1.5'>
+                            <input
+                                type="text"
+                                value={newComment}
+                                onChange={(e) => setNewComment(e.target.value)}
+                                onKeyDown={(e) => { if (e.key === 'Enter' && newComment.trim()) handleSubmitComment(); }}
+                                placeholder="Write a comment..."
+                                className='w-full bg-transparent text-[12px] text-gray-700 font-normal placeholder-gray-400 placeholder:font-normal outline-none py-1'
+                            />
+                            {/* Rating + Send row */}
+                            <div className='flex items-center justify-between mt-1 pt-1.5 border-t border-gray-200/60'>
+                                <div className='flex items-center gap-1.5'>
+                                    <span className='text-[11px] text-gray-400'>Rating</span>
+                                    <div className='flex gap-px'>
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <button
+                                                key={star}
+                                                onClick={() => setNewRating(star)}
+                                                onMouseEnter={() => setHoverRating(star)}
+                                                onMouseLeave={() => setHoverRating(0)}
+                                                className='p-px transition-transform hover:scale-125'
+                                            >
+                                                <FiStar size={13} style={{
+                                                    color: '#f59e0b',
+                                                    fill: star <= (hoverRating || newRating) ? '#f59e0b' : 'none',
+                                                    transition: 'all 0.15s ease'
+                                                }} />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={handleSubmitComment}
+                                    disabled={!newComment.trim() || isSubmitting}
+                                    className='text-[#0B4222] font-semibold text-[13px] hover:text-[#093519] transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1'
+                                >
+                                    {isSubmitting ? (
+                                        <div className='w-4 h-4 border-2 border-gray-300 border-t-[#0B4222] rounded-full animate-spin' />
+                                    ) : (
+                                        <><FiSend size={13} /> Post</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style>{`
+                @keyframes fbModalIn {
+                    from { transform: scale(0.95) translateY(10px); opacity: 0; }
+                    to { transform: scale(1) translateY(0); opacity: 1; }
+                }
+            `}</style>
+        </div>
+    );
+};
+
+export { CommentsPopup };
+export default NewProductCard;

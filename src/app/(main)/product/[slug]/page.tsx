@@ -1,0 +1,1875 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
+import {
+    FiHeart, FiShoppingCart, FiMinus, FiPlus, FiCheckCircle,
+    FiStar, FiX, FiZoomIn, FiCopy, FiShare2, FiDownload,
+    FiThumbsUp, FiChevronUp, FiChevronDown, FiMessageSquare,
+    FiEye, FiChevronRight, FiChevronLeft, FiSend
+} from 'react-icons/fi';
+import { useGetProductBySlugQuery, useGetRelatedProductsQuery, useIncrementProductStatMutation } from '@/redux/api/productApi';
+import { useGetProductReviewsQuery, usePublicCreateReviewMutation } from '@/redux/api/reviewApi';
+import { useAppDispatch, useAppSelector } from '@/redux';
+import { addToCart } from '@/redux/slices/cartSlice';
+import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
+import NewProductCard, { CommentsPopup } from '@/components/shared/NewProductCard';
+import OrderModal from '@/components/shared/OrderModal';
+import {
+    FaFacebookF, FaFacebookMessenger, FaWhatsapp, FaTelegramPlane,
+    FaLinkedinIn, FaPinterestP, FaEnvelope, FaInstagram
+} from 'react-icons/fa';
+import { FaXTwitter, FaTiktok } from 'react-icons/fa6';
+
+export default function ProductDetailsPage() {
+    const { slug } = useParams();
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+    const { isAuthenticated } = useAppSelector((state: any) => state.auth);
+    const [createInquiry] = useCreateInquiryMutation();
+    const [incrementStat] = useIncrementProductStatMutation();
+    const [quantity, setQuantity] = useState(1);
+    const [buyNowQty, setBuyNowQty] = useState(1);
+    const [selectedImage, setSelectedImage] = useState(0);
+    const [isWishlisted, setIsWishlisted] = useState(false);
+    const [addedToCart, setAddedToCart] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const [selectedColor, setSelectedColor] = useState<string>('');
+    const [selectedSize, setSelectedSize] = useState<string>('');
+    const [activeInfoPanel, setActiveInfoPanel] = useState<'delivery' | 'payment' | 'terms' | null>(null);
+    const [showRatingModal, setShowRatingModal] = useState(false);
+    const [showSharePopup, setShowSharePopup] = useState(false);
+    const [showBuyNowModal, setShowBuyNowModal] = useState(false);
+    const [shareLinkCopied, setShareLinkCopied] = useState(false);
+    const [showCommentsModal, setShowCommentsModal] = useState(false);
+    const [cmtText, setCmtText] = useState('');
+    const [cmtRating, setCmtRating] = useState(5);
+    const [cmtHoverRating, setCmtHoverRating] = useState(0);
+    const [cmtSubmitting, setCmtSubmitting] = useState(false);
+    const [cmtSuccess, setCmtSuccess] = useState(false);
+    const [zoomLevel, setZoomLevel] = useState(1);
+    const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+    // Refs for drag — avoids stale closure in mouse event handlers
+    const isDraggingRef = useRef(false);
+    const hasDraggedRef = useRef(false);  // true if mouse actually moved during drag
+    const dragStartRef = useRef({ x: 0, y: 0 });
+    const panOffsetRef = useRef({ x: 0, y: 0 });
+    const [showDownloadModal, setShowDownloadModal] = useState(false);
+    const [showInquiryModal, setShowInquiryModal] = useState(false);
+    const [inquiryName, setInquiryName] = useState('');
+    const [inquiryContact, setInquiryContact] = useState('');
+    const [inquiryMessage, setInquiryMessage] = useState('');
+    const [inquirySubmitting, setInquirySubmitting] = useState(false);
+    const [inquirySuccess, setInquirySuccess] = useState(false);
+    const colorSwatchRef = useRef<HTMLDivElement>(null);
+    const sizeSwatchRef = useRef<HTMLDivElement>(null);
+    const colorSwatchRef2 = useRef<HTMLDivElement>(null);
+    const detailsRef = useRef<HTMLDivElement>(null);
+
+    // Scroll to top whenever the slug changes (page navigation)
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, [slug]);
+
+    // Lock body scroll when any modal is open
+    const anyModalOpen = showSharePopup || showCommentsModal || showRatingModal || showBuyNowModal || isFullscreen || showDownloadModal || showInquiryModal;
+    useEffect(() => {
+        if (anyModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [anyModalOpen]);
+    const scrollList = (ref: React.RefObject<HTMLDivElement | null>, dir: 'up' | 'down') => {
+        if (ref.current) {
+            ref.current.scrollBy({ top: dir === 'down' ? 96 : -96, behavior: 'smooth' });
+        }
+    };
+
+    const { data: productData, isLoading, isError } = useGetProductBySlugQuery(slug as string, { skip: !slug });
+    const product = productData?.data;
+
+    const { data: relatedData } = useGetRelatedProductsQuery(
+        { id: product?._id, categoryId: product?.category?._id },
+        { skip: !product?._id || !product?.category?._id }
+    );
+    const relatedProducts = relatedData?.data || [];
+
+    const { data: reviewsData } = useGetProductReviewsQuery({ productId: product?._id }, { skip: !product?._id });
+    const reviews = reviewsData?.data || [];
+    const [publicCreateReview] = usePublicCreateReviewMutation();
+
+    const handleCommentSubmit = async () => {
+        if (!cmtText.trim() || !product?._id) return;
+        setCmtSubmitting(true);
+        try {
+            await publicCreateReview({
+                product: product._id,
+                rating: cmtRating,
+                comment: cmtText.trim(),
+                userName: 'Anonymous'
+            }).unwrap();
+            setCmtText('');
+            setCmtRating(5);
+            setCmtSuccess(true);
+            setTimeout(() => setCmtSuccess(false), 3000);
+        } catch (err) {
+            console.error('Failed to submit review:', err);
+        } finally {
+            setCmtSubmitting(false);
+        }
+    };
+
+    const cartItems = useAppSelector((state: any) => state.cart.items);
+
+    // Build unique cart ID that includes variant info
+    const getCartId = () => {
+        const parts = [product?._id];
+        if (selectedColor) parts.push(selectedColor);
+        if (selectedSize) parts.push(selectedSize);
+        return parts.join('_');
+    };
+
+    const isInCart = product ? cartItems.some((item: any) => item.id === getCartId()) : false;
+
+    const handleAddToCart = () => {
+        if (!product) return;
+        const cartId = getCartId();
+
+        if (isInCart) {
+            setAddedToCart(true);
+            setTimeout(() => setAddedToCart(false), 2000);
+            return;
+        }
+
+        // Use variant's first image if available, else product thumbnail
+        const variantImage = activeVariant?.images?.[0] || allImages[selectedImage] || product.thumbnail;
+
+        dispatch(addToCart({
+            id: cartId,
+            productId: product._id,
+            name: product.name,
+            price: discountedPrice,
+            mrp: activeVariant?.originalPrice || product.originalPrice || product.price,
+            image: variantImage,
+            category: product.category?.name || 'General',
+            quantity: quantity,
+            color: selectedColor || undefined,
+            colorHex: activeVariant?.colorHex || undefined,
+            size: selectedSize || undefined,
+        }));
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 2000);
+    };
+
+    const scrollColors = (direction: 'up' | 'down') => {
+        if (colorSwatchRef.current) {
+            const amount = direction === 'up' ? -80 : 80;
+            colorSwatchRef.current.scrollBy({ top: amount, behavior: 'smooth' });
+        }
+    };
+
+    const scrollDetails = (direction: 'up' | 'down') => {
+        if (detailsRef.current) {
+            const amount = direction === 'up' ? -150 : 150;
+            detailsRef.current.scrollBy({ top: amount, behavior: 'smooth' });
+        }
+    };
+
+    // Loading
+    if (isLoading) {
+        return (
+            <div className="bg-gray-50" style={{ minHeight: '100vh' }}>
+                <div className="container mx-auto px-4" style={{ padding: '2rem 1rem' }}>
+                    {/* Breadcrumb skeleton */}
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                        <div style={{ height: '14px', width: '50px', background: '#e5e7eb', borderRadius: '4px' }} className="animate-pulse" />
+                        <div style={{ height: '14px', width: '80px', background: '#e5e7eb', borderRadius: '4px' }} className="animate-pulse" />
+                        <div style={{ height: '14px', width: '120px', background: '#e5e7eb', borderRadius: '4px' }} className="animate-pulse" />
+                    </div>
+                    {/* Title skeleton */}
+                    <div style={{ height: '28px', background: '#e5e7eb', borderRadius: '8px', width: '60%', marginBottom: '12px' }} className="animate-pulse" />
+                    <div style={{ height: '16px', background: '#e5e7eb', borderRadius: '6px', width: '30%', marginBottom: '24px' }} className="animate-pulse" />
+                    {/* Main content skeleton */}
+                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', background: '#fff', borderRadius: '12px', padding: '16px', border: '1px solid #eee' }}>
+                        <div style={{ flex: '1 1 55%', aspectRatio: '1', background: '#f3f4f6', borderRadius: '12px' }} className="animate-pulse" />
+                        <div style={{ flex: '1 1 40%', display: 'flex', flexDirection: 'column', gap: '12px', padding: '8px' }}>
+                            <div style={{ height: '60px', background: '#fef3f2', borderRadius: '8px' }} className="animate-pulse" />
+                            <div style={{ height: '20px', background: '#f3f4f6', borderRadius: '6px', width: '50%' }} className="animate-pulse" />
+                            <div style={{ height: '80px', background: '#f3f4f6', borderRadius: '8px' }} className="animate-pulse" />
+                            <div style={{ height: '80px', background: '#f3f4f6', borderRadius: '8px' }} className="animate-pulse" />
+                            <div style={{ height: '40px', background: '#f3f4f6', borderRadius: '8px', marginTop: 'auto' }} className="animate-pulse" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Error
+    if (isError || !product) {
+        return (
+            <div className="bg-gray-50" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ textAlign: 'center', padding: '5rem 1rem', background: '#fff', borderRadius: '16px', maxWidth: '400px', margin: '0 auto', border: '1px solid #eee' }}>
+                    <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>😕</div>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', marginBottom: '0.5rem' }}>Product Not Found</h2>
+                    <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '14px' }}>This product may have been removed or is no longer available.</p>
+                    <Link href="/products" style={{ padding: '0.75rem 2rem', background: '#0B4222', color: '#fff', borderRadius: '8px', fontWeight: 600, textDecoration: 'none', fontSize: '14px' }}>Browse Products</Link>
+                </div>
+            </div>
+        );
+    }
+
+    // ── Variant-Aware Logic with Bi-directional Color ↔ Image Sync ──
+    const baseImages = [product.thumbnail, ...(product.images || [])].filter(Boolean);
+    const variants = product.variants || [];
+    const hasVariants = variants.length > 0;
+
+    // Color swatches — from variants first, then product.colors, then empty
+    const colorSwatches = (() => {
+        if (hasVariants) {
+            const map = new Map<string, string>();
+            variants.forEach((v: any) => { if (v.color) map.set(v.color, v.colorHex || v.color); });
+            return Array.from(map.entries()).map(([name, hex]) => ({ name, hex }));
+        }
+        if (product.colors?.length > 0) {
+            return product.colors.map((c: string, i: number) => ({ name: c, hex: product.colorHex?.[i] || c }));
+        }
+        return [];
+    })();
+
+    // Size list — from variants first, then product.sizes
+    const sizeList: string[] = (() => {
+        if (hasVariants) {
+            return [...new Set(variants.filter((v: any) => v.size).map((v: any) => v.size))];
+        }
+        return product.sizes?.length > 0 ? product.sizes : [];
+    })();
+
+    // ── Build Color → Images Map (key piece for bi-directional sync) ──
+    const colorImageMap = (() => {
+        const map: Record<string, string[]> = {};
+        if (hasVariants) {
+            // Collect all images from variants of same color
+            variants.forEach((v: any) => {
+                if (v.color && v.images?.length > 0) {
+                    if (!map[v.color]) map[v.color] = [];
+                    v.images.forEach((img: string) => {
+                        if (!map[v.color].includes(img)) map[v.color].push(img);
+                    });
+                }
+            });
+        } else if (colorSwatches.length > 0 && baseImages.length > 0) {
+            // No variants — map each color to corresponding image by index
+            colorSwatches.forEach((c: any, i: number) => {
+                if (i < baseImages.length) {
+                    map[c.name] = [baseImages[i]];
+                }
+            });
+        }
+        return map;
+    })();
+
+    // ── Build Image → Color reverse map (for thumbnail click → color select) ──
+    const imageToColorMap = (() => {
+        const map: Record<string, string> = {};
+        Object.entries(colorImageMap).forEach(([colorName, imgs]) => {
+            imgs.forEach(img => { map[img] = colorName; });
+        });
+        return map;
+    })();
+
+    // Active variant — matched by selected color + size
+    const activeVariant = hasVariants ? variants.find((v: any) =>
+        (!selectedColor || v.color === selectedColor) &&
+        (!selectedSize || v.size === selectedSize)
+    ) : null;
+
+    // Available sizes for selected color — show ALL sizes that exist for this color (regardless of stock)
+    const availableSizesForColor = hasVariants && selectedColor
+        ? variants.filter((v: any) => v.color === selectedColor).map((v: any) => v.size).filter(Boolean)
+        : sizeList;
+
+    // Available colors for selected size — show ALL colors that exist for this size (regardless of stock)
+    const availableColorsForSize = hasVariants && selectedSize
+        ? variants.filter((v: any) => v.size === selectedSize).map((v: any) => v.color).filter(Boolean)
+        : colorSwatches.map((c: any) => c.name);
+
+    // ── Display images — ALWAYS show ALL variant images + base images ──
+    // Collect per-COLOR (not per-variant) to avoid duplicates from same color's different sizes
+    const allImages = (() => {
+        if (hasVariants) {
+            const seen = new Set<string>();
+            const imgs: string[] = [];
+            // First add base/thumbnail
+            baseImages.forEach(img => {
+                if (!seen.has(img)) { seen.add(img); imgs.push(img); }
+            });
+            // Then add images per unique COLOR (only first variant of each color)
+            const processedColors = new Set<string>();
+            variants.forEach((v: any) => {
+                const colorKey = v.color || `__no_color_${v.size}`;
+                if (processedColors.has(colorKey)) return; // skip same color
+                processedColors.add(colorKey);
+                (v.images || []).forEach((img: string) => {
+                    if (!seen.has(img)) { seen.add(img); imgs.push(img); }
+                });
+            });
+            return imgs;
+        }
+        return baseImages;
+    })();
+
+    // Display price — variant price > product discounted price
+    const discountedPrice = (() => {
+        if (activeVariant) {
+            const vDiscount = activeVariant.discount || 0;
+            return vDiscount > 0 ? activeVariant.price - (activeVariant.price * vDiscount) / 100 : activeVariant.price;
+        }
+        return product.discount > 0 ? product.price - (product.price * product.discount) / 100 : product.price;
+    })();
+
+    // Display stock
+    const displayStock = activeVariant ? activeVariant.stock : product.stock;
+
+    // Build product details key-value pairs from product data
+    const productDetails: { key: string; value: string }[] = [];
+
+    if (product.sku) productDetails.push({ key: 'Model', value: product.sku });
+    if (product.brand) productDetails.push({ key: 'Brand', value: product.brand.toUpperCase() });
+    if (product.specifications?.length > 0) {
+        product.specifications.forEach((spec: any) => {
+            productDetails.push({ key: spec.key, value: spec.value });
+        });
+    }
+    if (product.material?.length > 0) productDetails.push({ key: 'Material', value: product.material.join(', ') });
+    if (product.weight > 0) productDetails.push({ key: 'Weight', value: `${product.weight}g` });
+    if (product.colors?.length > 0) productDetails.push({ key: product.productType === 'multi-color' ? 'Multi Color' : 'Color', value: product.colors.join(', ') });
+    if (product.sizes?.length > 0) productDetails.push({ key: 'Size', value: product.sizes.join(', ') });
+    if (product.weights?.length > 0) productDetails.push({ key: 'Weight Options', value: product.weights.join(', ') });
+
+    // Fallback: if no details exist, add basic ones
+    if (productDetails.length === 0) {
+        productDetails.push({ key: 'Category', value: product.category?.name || 'General' });
+        productDetails.push({ key: 'Stock', value: product.stock > 0 ? `${product.stock} available` : 'Out of Stock' });
+    }
+
+    const getColorHex = (colorName: string) => {
+        const namedColors: Record<string, string> = {
+            red: '#FF0000', orange: '#FF8C00', yellow: '#FFD700', green: '#00C853',
+            blue: '#2196F3', black: '#000000', white: '#FFFFFF', pink: '#FF69B4',
+            purple: '#9C27B0', brown: '#795548', gray: '#9E9E9E', grey: '#9E9E9E',
+            navy: '#001F3F', teal: '#009688', maroon: '#800000', olive: '#808000',
+            cyan: '#00BCD4', lime: '#76FF03', coral: '#FF7F50', gold: '#FFD700',
+            silver: '#C0C0C0', beige: '#F5F5DC', cream: '#FFFDD0', khaki: '#F0E68C',
+        };
+        return namedColors[colorName.toLowerCase()] || colorName;
+    };
+
+    // ── Handler: COLOR selected → find that color's FIRST image in allImages and select it ──
+    const handleColorSelect = (colorName: string) => {
+        if (selectedColor === colorName) {
+            setSelectedColor('');
+            return; // keep current image, just deselect color
+        }
+        setSelectedColor(colorName);
+        // Reset size if current selectedSize is not available for the new color
+        if (selectedSize && hasVariants) {
+            const sizesForNewColor = variants.filter((v: any) => v.color === colorName).map((v: any) => v.size).filter(Boolean);
+            if (!sizesForNewColor.includes(selectedSize)) {
+                setSelectedSize('');
+            }
+        }
+        // Find the first image belonging to this color in allImages
+        const colorImgs = colorImageMap[colorName];
+        if (colorImgs?.length > 0) {
+            const firstColorImg = colorImgs[0];
+            const idx = allImages.indexOf(firstColorImg);
+            if (idx >= 0) setSelectedImage(idx);
+        }
+    };
+
+    // ── Handler: IMAGE thumbnail clicked → auto-select matching color ──
+    const handleImageSelect = (imgIdx: number) => {
+        setSelectedImage(imgIdx);
+        // Find which color this image belongs to and auto-select
+        const imgUrl = allImages[imgIdx];
+        if (imgUrl && imageToColorMap[imgUrl]) {
+            setSelectedColor(imageToColorMap[imgUrl]);
+        }
+    };
+
+    // Handler: when size is selected
+    const handleSizeSelect = (size: string) => {
+        if (selectedSize === size) {
+            setSelectedSize('');
+            return;
+        }
+        setSelectedSize(size);
+    };
+
+    return (
+        <>
+            <div className="bg-gray-50" style={{ minHeight: '100vh' }}>
+                <div className="container mx-auto px-4">
+                    {/* ── Fullscreen Image Modal ── */}
+                    {isFullscreen && (
+                        <div
+                            style={{
+                                position: 'fixed', inset: 0, zIndex: 9999,
+                                background: 'rgba(0,0,0,0.95)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', padding: '1rem'
+                            }}
+                            onClick={() => { setIsFullscreen(false); setZoomLevel(1); setPanOffset({ x: 0, y: 0 }); }}
+                        >
+                            {/* Close Button */}
+                            <button
+                                onClick={() => { setIsFullscreen(false); setZoomLevel(1); setPanOffset({ x: 0, y: 0 }); }}
+                                style={{
+                                    position: 'absolute', top: '1rem', right: '1rem',
+                                    width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)',
+                                    border: 'none', borderRadius: '50%', color: '#fff',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    cursor: 'pointer', zIndex: 10
+                                }}
+                            >
+                                <FiX size={22} />
+                            </button>
+
+                            {/* Thumbnail Strip */}
+                            {allImages.length > 1 && (
+                                <div className="pd-zoom-thumbs" style={{
+                                    position: 'absolute', left: '11rem', top: '50%',
+                                    transform: 'translateY(-50%)', display: 'flex',
+                                    flexDirection: 'column', gap: '0.5rem', zIndex: 10
+                                }}>
+                                    {allImages.map((img, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={(e) => { e.stopPropagation(); handleImageSelect(idx); setZoomLevel(1); setPanOffset({ x: 0, y: 0 }); }}
+                                            style={{
+                                                width: '56px', height: '56px', borderRadius: '8px',
+                                                overflow: 'hidden', border: selectedImage === idx ? '2px solid #fff' : '2px solid rgba(255,255,255,0.2)',
+                                                opacity: selectedImage === idx ? 1 : 0.6,
+                                                cursor: 'pointer', background: 'transparent', padding: 0,
+                                                transform: selectedImage === idx ? 'scale(1.1)' : 'scale(1)',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Image + Arrows Container */}
+                            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '12px' }} onClick={(e) => e.stopPropagation()}>
+                                {/* Left Arrow — always visible, disabled at first */}
+                                <button
+                                    onClick={() => { if (selectedImage > 0) { setSelectedImage(prev => prev - 1); setZoomLevel(1); setPanOffset({ x: 0, y: 0 }); } }}
+                                    disabled={selectedImage === 0}
+                                    style={{
+                                        background: selectedImage === 0 ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.15)',
+                                        border: 'none', borderRadius: '50%',
+                                        width: '44px', height: '44px',
+                                        cursor: selectedImage === 0 ? 'not-allowed' : 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        transition: 'all 0.2s ease', flexShrink: 0,
+                                        opacity: selectedImage === 0 ? 0.3 : 1,
+                                    }}
+                                >
+                                    <FiChevronLeft size={24} color="#fff" />
+                                </button>
+
+                                {/* Image Box — large, responsive to viewport */}
+                                <div
+                                    style={{ position: 'relative', width: 'min(92vh, 90vw)', height: 'min(92vh, 90vw)', flexShrink: 0, overflow: 'hidden', borderRadius: '12px' }}
+                                    onMouseDown={(e) => {
+                                        if (zoomLevel > 1) {
+                                            e.preventDefault();
+                                            isDraggingRef.current = true;
+                                            hasDraggedRef.current = false;  // reset on each new press
+                                            dragStartRef.current = {
+                                                x: e.clientX - panOffsetRef.current.x,
+                                                y: e.clientY - panOffsetRef.current.y,
+                                            };
+                                        }
+                                    }}
+                                    onMouseMove={(e) => {
+                                        if (isDraggingRef.current && zoomLevel > 1) {
+                                            hasDraggedRef.current = true;  // real drag happened
+                                            const newOffset = {
+                                                x: e.clientX - dragStartRef.current.x,
+                                                y: e.clientY - dragStartRef.current.y,
+                                            };
+                                            panOffsetRef.current = newOffset;
+                                            setPanOffset({ ...newOffset });
+                                        }
+                                    }}
+                                    onMouseUp={() => { isDraggingRef.current = false; }}
+                                    onMouseLeave={() => { isDraggingRef.current = false; }}
+                                >
+                                    <img
+                                        src={allImages[selectedImage] || allImages[0]}
+                                        alt={product.name}
+                                        draggable={false}
+                                        style={{
+                                            width: '100%', height: '100%',
+                                            objectFit: 'contain', borderRadius: '12px',
+                                            transition: 'transform 0.1s ease',
+                                            transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
+                                            cursor: zoomLevel > 1 ? 'grab' : 'zoom-in',
+                                            background: '#111',
+                                            userSelect: 'none',
+                                            transformOrigin: 'center center',
+                                        }}
+                                        onClick={(e) => {
+                                            // Block click if a real drag just happened
+                                            if (hasDraggedRef.current) {
+                                                hasDraggedRef.current = false;
+                                                return;
+                                            }
+                                            e.stopPropagation();
+                                            if (zoomLevel > 1) {
+                                                setZoomLevel(1);
+                                                const reset = { x: 0, y: 0 };
+                                                panOffsetRef.current = reset;
+                                                setPanOffset(reset);
+                                            } else {
+                                                setZoomLevel(1.8);
+                                            }
+                                        }}
+                                        onWheel={(e) => {
+                                            e.stopPropagation();
+                                            setZoomLevel(prev => {
+                                                const next = prev + (e.deltaY < 0 ? 0.15 : -0.15);
+                                                const clamped = Math.max(1, Math.min(2.5, next));
+                                                if (clamped <= 1) {
+                                                    const reset = { x: 0, y: 0 };
+                                                    panOffsetRef.current = reset;
+                                                    setPanOffset(reset);
+                                                }
+                                                return clamped;
+                                            });
+                                        }}
+                                    />
+                                    {/* Counter — always visible inside image */}
+                                    <div style={{
+                                        position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)',
+                                        color: '#fff', fontSize: '13px', fontWeight: 600, letterSpacing: '1px',
+                                        background: 'rgba(0,0,0,0.55)', padding: '4px 14px', borderRadius: '20px',
+                                        pointerEvents: 'none', whiteSpace: 'nowrap',
+                                    }}>
+                                        {selectedImage + 1} / {allImages.length}
+                                    </div>
+                                </div>
+
+                                {/* Right Arrow — always visible, disabled at last */}
+                                <button
+                                    onClick={() => { if (selectedImage < allImages.length - 1) { setSelectedImage(prev => prev + 1); setZoomLevel(1); setPanOffset({ x: 0, y: 0 }); } }}
+                                    disabled={selectedImage === allImages.length - 1}
+                                    style={{
+                                        background: selectedImage === allImages.length - 1 ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.15)',
+                                        border: 'none', borderRadius: '50%',
+                                        width: '44px', height: '44px',
+                                        cursor: selectedImage === allImages.length - 1 ? 'not-allowed' : 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        transition: 'all 0.2s ease', flexShrink: 0,
+                                        opacity: selectedImage === allImages.length - 1 ? 0.3 : 1,
+                                    }}
+                                >
+                                    <FiChevronRight size={24} color="#fff" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ═══ BREADCRUMB + PRODUCT TITLE BAR ═══ */}
+                    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', marginTop: '16px', padding: '16px 20px 12px' }}>
+                            {/* Breadcrumb */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#999', marginBottom: '10px' }}>
+                                <a href="/" style={{ color: '#888', textDecoration: 'none' }}>Home</a>
+                                <span>/</span>
+                                <a href="/products" style={{ color: '#888', textDecoration: 'none' }}>Products</a>
+                                {product.category?.name && (
+                                    <>
+                                        <span>/</span>
+                                        <a href={`/products?category=${product.category._id}`} style={{ color: '#888', textDecoration: 'none' }}>{product.category.name}</a>
+                                    </>
+                                )}
+                                <span>/</span>
+                                <span style={{ color: '#555', fontWeight: 500 }}>{product.name?.slice(0, 40)}...</span>
+                            </div>
+
+                            {/* Product Name */}
+                            <h1 style={{
+                                fontSize: '22px', fontWeight: 700, color: '#111',
+                                margin: 0, lineHeight: 1.4,
+                            }}>
+                                {product.name}
+                            </h1>
+
+                            {/* Tagline */}
+                            {product.tagline && (
+                                <p style={{ fontSize: '13px', color: '#0B4222', fontWeight: 500, margin: '4px 0 0' }}>{product.tagline}</p>
+                            )}
+
+                            {/* Stats Row */}
+                            <div className="pd-stats-row" style={{
+                                display: 'flex', alignItems: 'center', gap: '20px',
+                                flexWrap: 'wrap', fontSize: '13px', color: '#888',
+                                marginTop: '12px', paddingBottom: '8px',
+                            }}>
+                                {/* Rating */}
+                                <button
+                                    onClick={() => setShowRatingModal(true)}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: '#888', fontSize: '13px', padding: 0,
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', gap: '1px' }}>
+                                        {[1,2,3,4,5].map(s => <FiStar key={s} size={13} style={{ color: '#f59e0b', fill: s <= Math.round(product.rating || 0) ? '#f59e0b' : 'none' }} />)}
+                                    </div>
+                                    <span style={{ fontWeight: 600, color: '#333' }}>{product.rating?.toFixed(1) || '0.0'}</span>
+                                    <span>({product.reviewCount || 0})</span>
+                                </button>
+
+                                <span style={{ color: '#ddd' }}>|</span>
+
+                                {/* Sold */}
+                                <span>{product.soldCount || product.totalSold || 0} sold</span>
+
+                                <span style={{ color: '#ddd' }}>|</span>
+
+                                {/* Views */}
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <FiEye size={13} /> {product.viewCount || 0} views
+                                </span>
+
+                                {/* Like */}
+                                <button
+                                    onClick={() => {
+                                        if (!isLiked && product?._id) {
+                                            incrementStat({ id: product._id, field: 'likeCount' });
+                                            setIsLiked(true);
+                                        }
+                                    }}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: isLiked ? '#ef4444' : '#888', fontSize: '13px', padding: 0, marginLeft: 'auto',
+                                    }}
+                                >
+                                    <FiHeart size={14} style={{ fill: isLiked ? '#ef4444' : 'none' }} />
+                                    <span>{product.likeCount || 0}</span>
+                                </button>
+
+                                {/* Share */}
+                                <button
+                                    onClick={() => { setShowSharePopup(true); if (product?._id) incrementStat({ id: product._id, field: 'shareCount' }); }}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: '#888', fontSize: '13px', padding: 0,
+                                    }}
+                                >
+                                    <FiShare2 size={14} />
+                                    <span>Share</span>
+                                </button>
+
+                                {/* Copy Link */}
+                                <button
+                                    onClick={() => {
+                                        if (typeof window !== 'undefined') {
+                                            navigator.clipboard.writeText(window.location.href);
+                                            setLinkCopied(true);
+                                            setTimeout(() => setLinkCopied(false), 2000);
+                                        }
+                                    }}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '4px',
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: linkCopied ? '#0B4222' : '#888', fontSize: '13px', padding: 0,
+                                    }}
+                                >
+                                    <FiCopy size={13} />
+                                    <span>{linkCopied ? 'Copied!' : 'Copy'}</span>
+                                </button>
+                            </div>
+                    </div>
+
+                    {/* ═══ MAIN CONTENT AREA ═══ */}
+                    <div style={{ paddingTop: '12px' }}>
+                        <div className="pd-main-flex" style={{
+                            display: 'flex', gap: 0,
+                            alignItems: 'stretch',
+                            background: '#fff',
+                            borderRadius: '12px',
+                            border: '1px solid #eee',
+                            overflow: 'hidden',
+                            height: 'calc(clamp(300px, 32vw, 520px) + 60px)',
+                        }}>
+
+                            {/* ═══ LEFT SECTION: Color Swatches + Product Image + Action Bar ═══ */}
+                            <div className="pd-left-section" style={{
+                                display: 'flex', flexDirection: 'column', flex: '0 0 60%', maxWidth: '60%',
+                                minWidth: '320px',
+                                paddingRight: '16px',
+                                overflow: 'visible',
+                            }}>
+                                {/* Image area row */}
+                                <div style={{ display: 'flex', height: 'clamp(300px, 32vw, 480px)', overflow: 'visible' }}>
+                                    <div className="pd-thumb-col" style={{
+                                        width: '82px', display: 'flex', flexDirection: 'column',
+                                        alignItems: 'center', padding: '8px 0', marginLeft: '4px',
+                                        flexShrink: 0, gap: '4px',
+                                    }}>
+                                        {/* Label */}
+                                        <span style={{ fontSize: '11px', fontWeight: 400, color: '#555', textTransform: 'capitalize', letterSpacing: '0.5px' }}>Image</span>
+
+                                        {/* Image Thumbnails */}
+                                        <div
+                                            ref={colorSwatchRef}
+                                            style={{
+                                                display: 'flex', flexDirection: 'column', gap: '8px',
+                                                overflow: 'hidden', maxHeight: '580px', flex: 1,
+                                            }}
+                                            className="no-scrollbar"
+                                        >
+                                            {allImages.map((img: string, idx: number) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleImageSelect(idx)}
+                                                    style={{
+                                                        width: '75px', height: '75px', flexShrink: 0,
+                                                        border: selectedImage === idx
+                                                            ? '2px solid #0B4222'
+                                                            : '2px solid #e0e0e0',
+                                                        borderRadius: '6px',
+                                                        cursor: 'pointer',
+                                                        transition: 'all 0.2s ease',
+                                                        overflow: 'hidden',
+                                                        padding: 0, background: '#f5f5f5',
+                                                        boxShadow: selectedImage === idx ? '0 0 0 2px rgba(11,66,34,0.2)' : 'none',
+                                                    }}
+                                                >
+                                                    <img src={img} alt={`Product ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Up & Down Arrows */}
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            <button onClick={() => scrollList(colorSwatchRef, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <FiChevronUp size={18} />
+                                            </button>
+                                            <button onClick={() => scrollList(colorSwatchRef, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                <FiChevronDown size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Image Wrapper — fills remaining flex space */}
+                                    <div className="pd-image-wrapper" style={{
+                                        position: 'relative', flex: 1,
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        padding: '8px',
+                                    }}>
+                                        {/* Left Arrow — outside image, simple negative offset */}
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); if (selectedImage > 0) { setSelectedImage(prev => prev - 1); setZoomLevel(1); } }}
+                                            style={{
+                                                position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)',
+                                                background: 'rgba(255,255,255,0.95)', border: '1px solid #ddd', borderRadius: '50%',
+                                                width: '32px', height: '32px', zIndex: 5,
+                                                cursor: selectedImage === 0 ? 'not-allowed' : 'pointer',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)', transition: 'all 0.2s ease',
+                                                opacity: selectedImage === 0 ? 0.25 : 1,
+                                            }}
+                                            onMouseEnter={(e) => { if (selectedImage > 0) { e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)'; } }}
+                                            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.95)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'; }}
+                                        >
+                                            <FiChevronLeft size={18} color="#333" />
+                                        </button>
+
+                                        {/* Right Arrow — outside image, simple positive offset */}
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); if (selectedImage < allImages.length - 1) { setSelectedImage(prev => prev + 1); setZoomLevel(1); } }}
+                                            style={{
+                                                position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)',
+                                                background: 'rgba(255,255,255,0.95)', border: '1px solid #ddd', borderRadius: '50%',
+                                                width: '32px', height: '32px', zIndex: 5,
+                                                cursor: selectedImage >= allImages.length - 1 ? 'not-allowed' : 'pointer',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.15)', transition: 'all 0.2s ease',
+                                                opacity: selectedImage >= allImages.length - 1 ? 0.25 : 1,
+                                            }}
+                                            onMouseEnter={(e) => { if (selectedImage < allImages.length - 1) { e.currentTarget.style.background = '#fff'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)'; } }}
+                                            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.95)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'; }}
+                                        >
+                                            <FiChevronRight size={18} color="#333" />
+                                        </button>
+
+                                        {/* Actual image — square gray box centered */}
+                                        <div
+                                            style={{
+                                                height: '100%', aspectRatio: '1 / 1',
+                                                background: '#f5f5f5', display: 'flex',
+                                                alignItems: 'center', justifyContent: 'center',
+                                                cursor: 'pointer', position: 'relative',
+                                                overflow: 'hidden',
+                                            }}
+                                            onClick={() => setIsFullscreen(true)}
+                                        >
+                                            <img
+                                                src={allImages[selectedImage] || allImages[0]}
+                                                alt={product.name}
+                                                style={{
+                                                    width: '100%', height: '100%',
+                                                    objectFit: 'cover', transition: 'transform 0.3s ease',
+                                                }}
+                                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/600x600/f3f4f6/9ca3af?text=No+Image'; }}
+                                            />
+
+                                            {/* Zoom Indicator */}
+                                            <div style={{
+                                                position: 'absolute', bottom: '12px', right: '12px',
+                                                background: '#0B4222', borderRadius: '50%',
+                                                padding: '8px', color: '#fff', opacity: 0,
+                                                transition: 'opacity 0.3s ease',
+                                            }} className="zoom-indicator">
+                                                <FiZoomIn size={18} />
+                                            </div>
+
+                                            {/* Discount Badge */}
+                                            {product.discount > 0 && (
+                                                <div className="discount-badge" style={{
+                                                    position: 'absolute', top: '12px', left: '12px',
+                                                    background: '#0B4222', color: '#fff', fontSize: '11px',
+                                                    fontWeight: 700, padding: '4px 10px', borderRadius: '9999px',
+                                                    zIndex: 2, opacity: 0, transition: 'opacity 0.3s ease'
+                                                }}>
+                                                    -{product.discount}% Off
+                                                </div>
+                                            )}
+
+                                            {/* Low Stock Badge */}
+                                            {product.stock <= 5 && product.stock > 0 && (
+                                                <div style={{
+                                                    position: 'absolute', top: '12px', right: '12px',
+                                                    background: '#f59e0b', color: '#fff', fontSize: '11px',
+                                                    fontWeight: 700, padding: '4px 10px', borderRadius: '9999px',
+                                                    zIndex: 2
+                                                }} className="animate-pulse">
+                                                    Only {product.stock} left!
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Size Swatches Column (RIGHT of image) */}
+                                    {sizeList.length > 0 && (
+                                        <div className="pd-size-col" style={{
+                                            width: 'clamp(44px, 5vw, 56px)', display: 'flex', flexDirection: 'column',
+                                            alignItems: 'center', padding: '8px 0',
+                                            flexShrink: 0, gap: '4px',
+                                        }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 400, color: '#555', textTransform: 'capitalize', letterSpacing: '0.5px' }}>Size</span>
+                                            <div ref={sizeSwatchRef} style={{
+                                                display: 'flex', flexDirection: 'column', gap: '8px',
+                                                overflow: 'hidden', maxHeight: '580px', flex: 1,
+                                            }} className="no-scrollbar">
+                                                {sizeList.map((size: string, idx: number) => {
+                                                    const isAvailable = availableSizesForColor.includes(size);
+                                                    const isSelected = selectedSize === size;
+                                                    return (
+                                                        <button
+                                                            key={idx}
+                                                            onClick={() => isAvailable && handleSizeSelect(size)}
+                                                            title={!isAvailable ? `${size} — not available` : size}
+                                                            style={{
+                                                                width: 'clamp(36px, 4vw, 48px)', height: 'clamp(36px, 4vw, 48px)', flexShrink: 0,
+                                                                background: isSelected ? '#0B4222' : !isAvailable ? '#f3f4f6' : '#fff',
+                                                                color: isSelected ? '#fff' : !isAvailable ? '#ccc' : '#333',
+                                                                border: isSelected ? '2px solid #0B4222' : !isAvailable ? '2px solid #e8e8e8' : '2px solid #e0e0e0',
+                                                                borderRadius: '6px',
+                                                                cursor: !isAvailable ? 'not-allowed' : 'pointer',
+                                                                fontWeight: 700, fontSize: '12px',
+                                                                transition: 'all 0.2s ease',
+                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                boxShadow: isSelected ? '0 0 0 2px rgba(11,66,34,0.2)' : 'none',
+                                                                opacity: !isAvailable ? 0.5 : 1,
+                                                                textDecoration: !isAvailable ? 'line-through' : 'none',
+                                                            }}
+                                                        >
+                                                            {size}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '4px' }}>
+                                                <button onClick={() => scrollList(sizeSwatchRef, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronUp size={18} /></button>
+                                                <button onClick={() => scrollList(sizeSwatchRef, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronDown size={18} /></button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Color Label Column (RIGHT of image) */}
+                                    {colorSwatches.length > 0 && (
+                                        <div className="pd-color-col" style={{
+                                            width: 'clamp(44px, 5vw, 56px)', display: 'flex', flexDirection: 'column',
+                                            alignItems: 'center', padding: '8px 0',
+                                            flexShrink: 0, gap: '4px',
+                                        }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 400, color: '#555', textTransform: 'capitalize', letterSpacing: '0.5px' }}>{product.productType === 'multi-color' ? 'Multi Color' : 'Color'}</span>
+                                            <div ref={colorSwatchRef2} style={{
+                                                display: 'flex', flexDirection: 'column', gap: '8px',
+                                                overflow: 'hidden', maxHeight: '580px', flex: 1,
+                                            }} className="no-scrollbar">
+                                                {colorSwatches.map((color: any, idx: number) => {
+                                                    const isAvailable = availableColorsForSize.includes(color.name);
+                                                    const isSelected = selectedColor === color.name;
+                                                    return (
+                                                        <button
+                                                            key={idx}
+                                                            onClick={() => handleColorSelect(color.name)}
+                                                            title={color.name}
+                                                            style={{
+                                                                width: 'clamp(36px, 4vw, 48px)', height: 'clamp(36px, 4vw, 48px)', flexShrink: 0,
+                                                                background: getColorHex(color.hex || color.name),
+                                                                border: isSelected
+                                                                    ? '3px solid #0B4222'
+                                                                    : !isAvailable ? '2px solid #ccc' : '2px solid #e0e0e0',
+                                                                borderRadius: '6px',
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.2s ease',
+                                                                boxShadow: isSelected
+                                                                    ? '0 0 0 2px rgba(11,66,34,0.2)'
+                                                                    : 'none',
+                                                                opacity: !isAvailable ? 0.7 : 1,
+                                                                position: 'relative',
+                                                                overflow: 'hidden',
+                                                                padding: 0,
+                                                            }}
+                                                        >
+                                                            {/* Diagonal cross for unavailable colors */}
+                                                            {!isAvailable && (
+                                                                <div style={{
+                                                                    position: 'absolute', inset: 0,
+                                                                    background: 'linear-gradient(to top right, transparent calc(50% - 1px), rgba(180,180,180,0.7) calc(50% - 1px), rgba(180,180,180,0.7) calc(50% + 1px), transparent calc(50% + 1px))',
+                                                                    pointerEvents: 'none',
+                                                                    borderRadius: '4px',
+                                                                }} />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '4px' }}>
+                                                <button onClick={() => scrollList(colorSwatchRef2, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronUp size={18} /></button>
+                                                <button onClick={() => scrollList(colorSwatchRef2, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronDown size={18} /></button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>{/* end image area row */}
+                                {/* ═══ ACTION BAR at bottom of left section ═══ */}
+                                <div className="pd-action-bar" style={{
+                                    display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'stretch',
+                                    padding: '0 4px', height: '40px', marginTop: '12px',
+                                }}>
+                                    {/* ADD TO CART */}
+                                    <button
+                                        onClick={handleAddToCart}
+                                        disabled={product.stock === 0}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                            background: '#fff', border: '2px solid #0B4222', color: '#0B4222',
+                                            fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                                            padding: '0 20px', height: '100%', letterSpacing: '0.3px',
+                                            textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
+                                            borderRadius: '8px', transition: 'all 0.2s ease',
+                                            opacity: product.stock === 0 ? 0.5 : 1,
+                                        }}
+                                    >
+                                        <FiShoppingCart size={15} />
+                                        {isInCart ? '✓ ADDED' : addedToCart ? 'ADDED!' : 'ADD TO CART'}
+                                    </button>
+
+                                    {/* BUY NOW */}
+                                    <button
+                                        onClick={() => { if (product.stock === 0) return; setShowBuyNowModal(true); }}
+                                        disabled={product.stock === 0}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                            background: 'linear-gradient(135deg, #0B4222, #18764a)', border: 'none', color: '#fff',
+                                            fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                                            padding: '0 20px', height: '100%', letterSpacing: '0.3px',
+                                            textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
+                                            borderRadius: '8px', transition: 'all 0.2s ease',
+                                            opacity: product.stock === 0 ? 0.5 : 1,
+                                        }}
+                                    >
+                                        BUY NOW
+                                    </button>
+
+                                    {/* SEND INQUIRY */}
+                                    <button
+                                        onClick={() => setShowInquiryModal(true)}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                            background: '#f8f9fa', border: '1.5px solid #ddd', color: '#333',
+                                            fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+                                            padding: '0 16px', height: '100%', letterSpacing: '0.3px',
+                                            textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
+                                            borderRadius: '8px', transition: 'all 0.2s ease',
+                                        }}
+                                    >
+                                        <FiSend size={13} />
+                                        INQUIRY
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* ═══ RIGHT SECTION: Price + Product Details ═══ */}
+                            <div className="pd-right-section" style={{
+                                flex: '0 0 40%', maxWidth: '40%',
+                                paddingLeft: '0',
+                                display: 'flex', flexDirection: 'column',
+                                position: 'relative',
+                                borderLeft: '1px solid #f0f0f0',
+                            }}>
+                                {/* Up Scroll Arrow for details */}
+                                <button
+                                    className="pd-scroll-arrow"
+                                    onClick={() => scrollDetails('up')}
+                                    style={{
+                                        position: 'absolute', top: '4px', right: '8px',
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: '#333', zIndex: 5, display: 'flex',
+                                        alignItems: 'center', justifyContent: 'center', padding: '4px'
+                                    }}
+                                >
+                                    <FiChevronUp size={18} />
+                                </button>
+
+                                {/* ── Info Panel Overlay ── */}
+                                {activeInfoPanel && (
+                                    <div style={{
+                                        position: 'absolute', inset: 0, zIndex: 10,
+                                        background: '#fff', overflowY: 'auto',
+                                        padding: '16px 20px',
+                                        animation: 'fadeIn 0.2s ease-out',
+                                    }} className="no-scrollbar">
+                                        {/* Close Button */}
+                                        <button
+                                            onClick={() => setActiveInfoPanel(null)}
+                                            style={{
+                                                position: 'absolute', top: '10px', right: '10px',
+                                                width: '32px', height: '32px', borderRadius: '50%',
+                                                background: '#f3f4f6', border: 'none', cursor: 'pointer',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                color: '#333', zIndex: 11,
+                                                transition: 'all 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#e5e7eb'; }}
+                                            onMouseLeave={(e) => { (e.target as HTMLElement).style.background = '#f3f4f6'; }}
+                                        >
+                                            <FiX size={16} />
+                                        </button>
+
+                                        {/* Delivery Info */}
+                                        {activeInfoPanel === 'delivery' && (
+                                            <div>
+                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 14px 0' }}>Delivery Information</h3>
+                                                {product.deliveryInfo ? (
+                                                    <div style={{ fontSize: '13px', color: '#444', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: product.deliveryInfo }} />
+                                                ) : (
+                                                    <p style={{ fontSize: '13px', color: '#888' }}>No delivery information available.</p>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Payment Info */}
+                                        {activeInfoPanel === 'payment' && (
+                                            <div>
+                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 14px 0' }}>Payment Methods</h3>
+                                                {product.paymentInfo ? (
+                                                    <div style={{ fontSize: '13px', color: '#444', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: product.paymentInfo }} />
+                                                ) : (
+                                                    <p style={{ fontSize: '13px', color: '#888' }}>No payment information available.</p>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Terms & Conditions */}
+                                        {activeInfoPanel === 'terms' && (
+                                            <div>
+                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 14px 0' }}>Terms & Conditions</h3>
+                                                {product.termsInfo ? (
+                                                    <div style={{ fontSize: '13px', color: '#444', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: product.termsInfo }} />
+                                                ) : (
+                                                    <p style={{ fontSize: '13px', color: '#888' }}>No terms & conditions available.</p>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Scrollable Content */}
+                                <div
+                                    ref={detailsRef}
+                                    style={{
+                                        flex: 1, overflowY: 'auto', padding: '8px 20px',
+                                        paddingRight: '20px',
+                                    }}
+                                    className="no-scrollbar pd-right-scroll"
+                                >
+                                    {/* Price Section */}
+                                    <div style={{ marginBottom: '16px', padding: '14px 18px', background: 'linear-gradient(135deg, #fef2f2, #fff5f5)', borderRadius: '10px', border: '1px solid #fecaca' }}>
+                                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
+                                            <span style={{ fontSize: '28px', fontWeight: 800, color: '#dc2626' }}>
+                                                ৳{discountedPrice.toLocaleString()}
+                                            </span>
+                                            {product.originalPrice && product.originalPrice > discountedPrice && (
+                                                <span style={{ fontSize: '16px', color: '#aaa', textDecoration: 'line-through', fontWeight: 400 }}>
+                                                    ৳{product.originalPrice.toLocaleString()}
+                                                </span>
+                                            )}
+                                            {product.discount > 0 && (
+                                                <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff', background: '#dc2626', padding: '3px 10px', borderRadius: '20px' }}>
+                                                    -{product.discount}% OFF
+                                                </span>
+                                            )}
+                                        </div>
+                                        {product.priceType === 'negotiable' && (
+                                            <div style={{ marginTop: '6px', fontSize: '12px', color: '#0B4222', fontWeight: 600 }}>
+                                                💬 Price is negotiable — Send inquiry for best deal
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Stock & SKU */}
+                                    <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                                        <div style={{
+                                            display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                            padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
+                                            background: displayStock > 5 ? '#ecfdf5' : displayStock > 0 ? '#fffbeb' : '#fef2f2',
+                                            color: displayStock > 5 ? '#059669' : displayStock > 0 ? '#d97706' : '#dc2626',
+                                            border: `1px solid ${displayStock > 5 ? '#a7f3d0' : displayStock > 0 ? '#fde68a' : '#fecaca'}`,
+                                        }}>
+                                            <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'currentColor' }} />
+                                            {displayStock > 5 ? 'In Stock' : displayStock > 0 ? `Only ${displayStock} left` : 'Out of Stock'}
+                                        </div>
+                                        {product.sku && (
+                                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, background: '#f3f4f6', color: '#555' }}>
+                                                SKU: {product.sku}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Quantity Selector */}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>Quantity:</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
+                                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: '36px', height: '36px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '16px', fontWeight: 600 }}>
+                                                <FiMinus size={14} />
+                                            </button>
+                                            <span style={{ width: '48px', textAlign: 'center', fontSize: '14px', fontWeight: 700, color: '#111' }}>{quantity}</span>
+                                            <button onClick={() => setQuantity(quantity + 1)} style={{ width: '36px', height: '36px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '16px', fontWeight: 600 }}>
+                                                <FiPlus size={14} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Specifications Table */}
+                                    {productDetails.length > 0 && (
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Specifications</h4>
+                                            <div style={{ border: '1px solid #f0f0f0', borderRadius: '8px', overflow: 'hidden' }}>
+                                                {productDetails.map((d, i) => (
+                                                    <div key={i} style={{ display: 'flex', fontSize: '13px', borderBottom: i < productDetails.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+                                                        <span style={{ flex: '0 0 40%', padding: '8px 12px', background: '#fafafa', fontWeight: 600, color: '#555' }}>{d.key}</span>
+                                                        <span style={{ flex: 1, padding: '8px 12px', color: '#333' }}>{d.value}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Description */}
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Description</h4>
+                                        {product.description && (
+                                            <div
+                                                style={{ fontSize: '13px', color: '#555', lineHeight: 1.8 }}
+                                                dangerouslySetInnerHTML={{ __html: product.description }}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Down Scroll Arrow for details */}
+                                <button
+                                    className="pd-scroll-arrow"
+                                    onClick={() => scrollDetails('down')}
+                                    style={{
+                                        position: 'absolute', bottom: '4px', right: '8px',
+                                        background: 'none', border: 'none', cursor: 'pointer',
+                                        color: '#333', zIndex: 5, display: 'flex',
+                                        alignItems: 'center', justifyContent: 'center', padding: '4px'
+                                    }}
+                                >
+                                    <FiChevronDown size={18} />
+                                </button>
+
+                                {/* Info tabs at bottom */}
+                                <div className="pd-info-bar" style={{
+                                    display: 'flex', alignItems: 'center', gap: '0',
+                                    padding: '0', height: '40px', marginTop: 'auto',
+                                    borderTop: '1px solid #f0f0f0',
+                                }}>
+                                    {[
+                                        { key: 'delivery' as const, label: '🚚 Delivery' },
+                                        { key: 'payment' as const, label: '💳 Payment' },
+                                        { key: 'terms' as const, label: '📋 Terms' },
+                                    ].map((tab) => (
+                                        <button key={tab.key} onClick={() => setActiveInfoPanel(activeInfoPanel === tab.key ? null : tab.key)} style={{
+                                            background: activeInfoPanel === tab.key ? '#0B4222' : 'transparent',
+                                            border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
+                                            color: activeInfoPanel === tab.key ? '#fff' : '#666',
+                                            flex: 1, height: '100%', transition: 'all 0.2s ease',
+                                            borderRight: '1px solid #f0f0f0',
+                                        }}>{tab.label}</button>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
+                    {/* ═══ Related Products Section ═══ */}
+                    {relatedProducts.length > 0 && (
+                        <div style={{ marginTop: '16px', background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                    <div>
+                                        <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#111', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Related Products</h2>
+                                        {product?.category?.name && (
+                                            <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>
+                                                More from <span style={{ color: '#0B4222', fontWeight: 600 }}>{product.category.name}</span>
+                                            </p>
+                                        )}
+                                    </div>
+                                    {product?.category?._id && (
+                                        <Link
+                                            href={`/products?category=${product.category._id}`}
+                                            style={{
+                                                display: 'flex', alignItems: 'center', gap: '4px',
+                                                fontSize: '0.875rem', fontWeight: 600, color: '#0B4222',
+                                                background: '#EDF2EE', padding: '0.5rem 1rem',
+                                                borderRadius: '9999px', textDecoration: 'none',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            View All <FiChevronRight size={16} />
+                                        </Link>
+                                    )}
+                                </div>
+                                <div className="pd-related-grid grid grid-cols-4 gap-2 overflow-hidden">
+                                    {relatedProducts.slice(0, 4).map((item: any) => (
+                                        <NewProductCard
+                                            key={item._id}
+                                            product={{
+                                                id: item._id,
+                                                slug: item.slug,
+                                                name: item.name,
+                                                image: item.thumbnail,
+                                                price: item.discount > 0 ? item.price - (item.price * item.discount) / 100 : item.price,
+                                                originalPrice: item.originalPrice,
+                                                mrp: item.originalPrice || item.price,
+                                                discount: item.discount,
+                                                rating: item.rating,
+                                                reviews: item.reviewCount,
+                                                categoryName: item.category?.name || product?.category?.name,
+                                                priceType: item.priceType,
+                                                likeCount: item.likeCount || 0,
+                                                commentCount: item.commentCount || 0,
+                                                shareCount: item.shareCount || 0,
+                                                viewCount: item.viewCount || 0,
+                                                reviewCount: item.reviewCount || 0,
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+
+                    {/* ═══ Rating Popup Modal ═══ */}
+                    {showRatingModal && (
+                        <div
+                            style={{
+                                position: 'fixed', inset: 0, zIndex: 9999,
+                                background: 'rgba(0,0,0,0.5)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', padding: '1rem'
+                            }}
+                            onClick={() => setShowRatingModal(false)}
+                        >
+                            <div
+                                style={{
+                                    background: '#fff', borderRadius: '12px', maxWidth: '500px',
+                                    width: '100%', maxHeight: '80vh', overflowY: 'auto',
+                                    padding: '24px', position: 'relative',
+                                    animation: 'fadeIn 0.2s ease-out',
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Close Button */}
+                                <button
+                                    onClick={() => setShowRatingModal(false)}
+                                    style={{
+                                        position: 'absolute', top: '12px', right: '12px',
+                                        width: '32px', height: '32px', borderRadius: '50%',
+                                        background: '#f3f4f6', border: 'none', cursor: 'pointer',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}
+                                >
+                                    <FiX size={16} />
+                                </button>
+
+                                {/* Header */}
+                                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', color: '#1a1a1a' }}>
+                                    Ratings & Reviews
+                                </h3>
+
+                                {/* Overall Rating */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', padding: '16px', background: '#f9fafb', borderRadius: '8px' }}>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <div style={{ fontSize: '36px', fontWeight: 800, color: '#1a1a1a' }}>
+                                            {product.rating?.toFixed(1) || '0.0'}
+                                        </div>
+                                        <div style={{ display: 'flex', gap: '2px', justifyContent: 'center', marginTop: '4px' }}>
+                                            {[1, 2, 3, 4, 5].map(star => (
+                                                <FiStar key={star} size={14} style={{
+                                                    color: '#f59e0b',
+                                                    fill: star <= Math.round(product.rating || 0) ? '#f59e0b' : 'none'
+                                                }} />
+                                            ))}
+                                        </div>
+                                        <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>
+                                            {product.reviewCount || 0} ratings
+                                        </div>
+                                    </div>
+
+                                    {/* Star Breakdown */}
+                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        {[5, 4, 3, 2, 1].map(star => {
+                                            const count = product.ratingBreakdown?.[star] || 0;
+                                            const total = product.reviewCount || 1;
+                                            const percentage = Math.round((count / total) * 100);
+                                            return (
+                                                <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
+                                                    <span style={{ width: '12px', fontWeight: 600, color: '#555' }}>{star}</span>
+                                                    <FiStar size={10} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
+                                                    <div style={{ flex: 1, height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+                                                        <div style={{ width: `${percentage}%`, height: '100%', background: '#f59e0b', borderRadius: '4px', transition: 'width 0.3s ease' }} />
+                                                    </div>
+                                                    <span style={{ width: '30px', textAlign: 'right', color: '#888', fontSize: '11px' }}>{count}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Reviews List */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {(product.reviews && product.reviews.length > 0) ? (
+                                        product.reviews.map((review: any, idx: number) => (
+                                            <div key={idx} style={{ padding: '12px', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
+                                                <div style={{ display: 'flex', gap: '2px', marginBottom: '6px' }}>
+                                                    {[1, 2, 3, 4, 5].map(star => (
+                                                        <FiStar key={star} size={10} style={{
+                                                            color: '#f59e0b',
+                                                            fill: star <= (review.rating || 0) ? '#f59e0b' : 'none'
+                                                        }} />
+                                                    ))}
+                                                </div>
+                                                {review.comment && (
+                                                    <p style={{ fontSize: '12px', color: '#555', margin: 0, lineHeight: 1.6 }}>
+                                                        {review.comment}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div style={{ textAlign: 'center', padding: '20px', color: '#888', fontSize: '13px' }}>
+                                            No reviews yet. Be the first to review this product!
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Hover styles for zoom indicator */}
+                    <style>{`
+                div:hover > .zoom-indicator {
+                    opacity: 1 !important;
+                }
+                div:hover > .discount-badge {
+                    opacity: 1 !important;
+                }
+
+                /* ═══ MOBILE RESPONSIVE ═══ */
+                @media (max-width: 767px) {
+
+                    /* Main flex → column */
+                    .pd-main-flex { flex-direction: column !important; }
+
+                    /* Left section → full width, wrap so inner cols reorder */
+                    .pd-left-section {
+                        flex: 0 0 100% !important; max-width: 100% !important;
+                        min-width: unset !important; height: auto !important;
+                        padding-right: 0 !important;
+                        flex-wrap: wrap !important; align-content: flex-start !important;
+                    }
+
+                    /* ── Image wrapper → full width, ORDER 1 ── */
+                    .pd-image-wrapper {
+                        width: 100% !important; flex: unset !important;
+                        order: 1 !important; padding: 4px !important;
+                    }
+                    .pd-image-wrapper > div {
+                        width: 100% !important; height: auto !important;
+                        aspect-ratio: 1 / 1 !important;
+                    }
+
+                    /* ── Thumbnail column → horizontal strip, ORDER 2 ── */
+                    .pd-thumb-col {
+                        width: 100% !important; order: 2 !important;
+                        flex-direction: row !important; flex-wrap: nowrap !important;
+                        overflow-x: auto !important; overflow-y: hidden !important;
+                        gap: 6px !important; padding: 6px 0 !important;
+                        margin-left: 0 !important; align-items: center !important;
+                    }
+                    .pd-thumb-col > span { display: none !important; }
+                    .pd-thumb-col > div:last-child { display: none !important; }
+                    .pd-thumb-col > div:first-of-type {
+                        flex-direction: row !important; flex-wrap: nowrap !important;
+                        max-height: unset !important; overflow: visible !important; gap: 6px !important;
+                    }
+                    .pd-thumb-col button { width: 56px !important; height: 56px !important; }
+
+                    /* ── Size → horizontal row, ORDER 3 ── */
+                    .pd-size-col {
+                        width: 100% !important; order: 3 !important;
+                        flex-direction: row !important; flex-wrap: wrap !important;
+                        align-items: center !important; gap: 8px !important; padding: 6px 0 !important;
+                    }
+                    .pd-size-col > div:first-of-type {
+                        flex-direction: row !important; flex-wrap: wrap !important;
+                        max-height: unset !important; overflow: visible !important; gap: 6px !important;
+                    }
+                    .pd-size-col > div:last-child { display: none !important; }
+                    .pd-size-col button { width: 40px !important; height: 40px !important; font-size: 11px !important; }
+
+                    /* ── Color → horizontal row, ORDER 4 ── */
+                    .pd-color-col {
+                        width: 100% !important; order: 4 !important;
+                        flex-direction: row !important; flex-wrap: wrap !important;
+                        align-items: center !important; gap: 8px !important; padding: 6px 0 !important;
+                    }
+                    .pd-color-col > div:first-of-type {
+                        flex-direction: row !important; flex-wrap: wrap !important;
+                        max-height: unset !important; overflow: visible !important; gap: 6px !important;
+                    }
+                    .pd-color-col > div:last-child { display: none !important; }
+                    .pd-color-col button { width: 36px !important; height: 36px !important; }
+
+                    /* Right section → full width, auto height, LAST on mobile */
+                    .pd-right-section {
+                        flex: 0 0 100% !important; max-width: 100% !important;
+                        height: auto !important; border-left: none !important;
+                        border-top: 1px solid #e5e7eb !important; padding-left: 0 !important;
+                        order: 10 !important;
+                    }
+                    .pd-right-scroll { overflow-y: visible !important; flex: unset !important; padding: 8px 0 !important; }
+                    .pd-scroll-arrow { display: none !important; }
+
+                    /* Action bar → full width, BEFORE description */
+                    .pd-action-bar {
+                        flex: 0 0 100% !important; max-width: 100% !important;
+                        flex-wrap: wrap !important; gap: 8px !important;
+                        height: auto !important; padding-right: 0 !important; margin-top: 16px !important;
+                        order: 6 !important;
+                    }
+                    .pd-action-bar > div, .pd-action-bar > button {
+                        flex: 1 1 auto !important; min-width: 100px !important; height: 42px !important;
+                    }
+
+                    /* Info bar → full width, BEFORE description */
+                    .pd-info-bar {
+                        flex: 0 0 100% !important; max-width: 100% !important;
+                        height: auto !important; flex-wrap: wrap !important;
+                        margin-left: 0 !important; padding: 8px 0 0 0 !important; gap: 12px !important;
+                        order: 7 !important;
+                    }
+
+                    .pd-stats-row { gap: 12px !important; flex-wrap: wrap !important; }
+                    .pd-related-grid { grid-template-columns: repeat(2, 1fr) !important; }
+                    .pd-title { font-size: 16px !important; }
+                    .pd-price { font-size: 17px !important; }
+
+                    /* Hide zoom modal sidebar thumbnails on mobile */
+                    .pd-zoom-thumbs { display: none !important; }
+                }
+            `}</style>
+
+                    {/* ── Share Popup Modal ── */}
+                    {showSharePopup && (() => {
+                        const productUrl = typeof window !== 'undefined' ? window.location.href : '';
+                        const shareText = `${product.name} - Tk.${product.price}`;
+                        const shareLinks = [
+                            { name: 'Facebook', icon: FaFacebookF, color: '#1877F2', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}&quote=${encodeURIComponent(shareText)}` },
+                            { name: 'WhatsApp', icon: FaWhatsapp, color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + productUrl)}` },
+                            { name: 'Messenger', icon: FaFacebookMessenger, color: '#0078FF', url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(productUrl)}&app_id=966242223397117&redirect_uri=${encodeURIComponent(productUrl)}` },
+                            { name: 'X', icon: FaXTwitter, color: '#000000', url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(shareText)}` },
+                            { name: 'Telegram', icon: FaTelegramPlane, color: '#0088cc', url: `https://t.me/share/url?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(shareText)}` },
+                            { name: 'LinkedIn', icon: FaLinkedinIn, color: '#0A66C2', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(productUrl)}` },
+                            { name: 'Pinterest', icon: FaPinterestP, color: '#E60023', url: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(productUrl)}&media=${encodeURIComponent(allImages[0])}&description=${encodeURIComponent(shareText)}` },
+                            { name: 'Instagram', icon: FaInstagram, color: '#E1306C', url: `https://www.instagram.com/` },
+                            { name: 'TikTok', icon: FaTiktok, color: '#000000', url: `https://www.tiktok.com/` },
+                            { name: 'Email', icon: FaEnvelope, color: '#555555', url: `mailto:?subject=${encodeURIComponent(product.name)}&body=${encodeURIComponent(shareText + '\n\n' + productUrl)}` },
+                        ];
+                        return (
+                            <div
+                                className='fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4'
+                                onClick={() => setShowSharePopup(false)}
+                            >
+                                <div
+                                    className='bg-white rounded-lg w-full max-w-[620px] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl'
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{ animation: 'fadeIn 0.2s ease-out' }}
+                                >
+                                    {/* Header */}
+                                    <div className='flex items-center justify-between px-4 py-2.5 border-b border-gray-200 shrink-0'>
+                                        <h3 className='text-[15px] font-bold text-gray-900 truncate pr-4'>{product.name}</h3>
+                                        <button
+                                            onClick={() => setShowSharePopup(false)}
+                                            className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors shrink-0'
+                                        >
+                                            <FiX size={18} />
+                                        </button>
+                                    </div>
+
+                                    {/* Product Image — full view like comments popup */}
+                                    <div className='shrink-0 border-b border-gray-200'>
+                                        <div className='w-full bg-gray-50 flex items-center justify-center' style={{ maxHeight: '280px' }}>
+                                            <img
+                                                src={allImages[0]}
+                                                alt={product.name}
+                                                className='w-full object-contain'
+                                                style={{ maxHeight: '280px' }}
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = 'https://via.placeholder.com/620x200/f3f4f6/9ca3af?text=No+Image';
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Share With label */}
+                                    <div className='px-4 pt-3 pb-1'>
+                                        <p className='text-[13px] font-bold text-gray-900'>Share With</p>
+                                    </div>
+
+                                    {/* Social Media Grid */}
+                                    <div className='px-4 py-2 overflow-y-auto flex-1'>
+                                        <div className='grid grid-cols-5 gap-3'>
+                                            {shareLinks.map((link) => (
+                                                <a
+                                                    key={link.name}
+                                                    href={link.url}
+                                                    target='_blank'
+                                                    rel='noopener noreferrer'
+                                                    className='flex flex-col items-center gap-1.5 py-2 rounded-lg hover:bg-gray-50 transition-colors'
+                                                >
+                                                    <div className='w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110' style={{ background: link.color }}>
+                                                        <link.icon size={16} />
+                                                    </div>
+                                                    <span className='text-[10px] text-gray-500 font-medium'>{link.name}</span>
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Copy Link Bar */}
+                                    <div className='px-4 py-3 border-t border-gray-100 shrink-0'>
+                                        <div className='flex items-center bg-gray-100 rounded-lg overflow-hidden'>
+                                            <input type='text' value={productUrl} readOnly className='flex-1 bg-transparent text-xs text-gray-600 outline-none px-3 py-2.5 truncate' />
+                                            <button
+                                                onClick={() => { navigator.clipboard.writeText(productUrl); setShareLinkCopied(true); setTimeout(() => setShareLinkCopied(false), 2000); }}
+                                                className='px-4 py-2.5 bg-[#0B4222] text-white text-xs font-semibold hover:bg-[#093519] transition-colors flex items-center gap-1.5 whitespace-nowrap'
+                                            >
+                                                {shareLinkCopied ? <><FiCheckCircle size={12} /> Copied!</> : <><FiCopy size={12} /> Copy</>}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })()}
+                    {/* ── Comments Modal (same component as product card) ── */}
+                    {showCommentsModal && product && (
+                        <CommentsPopup
+                            productId={product._id}
+                            productName={product.name}
+                            productImage={allImages[0]}
+                            onClose={() => setShowCommentsModal(false)}
+                        />
+                    )}
+
+                    {/* ═══ Download Modal ═══ */}
+                    {showDownloadModal && (
+                        <div
+                            style={{
+                                position: 'fixed', inset: 0, zIndex: 9999,
+                                background: 'rgba(0,0,0,0.7)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', padding: '2rem',
+                            }}
+                            onClick={() => setShowDownloadModal(false)}
+                        >
+                            <div
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                    background: '#fff', borderRadius: '12px', padding: '24px',
+                                    maxWidth: '600px', width: '100%', maxHeight: '80vh', overflowY: 'auto',
+                                    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
+                                        <FiDownload size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                        Download Images
+                                    </h3>
+                                    <button onClick={() => setShowDownloadModal(false)} style={{ background: '#f3f4f6', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <FiX size={16} />
+                                    </button>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                                    {allImages.map((img: string, idx: number) => (
+                                        <div
+                                            key={idx}
+                                            onClick={async () => {
+                                                try {
+                                                    const res = await fetch(img);
+                                                    const blob = await res.blob();
+                                                    const url = URL.createObjectURL(blob);
+                                                    const a = document.createElement('a');
+                                                    a.href = url;
+                                                    a.download = `${product.name || 'product'}-image-${idx + 1}.jpg`;
+                                                    document.body.appendChild(a);
+                                                    a.click();
+                                                    document.body.removeChild(a);
+                                                    URL.revokeObjectURL(url);
+                                                } catch {
+                                                    window.open(img, '_blank');
+                                                }
+                                            }}
+                                            style={{
+                                                aspectRatio: '1/1', borderRadius: '8px', overflow: 'hidden',
+                                                cursor: 'pointer', border: '2px solid #e5e7eb', position: 'relative',
+                                                transition: 'all 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0B4222'; e.currentTarget.style.transform = 'scale(1.03)'; (e.currentTarget.querySelector('.dl-overlay') as HTMLElement).style.opacity = '1'; }}
+                                            onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.transform = 'scale(1)'; (e.currentTarget.querySelector('.dl-overlay') as HTMLElement).style.opacity = '0'; }}
+                                        >
+                                            <img src={img} alt={`Image ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <div className="dl-overlay" style={{
+                                                position: 'absolute', inset: 0, background: 'rgba(11,66,34,0.5)',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                opacity: 0, transition: 'opacity 0.2s ease',
+                                            }}>
+                                                <FiDownload size={24} color="#fff" />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* ═══ Send Inquiry Modal ═══ */}
+                    {showInquiryModal && (
+                        <div
+                            style={{
+                                position: 'fixed', inset: 0, zIndex: 9999,
+                                background: 'rgba(0,0,0,0.7)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', padding: '2rem',
+                            }}
+                            onClick={() => { setShowInquiryModal(false); setInquirySuccess(false); }}
+                        >
+                            <div
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                    background: '#fff', borderRadius: '12px', padding: '24px',
+                                    maxWidth: '480px', width: '100%', maxHeight: '90vh', overflowY: 'auto',
+                                    boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                                }}
+                            >
+                                {/* Header */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>
+                                        <FiMessageSquare size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                                        Send Inquiry
+                                    </h3>
+                                    <button onClick={() => { setShowInquiryModal(false); setInquirySuccess(false); }} style={{ background: '#f3f4f6', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <FiX size={16} />
+                                    </button>
+                                </div>
+
+                                {/* Product Preview */}
+                                <div style={{ display: 'flex', gap: '12px', padding: '12px', background: '#f9fafb', borderRadius: '8px', marginBottom: '16px' }}>
+                                    <img src={product.thumbnail} alt={product.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px' }} />
+                                    <div>
+                                        <p style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a1a', margin: '0 0 4px 0', lineHeight: 1.3 }}>{product.name}</p>
+                                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#0B4222', margin: 0 }}>Tk.{discountedPrice.toLocaleString()}</p>
+                                    </div>
+                                </div>
+
+                                {inquirySuccess ? (
+                                    <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                                        <FiCheckCircle size={48} color="#0B4222" />
+                                        <p style={{ fontSize: '16px', fontWeight: 700, color: '#0B4222', marginTop: '12px' }}>Inquiry Sent!</p>
+                                        <p style={{ fontSize: '13px', color: '#666', marginTop: '4px' }}>We'll get back to you soon.</p>
+                                    </div>
+                                ) : (
+                                    <form onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        if (!inquiryName.trim() || !inquiryContact.trim() || !inquiryMessage.trim()) return;
+                                        setInquirySubmitting(true);
+                                        try {
+                                            await createInquiry({
+                                                product: product._id,
+                                                name: inquiryName.trim(),
+                                                phone: inquiryContact.trim(),
+                                                message: inquiryMessage.trim(),
+                                            }).unwrap();
+                                            setInquirySuccess(true);
+                                            setInquiryName('');
+                                            setInquiryContact('');
+                                            setInquiryMessage('');
+                                        } catch (err) {
+                                            console.error('Inquiry error:', err);
+                                        } finally {
+                                            setInquirySubmitting(false);
+                                        }
+                                    }}>
+                                        {/* Name */}
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Your Name *</label>
+                                            <input
+                                                value={inquiryName}
+                                                onChange={(e) => setInquiryName(e.target.value)}
+                                                placeholder="Enter your name"
+                                                required
+                                                style={{
+                                                    width: '100%', padding: '10px 12px', borderRadius: '8px',
+                                                    border: '1.5px solid #e5e7eb', fontSize: '13px', outline: 'none',
+                                                    transition: 'border 0.2s ease', boxSizing: 'border-box',
+                                                }}
+                                                onFocus={(e) => e.currentTarget.style.borderColor = '#0B4222'}
+                                                onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                            />
+                                        </div>
+
+                                        {/* Phone or Email */}
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Phone or Email *</label>
+                                            <input
+                                                value={inquiryContact}
+                                                onChange={(e) => setInquiryContact(e.target.value)}
+                                                placeholder="01XXXXXXXXX or email@example.com"
+                                                required
+                                                style={{
+                                                    width: '100%', padding: '10px 12px', borderRadius: '8px',
+                                                    border: '1.5px solid #e5e7eb', fontSize: '13px', outline: 'none',
+                                                    transition: 'border 0.2s ease', boxSizing: 'border-box',
+                                                }}
+                                                onFocus={(e) => e.currentTarget.style.borderColor = '#0B4222'}
+                                                onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                            />
+                                        </div>
+
+                                        {/* Message */}
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Your Query *</label>
+                                            <textarea
+                                                value={inquiryMessage}
+                                                onChange={(e) => setInquiryMessage(e.target.value)}
+                                                placeholder="Write your question or inquiry..."
+                                                required
+                                                rows={4}
+                                                style={{
+                                                    width: '100%', padding: '10px 12px', borderRadius: '8px',
+                                                    border: '1.5px solid #e5e7eb', fontSize: '13px', outline: 'none',
+                                                    transition: 'border 0.2s ease', resize: 'vertical',
+                                                    fontFamily: 'inherit', boxSizing: 'border-box',
+                                                }}
+                                                onFocus={(e) => e.currentTarget.style.borderColor = '#0B4222'}
+                                                onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                            />
+                                        </div>
+
+                                        {/* Submit */}
+                                        <button
+                                            type="submit"
+                                            disabled={inquirySubmitting}
+                                            style={{
+                                                width: '100%', padding: '12px', borderRadius: '9999px',
+                                                background: '#0B4222', color: '#fff', border: 'none',
+                                                fontWeight: 700, fontSize: '13px', cursor: 'pointer',
+                                                opacity: inquirySubmitting ? 0.7 : 1,
+                                                transition: 'all 0.2s ease', textTransform: 'uppercase',
+                                                letterSpacing: '0.5px',
+                                            }}
+                                        >
+                                            {inquirySubmitting ? 'Submitting...' : 'Submit Inquiry'}
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* ═══ BUY NOW ORDER MODAL ═══ */}
+            {product && (
+                <OrderModal
+                    isOpen={showBuyNowModal}
+                    onClose={() => setShowBuyNowModal(false)}
+                    items={[{
+                        product: product._id,
+                        quantity: buyNowQty,
+                        name: product.name,
+                        color: selectedColor || undefined,
+                        size: selectedSize || undefined,
+                        price: discountedPrice,
+                    }]}
+                    totalPrice={discountedPrice * buyNowQty}
+                    clearCartOnSuccess={false}
+                />
+            )}
+        </>
+    );
+}
