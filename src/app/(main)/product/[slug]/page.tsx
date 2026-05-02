@@ -589,20 +589,20 @@ export default function ProductDetailsPage() {
                     )}
 
                     {/* ═══ BREADCRUMB + PRODUCT TITLE BAR ═══ */}
-                    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', marginTop: '16px', padding: '16px 20px 12px' }}>
+                    <div className="pd-title-bar" style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', marginTop: '16px', padding: '16px 20px 12px' }}>
                             {/* Breadcrumb */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#999', marginBottom: '10px' }}>
-                                <a href="/" style={{ color: '#888', textDecoration: 'none' }}>Home</a>
-                                <span>/</span>
-                                <a href="/products" style={{ color: '#888', textDecoration: 'none' }}>Products</a>
+                            <div className="pd-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#999', marginBottom: '10px', flexWrap: 'nowrap', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                                <a href="/" style={{ color: '#888', textDecoration: 'none', flexShrink: 0 }}>Home</a>
+                                <span style={{ flexShrink: 0 }}>/</span>
+                                <a href="/products" style={{ color: '#888', textDecoration: 'none', flexShrink: 0 }}>Products</a>
                                 {product.category?.name && (
                                     <>
-                                        <span>/</span>
-                                        <a href={`/products?category=${product.category._id}`} style={{ color: '#888', textDecoration: 'none' }}>{product.category.name}</a>
+                                        <span style={{ flexShrink: 0 }}>/</span>
+                                        <a href={`/products?category=${product.category._id}`} style={{ color: '#888', textDecoration: 'none', flexShrink: 0 }}>{product.category.name}</a>
                                     </>
                                 )}
-                                <span>/</span>
-                                <span style={{ color: '#555', fontWeight: 500 }}>{product.name?.slice(0, 40)}...</span>
+                                <span style={{ flexShrink: 0 }}>/</span>
+                                <span style={{ color: '#555', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{product.name?.slice(0, 30)}...</span>
                             </div>
 
                             {/* Product Name */}
@@ -724,7 +724,7 @@ export default function ProductDetailsPage() {
                                 overflow: 'visible',
                             }}>
                                 {/* Image area row */}
-                                <div style={{ display: 'flex', height: 'clamp(300px, 32vw, 480px)', overflow: 'visible' }}>
+                                <div className="pd-image-area-row" style={{ display: 'flex', height: 'clamp(300px, 32vw, 480px)', overflow: 'visible' }}>
                                     <div className="pd-thumb-col" style={{
                                         width: '82px', display: 'flex', flexDirection: 'column',
                                         alignItems: 'center', padding: '8px 0', marginLeft: '4px',
@@ -819,6 +819,7 @@ export default function ProductDetailsPage() {
 
                                         {/* Actual image — square gray box centered */}
                                         <div
+                                            className="pd-main-image-box"
                                             style={{
                                                 height: '100%', aspectRatio: '1 / 1',
                                                 background: '#f5f5f5', display: 'flex',
@@ -1469,12 +1470,18 @@ export default function ProductDetailsPage() {
                         flex-wrap: wrap !important; align-content: flex-start !important;
                     }
 
+                    /* ── Image area row → column on mobile, auto height ── */
+                    .pd-image-area-row {
+                        flex-direction: column !important;
+                        height: auto !important;
+                    }
+
                     /* ── Image wrapper → full width, ORDER 1 ── */
                     .pd-image-wrapper {
                         width: 100% !important; flex: unset !important;
                         order: 1 !important; padding: 4px !important;
                     }
-                    .pd-image-wrapper > div {
+                    .pd-main-image-box {
                         width: 100% !important; height: auto !important;
                         aspect-ratio: 1 / 1 !important;
                     }
@@ -1560,6 +1567,16 @@ export default function ProductDetailsPage() {
                         font-size: 12px !important;
                         min-width: max-content !important;
                     }
+
+                    /* Breadcrumb & title bar */
+                    .pd-title-bar { padding: 12px 14px 10px !important; margin-top: 10px !important; }
+                    .pd-breadcrumb {
+                        font-size: 11px !important;
+                        gap: 4px !important;
+                        -ms-overflow-style: none !important;
+                        scrollbar-width: none !important;
+                    }
+                    .pd-breadcrumb::-webkit-scrollbar { display: none !important; }
 
                     /* Stats row */
                     .pd-stats-row { gap: 8px !important; flex-wrap: wrap !important; font-size: 12px !important; }
