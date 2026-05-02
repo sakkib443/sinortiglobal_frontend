@@ -77,7 +77,6 @@ export default function CreateProductPage() {
         price: '', originalPrice: '',
         thumbnail: '', images: '',
         category: '', status: 'active', visibility: 'visible', stock: '0',
-        deliveryInfo: '', paymentInfo: '', termsInfo: '',
     });
     const [tags, setTags] = useState<string[]>([]);
     const [colors, setColors] = useState<string[]>([]);
@@ -130,9 +129,6 @@ export default function CreateProductPage() {
             visibility:   form.visibility,
             stock:        Number(form.stock) || 0,
             tags, colors, colorHex, sizes,
-            deliveryInfo: form.deliveryInfo || '',
-            paymentInfo:  form.paymentInfo || '',
-            termsInfo:    form.termsInfo || '',
             variants: variants.map(v => ({
                 color:         v.color,
                 colorHex:      v.colorHex,
@@ -337,21 +333,7 @@ export default function CreateProductPage() {
                             </button>
                         </Section>
 
-                        {/* 5. Content Tabs */}
-                        <Section icon={<span style={{ fontSize: '14px' }}>📄</span>} title="Content Tabs (Optional)">
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                                {[
-                                    { key: 'deliveryInfo', label: 'Delivery Info' },
-                                    { key: 'paymentInfo', label: 'Payment Info' },
-                                    { key: 'termsInfo', label: 'Terms & Conditions' },
-                                ].map(({ key, label }) => (
-                                    <div key={key}>
-                                        <label style={lbl}>{label}</label>
-                                        <textarea value={(form as any)[key]} onChange={e => setF(key, e.target.value)} placeholder={`${label} লিখুন...`} rows={3} style={{ ...inp, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
-                                    </div>
-                                ))}
-                            </div>
-                        </Section>
+
                     </div>
 
                     {/* ════ RIGHT COLUMN ════ */}

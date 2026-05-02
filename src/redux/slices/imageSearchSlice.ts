@@ -29,14 +29,14 @@ interface ImageSearchState {
 function loadSearchHistory(): SearchHistory | null {
     if (typeof window === 'undefined') return null;
     try {
-        const stored = localStorage.getItem('dominion_search_history');
+        const stored = localStorage.getItem('sinotri_search_history');
         if (stored) {
             const parsed = JSON.parse(stored);
             // Expire after 30 minutes
             if (Date.now() - parsed.timestamp < 30 * 60 * 1000) {
                 return parsed;
             }
-            localStorage.removeItem('dominion_search_history');
+            localStorage.removeItem('sinotri_search_history');
         }
     } catch { /* ignore */ }
     return null;
@@ -45,7 +45,7 @@ function loadSearchHistory(): SearchHistory | null {
 function saveSearchHistory(history: SearchHistory): void {
     if (typeof window === 'undefined') return;
     try {
-        localStorage.setItem('dominion_search_history', JSON.stringify(history));
+        localStorage.setItem('sinotri_search_history', JSON.stringify(history));
     } catch { /* ignore */ }
 }
 
@@ -112,7 +112,7 @@ const imageSearchSlice = createSlice({
             state.previewImage = null;
             state.lastSearchHistory = null;
             if (typeof window !== 'undefined') {
-                localStorage.removeItem('dominion_search_history');
+                localStorage.removeItem('sinotri_search_history');
             }
         },
     },

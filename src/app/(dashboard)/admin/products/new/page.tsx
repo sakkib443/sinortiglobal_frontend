@@ -79,7 +79,6 @@ export default function NewProductPage() {
         name: '', description: '', tagline: '', priceType: 'negotiable',
         price: '', originalPrice: '',
         category: '', status: 'active', visibility: 'visible', stock: '0',
-        deliveryInfo: '', paymentInfo: '', termsInfo: '',
     });
     const [thumbnail, setThumbnail]   = useState('');
     const [extraImages, setExtraImages] = useState<string[]>([]);
@@ -141,9 +140,6 @@ export default function NewProductPage() {
             visibility:    form.visibility,
             stock:         Number(form.stock) || 0,
             tags, colors, colorHex, sizes,
-            deliveryInfo:  form.deliveryInfo || '',
-            paymentInfo:   form.paymentInfo  || '',
-            termsInfo:     form.termsInfo    || '',
             variants: variants
                 .map(v => ({
                     color:         v.color,
@@ -450,21 +446,7 @@ export default function NewProductPage() {
                             </button>
                         </Section>
 
-                        {/* 5. Content Tabs */}
-                        <Section icon={<span style={{ fontSize: '14px' }}>📄</span>} title="Content Tabs (Optional)">
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                                {([
-                                    { key: 'deliveryInfo', label: 'Delivery Info' },
-                                    { key: 'paymentInfo',  label: 'Payment Info' },
-                                    { key: 'termsInfo',    label: 'Terms & Conditions' },
-                                ] as const).map(({ key, label }) => (
-                                    <div key={key}>
-                                        <label style={lbl}>{label}</label>
-                                        <textarea value={form[key]} onChange={e => setF(key, e.target.value)} placeholder={`${label} লিখুন...`} rows={3} style={{ ...inp, resize: 'vertical' }} onFocus={focus} onBlur={blur} />
-                                    </div>
-                                ))}
-                            </div>
-                        </Section>
+
                     </div>
 
                     {/* ════ RIGHT COLUMN ════ */}

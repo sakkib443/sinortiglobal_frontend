@@ -93,7 +93,7 @@ export default function ContactPage() {
         {
             icon: <FiMail size={22} />,
             label: 'Email Us',
-            primary: c.email || 'support@dominion.com',
+            primary: c.email || 'support@sinotriglobal.com',
             secondary: 'We reply within 24 hours',
             href: `mailto:${c.email || ''}`,
             accent: '#4F46E5',

@@ -365,8 +365,8 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
 /* ═══════════════════════════════════════════════ */
 
 // localStorage helpers — track which reviews/replies this device has liked
-const LIKED_REVIEWS_KEY = 'dominion_liked_reviews';
-const LIKED_REPLIES_KEY = 'dominion_liked_replies';
+const LIKED_REVIEWS_KEY = 'sinotri_liked_reviews';
+const LIKED_REPLIES_KEY = 'sinotri_liked_replies';
 
 const getLikedSet = (key: string): Set<string> => {
     if (typeof window === 'undefined') return new Set();

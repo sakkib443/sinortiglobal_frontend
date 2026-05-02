@@ -121,7 +121,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
         const phone = isEmail ? '' : formData.contact.trim();
         const email = isEmail
             ? formData.contact.trim()
-            : `${formData.contact.trim().replace(/\s+/g, '')}@guest.dominion.com`;
+            : `${formData.contact.trim().replace(/\s+/g, '')}@guest.sinotriglobal.com`;
 
         try {
             const orderData = {

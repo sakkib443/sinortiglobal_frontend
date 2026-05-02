@@ -39,7 +39,7 @@ export default function ProductDetailsPage() {
     const [isLiked, setIsLiked] = useState(false);
     const [selectedColor, setSelectedColor] = useState<string>('');
     const [selectedSize, setSelectedSize] = useState<string>('');
-    const [activeInfoPanel, setActiveInfoPanel] = useState<'delivery' | 'payment' | 'terms' | null>(null);
+    const [activeInfoPanel, setActiveInfoPanel] = useState<'description' | 'reviews' | 'others' | null>('description');
     const [showRatingModal, setShowRatingModal] = useState(false);
     const [showSharePopup, setShowSharePopup] = useState(false);
     const [showBuyNowModal, setShowBuyNowModal] = useState(false);
@@ -718,7 +718,7 @@ export default function ProductDetailsPage() {
 
                             {/* ═══ LEFT SECTION: Color Swatches + Product Image + Action Bar ═══ */}
                             <div className="pd-left-section" style={{
-                                display: 'flex', flexDirection: 'column', flex: '0 0 60%', maxWidth: '60%',
+                                display: 'flex', flexDirection: 'column', flex: '0 0 50%', maxWidth: '50%',
                                 minWidth: '320px',
                                 paddingRight: '16px',
                                 overflow: 'visible',
@@ -874,253 +874,17 @@ export default function ProductDetailsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Size Swatches Column (RIGHT of image) */}
-                                    {sizeList.length > 0 && (
-                                        <div className="pd-size-col" style={{
-                                            width: 'clamp(44px, 5vw, 56px)', display: 'flex', flexDirection: 'column',
-                                            alignItems: 'center', padding: '8px 0',
-                                            flexShrink: 0, gap: '4px',
-                                        }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 400, color: '#555', textTransform: 'capitalize', letterSpacing: '0.5px' }}>Size</span>
-                                            <div ref={sizeSwatchRef} style={{
-                                                display: 'flex', flexDirection: 'column', gap: '8px',
-                                                overflow: 'hidden', maxHeight: '580px', flex: 1,
-                                            }} className="no-scrollbar">
-                                                {sizeList.map((size: string, idx: number) => {
-                                                    const isAvailable = availableSizesForColor.includes(size);
-                                                    const isSelected = selectedSize === size;
-                                                    return (
-                                                        <button
-                                                            key={idx}
-                                                            onClick={() => isAvailable && handleSizeSelect(size)}
-                                                            title={!isAvailable ? `${size} — not available` : size}
-                                                            style={{
-                                                                width: 'clamp(36px, 4vw, 48px)', height: 'clamp(36px, 4vw, 48px)', flexShrink: 0,
-                                                                background: isSelected ? '#0B4222' : !isAvailable ? '#f3f4f6' : '#fff',
-                                                                color: isSelected ? '#fff' : !isAvailable ? '#ccc' : '#333',
-                                                                border: isSelected ? '2px solid #0B4222' : !isAvailable ? '2px solid #e8e8e8' : '2px solid #e0e0e0',
-                                                                borderRadius: '6px',
-                                                                cursor: !isAvailable ? 'not-allowed' : 'pointer',
-                                                                fontWeight: 700, fontSize: '12px',
-                                                                transition: 'all 0.2s ease',
-                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                                boxShadow: isSelected ? '0 0 0 2px rgba(11,66,34,0.2)' : 'none',
-                                                                opacity: !isAvailable ? 0.5 : 1,
-                                                                textDecoration: !isAvailable ? 'line-through' : 'none',
-                                                            }}
-                                                        >
-                                                            {size}
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '4px' }}>
-                                                <button onClick={() => scrollList(sizeSwatchRef, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronUp size={18} /></button>
-                                                <button onClick={() => scrollList(sizeSwatchRef, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronDown size={18} /></button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Color Label Column (RIGHT of image) */}
-                                    {colorSwatches.length > 0 && (
-                                        <div className="pd-color-col" style={{
-                                            width: 'clamp(44px, 5vw, 56px)', display: 'flex', flexDirection: 'column',
-                                            alignItems: 'center', padding: '8px 0',
-                                            flexShrink: 0, gap: '4px',
-                                        }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 400, color: '#555', textTransform: 'capitalize', letterSpacing: '0.5px' }}>{product.productType === 'multi-color' ? 'Multi Color' : 'Color'}</span>
-                                            <div ref={colorSwatchRef2} style={{
-                                                display: 'flex', flexDirection: 'column', gap: '8px',
-                                                overflow: 'hidden', maxHeight: '580px', flex: 1,
-                                            }} className="no-scrollbar">
-                                                {colorSwatches.map((color: any, idx: number) => {
-                                                    const isAvailable = availableColorsForSize.includes(color.name);
-                                                    const isSelected = selectedColor === color.name;
-                                                    return (
-                                                        <button
-                                                            key={idx}
-                                                            onClick={() => handleColorSelect(color.name)}
-                                                            title={color.name}
-                                                            style={{
-                                                                width: 'clamp(36px, 4vw, 48px)', height: 'clamp(36px, 4vw, 48px)', flexShrink: 0,
-                                                                background: getColorHex(color.hex || color.name),
-                                                                border: isSelected
-                                                                    ? '3px solid #0B4222'
-                                                                    : !isAvailable ? '2px solid #ccc' : '2px solid #e0e0e0',
-                                                                borderRadius: '6px',
-                                                                cursor: 'pointer',
-                                                                transition: 'all 0.2s ease',
-                                                                boxShadow: isSelected
-                                                                    ? '0 0 0 2px rgba(11,66,34,0.2)'
-                                                                    : 'none',
-                                                                opacity: !isAvailable ? 0.7 : 1,
-                                                                position: 'relative',
-                                                                overflow: 'hidden',
-                                                                padding: 0,
-                                                            }}
-                                                        >
-                                                            {/* Diagonal cross for unavailable colors */}
-                                                            {!isAvailable && (
-                                                                <div style={{
-                                                                    position: 'absolute', inset: 0,
-                                                                    background: 'linear-gradient(to top right, transparent calc(50% - 1px), rgba(180,180,180,0.7) calc(50% - 1px), rgba(180,180,180,0.7) calc(50% + 1px), transparent calc(50% + 1px))',
-                                                                    pointerEvents: 'none',
-                                                                    borderRadius: '4px',
-                                                                }} />
-                                                            )}
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '4px' }}>
-                                                <button onClick={() => scrollList(colorSwatchRef2, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronUp size={18} /></button>
-                                                <button onClick={() => scrollList(colorSwatchRef2, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FiChevronDown size={18} /></button>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>{/* end image area row */}
-                                {/* ═══ ACTION BAR at bottom of left section ═══ */}
-                                <div className="pd-action-bar" style={{
-                                    display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'stretch',
-                                    padding: '0 4px', height: '40px', marginTop: '12px',
-                                }}>
-                                    {/* ADD TO CART */}
-                                    <button
-                                        onClick={handleAddToCart}
-                                        disabled={product.stock === 0}
-                                        style={{
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                            background: '#fff', border: '2px solid #0B4222', color: '#0B4222',
-                                            fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
-                                            padding: '0 20px', height: '100%', letterSpacing: '0.3px',
-                                            textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
-                                            borderRadius: '8px', transition: 'all 0.2s ease',
-                                            opacity: product.stock === 0 ? 0.5 : 1,
-                                        }}
-                                    >
-                                        <FiShoppingCart size={15} />
-                                        {isInCart ? '✓ ADDED' : addedToCart ? 'ADDED!' : 'ADD TO CART'}
-                                    </button>
-
-                                    {/* BUY NOW */}
-                                    <button
-                                        onClick={() => { if (product.stock === 0) return; setShowBuyNowModal(true); }}
-                                        disabled={product.stock === 0}
-                                        style={{
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                            background: 'linear-gradient(135deg, #0B4222, #18764a)', border: 'none', color: '#fff',
-                                            fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
-                                            padding: '0 20px', height: '100%', letterSpacing: '0.3px',
-                                            textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
-                                            borderRadius: '8px', transition: 'all 0.2s ease',
-                                            opacity: product.stock === 0 ? 0.5 : 1,
-                                        }}
-                                    >
-                                        BUY NOW
-                                    </button>
-
-                                    {/* SEND INQUIRY */}
-                                    <button
-                                        onClick={() => setShowInquiryModal(true)}
-                                        style={{
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                            background: '#f8f9fa', border: '1.5px solid #ddd', color: '#333',
-                                            fontWeight: 600, fontSize: '12px', cursor: 'pointer',
-                                            padding: '0 16px', height: '100%', letterSpacing: '0.3px',
-                                            textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
-                                            borderRadius: '8px', transition: 'all 0.2s ease',
-                                        }}
-                                    >
-                                        <FiSend size={13} />
-                                        INQUIRY
-                                    </button>
-                                </div>
                             </div>
 
                             {/* ═══ RIGHT SECTION: Price + Product Details ═══ */}
                             <div className="pd-right-section" style={{
-                                flex: '0 0 40%', maxWidth: '40%',
+                                flex: '0 0 50%', maxWidth: '50%',
                                 paddingLeft: '0',
                                 display: 'flex', flexDirection: 'column',
                                 position: 'relative',
                                 borderLeft: '1px solid #f0f0f0',
                             }}>
-                                {/* Up Scroll Arrow for details */}
-                                <button
-                                    className="pd-scroll-arrow"
-                                    onClick={() => scrollDetails('up')}
-                                    style={{
-                                        position: 'absolute', top: '4px', right: '8px',
-                                        background: 'none', border: 'none', cursor: 'pointer',
-                                        color: '#333', zIndex: 5, display: 'flex',
-                                        alignItems: 'center', justifyContent: 'center', padding: '4px'
-                                    }}
-                                >
-                                    <FiChevronUp size={18} />
-                                </button>
-
-                                {/* ── Info Panel Overlay ── */}
-                                {activeInfoPanel && (
-                                    <div style={{
-                                        position: 'absolute', inset: 0, zIndex: 10,
-                                        background: '#fff', overflowY: 'auto',
-                                        padding: '16px 20px',
-                                        animation: 'fadeIn 0.2s ease-out',
-                                    }} className="no-scrollbar">
-                                        {/* Close Button */}
-                                        <button
-                                            onClick={() => setActiveInfoPanel(null)}
-                                            style={{
-                                                position: 'absolute', top: '10px', right: '10px',
-                                                width: '32px', height: '32px', borderRadius: '50%',
-                                                background: '#f3f4f6', border: 'none', cursor: 'pointer',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                color: '#333', zIndex: 11,
-                                                transition: 'all 0.2s ease',
-                                            }}
-                                            onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#e5e7eb'; }}
-                                            onMouseLeave={(e) => { (e.target as HTMLElement).style.background = '#f3f4f6'; }}
-                                        >
-                                            <FiX size={16} />
-                                        </button>
-
-                                        {/* Delivery Info */}
-                                        {activeInfoPanel === 'delivery' && (
-                                            <div>
-                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 14px 0' }}>Delivery Information</h3>
-                                                {product.deliveryInfo ? (
-                                                    <div style={{ fontSize: '13px', color: '#444', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: product.deliveryInfo }} />
-                                                ) : (
-                                                    <p style={{ fontSize: '13px', color: '#888' }}>No delivery information available.</p>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {/* Payment Info */}
-                                        {activeInfoPanel === 'payment' && (
-                                            <div>
-                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 14px 0' }}>Payment Methods</h3>
-                                                {product.paymentInfo ? (
-                                                    <div style={{ fontSize: '13px', color: '#444', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: product.paymentInfo }} />
-                                                ) : (
-                                                    <p style={{ fontSize: '13px', color: '#888' }}>No payment information available.</p>
-                                                )}
-                                            </div>
-                                        )}
-
-                                        {/* Terms & Conditions */}
-                                        {activeInfoPanel === 'terms' && (
-                                            <div>
-                                                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 14px 0' }}>Terms & Conditions</h3>
-                                                {product.termsInfo ? (
-                                                    <div style={{ fontSize: '13px', color: '#444', lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: product.termsInfo }} />
-                                                ) : (
-                                                    <p style={{ fontSize: '13px', color: '#888' }}>No terms & conditions available.</p>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
 
                                 {/* Scrollable Content */}
                                 <div
@@ -1132,27 +896,22 @@ export default function ProductDetailsPage() {
                                     className="no-scrollbar pd-right-scroll"
                                 >
                                     {/* Price Section */}
-                                    <div style={{ marginBottom: '16px', padding: '14px 18px', background: 'linear-gradient(135deg, #fef2f2, #fff5f5)', borderRadius: '10px', border: '1px solid #fecaca' }}>
+                                    <div style={{ marginBottom: '18px', padding: '16px 20px', background: 'linear-gradient(135deg, #fafafa, #f5f5f5)', borderRadius: '12px', border: '1px solid #eaeaea' }}>
                                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
-                                            <span style={{ fontSize: '28px', fontWeight: 800, color: '#dc2626' }}>
+                                            <span style={{ fontSize: '30px', fontWeight: 800, color: '#0B4222', letterSpacing: '-0.5px' }}>
                                                 ৳{discountedPrice.toLocaleString()}
                                             </span>
                                             {product.originalPrice && product.originalPrice > discountedPrice && (
-                                                <span style={{ fontSize: '16px', color: '#aaa', textDecoration: 'line-through', fontWeight: 400 }}>
+                                                <span style={{ fontSize: '16px', color: '#bbb', textDecoration: 'line-through', fontWeight: 400 }}>
                                                     ৳{product.originalPrice.toLocaleString()}
                                                 </span>
                                             )}
                                             {product.discount > 0 && (
-                                                <span style={{ fontSize: '12px', fontWeight: 700, color: '#fff', background: '#dc2626', padding: '3px 10px', borderRadius: '20px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg, #e74c3c, #c0392b)', padding: '3px 10px', borderRadius: '20px', letterSpacing: '0.3px' }}>
                                                     -{product.discount}% OFF
                                                 </span>
                                             )}
                                         </div>
-                                        {product.priceType === 'negotiable' && (
-                                            <div style={{ marginTop: '6px', fontSize: '12px', color: '#0B4222', fontWeight: 600 }}>
-                                                💬 Price is negotiable — Send inquiry for best deal
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Stock & SKU */}
@@ -1174,38 +933,116 @@ export default function ProductDetailsPage() {
                                         )}
                                     </div>
 
-                                    {/* Quantity Selector */}
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>Quantity:</span>
-                                        <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden' }}>
-                                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: '36px', height: '36px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '16px', fontWeight: 600 }}>
-                                                <FiMinus size={14} />
-                                            </button>
-                                            <span style={{ width: '48px', textAlign: 'center', fontSize: '14px', fontWeight: 700, color: '#111' }}>{quantity}</span>
-                                            <button onClick={() => setQuantity(quantity + 1)} style={{ width: '36px', height: '36px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '16px', fontWeight: 600 }}>
-                                                <FiPlus size={14} />
-                                            </button>
+
+                                    {/* ── Color Selector (compact inline) ── */}
+                                    {colorSwatches.length > 0 && (
+                                        <div style={{ marginBottom: '14px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>{product.productType === 'multi-color' ? 'Multi Color' : 'Color'}:</span>
+                                                {selectedColor && <span style={{ fontSize: '12px', color: '#0B4222', fontWeight: 600 }}>{selectedColor}</span>}
+                                            </div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                                {colorSwatches.map((color: any, idx: number) => {
+                                                    const isAvailable = availableColorsForSize.includes(color.name);
+                                                    const isSelected = selectedColor === color.name;
+                                                    return (
+                                                        <button
+                                                            key={idx}
+                                                            onClick={() => handleColorSelect(color.name)}
+                                                            title={color.name}
+                                                            style={{
+                                                                width: '30px', height: '30px',
+                                                                background: getColorHex(color.hex || color.name),
+                                                                border: isSelected ? '2.5px solid #0B4222' : !isAvailable ? '2px solid #ddd' : '2px solid #e0e0e0',
+                                                                borderRadius: '50%',
+                                                                cursor: 'pointer',
+                                                                transition: 'all 0.2s ease',
+                                                                boxShadow: isSelected ? '0 0 0 2px rgba(11,66,34,0.2)' : 'none',
+                                                                opacity: !isAvailable ? 0.5 : 1,
+                                                                position: 'relative',
+                                                                overflow: 'hidden',
+                                                                padding: 0,
+                                                                flexShrink: 0,
+                                                            }}
+                                                        >
+                                                            {!isAvailable && (
+                                                                <div style={{
+                                                                    position: 'absolute', inset: 0,
+                                                                    background: 'linear-gradient(to top right, transparent calc(50% - 1px), rgba(180,180,180,0.7) calc(50% - 1px), rgba(180,180,180,0.7) calc(50% + 1px), transparent calc(50% + 1px))',
+                                                                    pointerEvents: 'none',
+                                                                }} />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
+
+                                    {/* ── Size Selector (compact inline) ── */}
+                                    {sizeList.length > 0 && (
+                                        <div style={{ marginBottom: '14px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>Size:</span>
+                                                {selectedSize && <span style={{ fontSize: '12px', color: '#0B4222', fontWeight: 600 }}>{selectedSize}</span>}
+                                            </div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                                {sizeList.map((size: string, idx: number) => {
+                                                    const isAvailable = availableSizesForColor.includes(size);
+                                                    const isSelected = selectedSize === size;
+                                                    return (
+                                                        <button
+                                                            key={idx}
+                                                            onClick={() => isAvailable && handleSizeSelect(size)}
+                                                            title={!isAvailable ? `${size} — not available` : size}
+                                                            style={{
+                                                                minWidth: '36px', height: '32px', flexShrink: 0,
+                                                                padding: '0 10px',
+                                                                background: isSelected ? '#0B4222' : !isAvailable ? '#f3f4f6' : '#fff',
+                                                                color: isSelected ? '#fff' : !isAvailable ? '#ccc' : '#333',
+                                                                border: isSelected ? '2px solid #0B4222' : !isAvailable ? '1.5px solid #e8e8e8' : '1.5px solid #e0e0e0',
+                                                                borderRadius: '6px',
+                                                                cursor: !isAvailable ? 'not-allowed' : 'pointer',
+                                                                fontWeight: 700, fontSize: '12px',
+                                                                transition: 'all 0.2s ease',
+                                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                                boxShadow: isSelected ? '0 0 0 2px rgba(11,66,34,0.2)' : 'none',
+                                                                opacity: !isAvailable ? 0.5 : 1,
+                                                                textDecoration: !isAvailable ? 'line-through' : 'none',
+                                                            }}
+                                                        >
+                                                            {size}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     {/* Specifications Table */}
                                     {productDetails.length > 0 && (
-                                        <div style={{ marginBottom: '16px' }}>
-                                            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Specifications</h4>
-                                            <div style={{ border: '1px solid #f0f0f0', borderRadius: '8px', overflow: 'hidden' }}>
+                                        <div style={{ marginBottom: '18px' }}>
+                                            <h4 style={{ fontSize: '12px', fontWeight: 700, color: '#0B4222', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <span style={{ width: '3px', height: '14px', background: '#0B4222', borderRadius: '2px', display: 'inline-block' }} />
+                                                Specifications
+                                            </h4>
+                                            <div style={{ border: '1px solid #eaeaea', borderRadius: '10px', overflow: 'hidden' }}>
                                                 {productDetails.map((d, i) => (
-                                                    <div key={i} style={{ display: 'flex', fontSize: '13px', borderBottom: i < productDetails.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
-                                                        <span style={{ flex: '0 0 40%', padding: '8px 12px', background: '#fafafa', fontWeight: 600, color: '#555' }}>{d.key}</span>
-                                                        <span style={{ flex: 1, padding: '8px 12px', color: '#333' }}>{d.value}</span>
+                                                    <div key={i} style={{ display: 'flex', fontSize: '13px', borderBottom: i < productDetails.length - 1 ? '1px solid #f3f3f3' : 'none' }}>
+                                                        <span style={{ flex: '0 0 38%', padding: '9px 14px', background: '#f8f9fa', fontWeight: 600, color: '#555', borderRight: '1px solid #f0f0f0' }}>{d.key}</span>
+                                                        <span style={{ flex: 1, padding: '9px 14px', color: '#333' }}>{d.value}</span>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Description */}
-                                    <div style={{ marginBottom: '16px' }}>
-                                        <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Description</h4>
+                                    {/* Short Description */}
+                                    <div style={{ marginBottom: '18px' }}>
+                                        <h4 style={{ fontSize: '12px', fontWeight: 700, color: '#0B4222', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{ width: '3px', height: '14px', background: '#0B4222', borderRadius: '2px', display: 'inline-block' }} />
+                                            Short Description
+                                        </h4>
                                         {product.description && (
                                             <div
                                                 style={{ fontSize: '13px', color: '#555', lineHeight: 1.8 }}
@@ -1213,44 +1050,228 @@ export default function ProductDetailsPage() {
                                             />
                                         )}
                                     </div>
+
+                                    {/* ═══ QUANTITY + ADD TO CART + BUY NOW ═══ */}
+                                    <div style={{
+                                        display: 'flex', alignItems: 'center', gap: '8px',
+                                        marginBottom: '8px', position: 'sticky', bottom: 0,
+                                        background: 'linear-gradient(to top, #fff 80%, transparent)', padding: '14px 0 6px',
+                                    }}>
+                                        {/* Quantity */}
+                                        <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e5e7eb', borderRadius: '10px', overflow: 'hidden', flexShrink: 0 }}>
+                                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: '34px', height: '40px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
+                                                <FiMinus size={14} />
+                                            </button>
+                                            <span style={{ width: '36px', textAlign: 'center', fontSize: '14px', fontWeight: 700, color: '#111' }}>{quantity}</span>
+                                            <button onClick={() => setQuantity(quantity + 1)} style={{ width: '34px', height: '40px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
+                                                <FiPlus size={14} />
+                                            </button>
+                                        </div>
+                                        {/* Add to Cart */}
+                                        <button
+                                            onClick={handleAddToCart}
+                                            disabled={product.stock === 0}
+                                            style={{
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                                background: '#fff', border: '2px solid #0B4222', color: '#0B4222',
+                                                fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                                                padding: '10px 12px', letterSpacing: '0.3px',
+                                                textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
+                                                borderRadius: '10px', transition: 'all 0.2s ease',
+                                                opacity: product.stock === 0 ? 0.5 : 1, height: '40px',
+                                            }}
+                                        >
+                                            <FiShoppingCart size={14} />
+                                            {isInCart ? '✓ ADDED' : addedToCart ? 'ADDED!' : 'ADD TO CART'}
+                                        </button>
+                                        {/* Buy Now */}
+                                        <button
+                                            onClick={() => { if (product.stock === 0) return; setShowBuyNowModal(true); }}
+                                            disabled={product.stock === 0}
+                                            style={{
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                                background: 'linear-gradient(135deg, #0B4222, #155d3a)', border: 'none', color: '#fff',
+                                                fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                                                padding: '10px 12px', letterSpacing: '0.3px',
+                                                textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
+                                                borderRadius: '10px', transition: 'all 0.2s ease',
+                                                opacity: product.stock === 0 ? 0.5 : 1, height: '40px',
+                                                boxShadow: '0 2px 8px rgba(11,66,34,0.25)',
+                                            }}
+                                        >
+                                            BUY NOW
+                                        </button>
+                                    </div>
                                 </div>
 
-                                {/* Down Scroll Arrow for details */}
-                                <button
-                                    className="pd-scroll-arrow"
-                                    onClick={() => scrollDetails('down')}
-                                    style={{
-                                        position: 'absolute', bottom: '4px', right: '8px',
-                                        background: 'none', border: 'none', cursor: 'pointer',
-                                        color: '#333', zIndex: 5, display: 'flex',
-                                        alignItems: 'center', justifyContent: 'center', padding: '4px'
-                                    }}
-                                >
-                                    <FiChevronDown size={18} />
-                                </button>
 
-                                {/* Info tabs at bottom */}
-                                <div className="pd-info-bar" style={{
-                                    display: 'flex', alignItems: 'center', gap: '0',
-                                    padding: '0', height: '40px', marginTop: 'auto',
-                                    borderTop: '1px solid #f0f0f0',
-                                }}>
-                                    {[
-                                        { key: 'delivery' as const, label: '🚚 Delivery' },
-                                        { key: 'payment' as const, label: '💳 Payment' },
-                                        { key: 'terms' as const, label: '📋 Terms' },
-                                    ].map((tab) => (
-                                        <button key={tab.key} onClick={() => setActiveInfoPanel(activeInfoPanel === tab.key ? null : tab.key)} style={{
-                                            background: activeInfoPanel === tab.key ? '#0B4222' : 'transparent',
-                                            border: 'none', cursor: 'pointer', fontSize: '12px', fontWeight: 600,
-                                            color: activeInfoPanel === tab.key ? '#fff' : '#666',
-                                            flex: 1, height: '100%', transition: 'all 0.2s ease',
-                                            borderRight: '1px solid #f0f0f0',
-                                        }}>{tab.label}</button>
-                                    ))}
-                                </div>
                             </div>
 
+                        </div>
+                    </div>
+
+                    {/* ═══ DESCRIPTION / REVIEWS / OTHERS ═══ */}
+                    <div style={{ marginTop: '12px', background: '#fff', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden' }}>
+                        <div className="pd-info-bar" style={{ display: 'flex', alignItems: 'center', height: '46px', borderBottom: '1px solid #f0f0f0' }}>
+                            {([
+                                { key: 'description' as const, label: '📝 Description' },
+                                { key: 'reviews' as const, label: `⭐ Rating & Review (${reviews.length})` },
+                                { key: 'others' as const, label: 'ℹ️ Others Information' },
+                            ]).map((tab, idx) => (
+                                <button key={tab.key} onClick={() => setActiveInfoPanel(tab.key)} style={{
+                                    background: activeInfoPanel === tab.key ? '#f0faf4' : 'transparent',
+                                    border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+                                    color: activeInfoPanel === tab.key ? '#0B4222' : '#666',
+                                    flex: 1, height: '100%', transition: 'all 0.2s ease',
+                                    borderRight: idx < 2 ? '1px solid #f0f0f0' : 'none',
+                                    borderBottom: activeInfoPanel === tab.key ? '2.5px solid #0B4222' : '2.5px solid transparent',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                                }}>
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                        <div style={{ padding: '20px 24px', minHeight: '80px' }}>
+                            {activeInfoPanel === 'description' && (
+                                <div>
+                                    {product.description ? (
+                                        <div style={{ fontSize: '14px', color: '#444', lineHeight: 1.8 }} dangerouslySetInnerHTML={{ __html: product.description }} />
+                                    ) : (
+                                        <p style={{ fontSize: '13px', color: '#888' }}>No description available.</p>
+                                    )}
+                                </div>
+                            )}
+                            {activeInfoPanel === 'reviews' && (
+                                <div>
+                                    {/* Average Rating Summary */}
+                                    {reviews.length > 0 && (() => {
+                                        const avg = reviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviews.length;
+                                        return (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', padding: '16px 20px', background: '#f8f9fa', borderRadius: '10px' }}>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <div style={{ fontSize: '36px', fontWeight: 800, color: '#0B4222', lineHeight: 1 }}>{avg.toFixed(1)}</div>
+                                                    <div style={{ display: 'flex', gap: '2px', marginTop: '6px', justifyContent: 'center' }}>
+                                                        {[1,2,3,4,5].map(s => (
+                                                            <FiStar key={s} size={14} style={{ color: s <= Math.round(avg) ? '#F59E0B' : '#ddd', fill: s <= Math.round(avg) ? '#F59E0B' : 'none' }} />
+                                                        ))}
+                                                    </div>
+                                                    <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>{reviews.length} review{reviews.length > 1 ? 's' : ''}</div>
+                                                </div>
+                                                <div style={{ width: '1px', height: '50px', background: '#e5e7eb' }} />
+                                                <div style={{ flex: 1 }}>
+                                                    {[5,4,3,2,1].map(star => {
+                                                        const count = reviews.filter((r: any) => r.rating === star).length;
+                                                        const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                                                        return (
+                                                            <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                                                                <span style={{ fontSize: '11px', color: '#888', width: '12px' }}>{star}</span>
+                                                                <FiStar size={11} style={{ color: '#F59E0B', fill: '#F59E0B', flexShrink: 0 }} />
+                                                                <div style={{ flex: 1, height: '6px', background: '#eee', borderRadius: '3px', overflow: 'hidden' }}>
+                                                                    <div style={{ width: `${pct}%`, height: '100%', background: '#F59E0B', borderRadius: '3px', transition: 'width 0.3s' }} />
+                                                                </div>
+                                                                <span style={{ fontSize: '11px', color: '#aaa', width: '24px', textAlign: 'right' }}>{count}</span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
+
+                                    {/* Review List */}
+                                    {reviews.length > 0 ? (
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                            {reviews.map((r: any, i: number) => (
+                                                <div key={i} style={{ padding: '14px 16px', background: '#fafafa', borderRadius: '10px', border: '1px solid #f0f0f0' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0B4222', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>
+                                                                {(r.userName || r.user?.firstName || 'A').charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>{r.userName || `${r.user?.firstName || ''} ${r.user?.lastName || ''}`.trim() || 'Anonymous'}</span>
+                                                                <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>
+                                                                    {[1,2,3,4,5].map(s => (
+                                                                        <FiStar key={s} size={11} style={{ color: s <= r.rating ? '#F59E0B' : '#ddd', fill: s <= r.rating ? '#F59E0B' : 'none' }} />
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <span style={{ fontSize: '11px', color: '#aaa' }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</span>
+                                                    </div>
+                                                    {r.comment && <p style={{ fontSize: '13px', color: '#555', lineHeight: 1.6, margin: 0 }}>{r.comment}</p>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                                            <FiStar size={32} style={{ color: '#ddd', margin: '0 auto 10px' }} />
+                                            <p style={{ fontSize: '14px', color: '#888', fontWeight: 500 }}>No reviews yet</p>
+                                            <p style={{ fontSize: '12px', color: '#aaa' }}>Be the first to review this product</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {activeInfoPanel === 'others' && (
+                                <div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                        {product.category?.name && (
+                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.category.name}</p>
+                                            </div>
+                                        )}
+                                        {product.brand && (
+                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Brand</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.brand}</p>
+                                            </div>
+                                        )}
+                                        {product.sku && (
+                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>SKU</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.sku}</p>
+                                            </div>
+                                        )}
+                                        {product.origin && (
+                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Origin</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.origin}</p>
+                                            </div>
+                                        )}
+                                        {product.material && (
+                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Material</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.material}</p>
+                                            </div>
+                                        )}
+                                        {product.weight && (
+                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Weight</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.weight}</p>
+                                            </div>
+                                        )}
+                                        <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Sold</span>
+                                            <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.totalSold || 0} pcs</p>
+                                        </div>
+                                        <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stock</span>
+                                            <p style={{ fontSize: '14px', fontWeight: 600, color: product.stock > 0 ? '#059669' : '#dc2626', margin: '4px 0 0' }}>{product.stock > 0 ? `${product.stock} available` : 'Out of Stock'}</p>
+                                        </div>
+                                    </div>
+                                    {product.tags?.length > 0 && (
+                                        <div style={{ marginTop: '16px' }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tags</span>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
+                                                {product.tags.map((tag: string, i: number) => (
+                                                    <span key={i} style={{ fontSize: '12px', padding: '4px 12px', background: '#e8f5e9', color: '#0B4222', borderRadius: '20px', fontWeight: 500 }}>{tag}</span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
 

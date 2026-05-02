@@ -9,7 +9,6 @@ import { useCreateOrderMutation, useGuestCheckoutMutation } from '@/redux/api/or
 import {
     FiMapPin,
     FiCreditCard,
-    FiTruck,
     FiCheckCircle,
     FiChevronLeft,
     FiShoppingBag,
@@ -37,8 +36,7 @@ const CheckoutPage = () => {
         area: '',
         postalCode: '',
         country: 'Bangladesh',
-        paymentMethod: 'cod',
-        shippingMethod: 'standard'
+        paymentMethod: 'cod'
     });
 
     // Pre-fill form if user is logged in
@@ -92,7 +90,6 @@ const CheckoutPage = () => {
                 postalCode: formData.postalCode,
             },
             paymentMethod: formData.paymentMethod,
-            shippingMethod: formData.shippingMethod
         };
 
         try {
@@ -149,8 +146,7 @@ const CheckoutPage = () => {
         }
     };
 
-    const shippingCost = formData.shippingMethod === 'express' ? 150 : (totalPrice >= 5000 ? 0 : 60);
-    const grandTotal = totalPrice + shippingCost;
+    const grandTotal = totalPrice;
     const isSubmitting = isPlacingOrder || isGuestPlacing;
 
     if (items.length === 0) return null;
@@ -312,52 +308,6 @@ const CheckoutPage = () => {
                             </div>
                         </div>
 
-                        {/* Shipping Method */}
-                        <div className="bg-white rounded-md border border-gray-100 p-8 shadow-sm">
-                            <div className="flex items-center gap-3 mb-8">
-                                <div className="w-10 h-10 rounded-md bg-orange-50 text-orange-600 flex items-center justify-center">
-                                    <FiTruck size={20} />
-                                </div>
-                                <h2 className="text-xl font-black text-gray-800">Shipping Method</h2>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label className={`flex items-center justify-between p-5 border rounded-md cursor-pointer transition-all ${formData.shippingMethod === 'standard' ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5' : 'border-gray-100 hover:border-gray-200'}`}>
-                                    <div className="flex items-center gap-4">
-                                        <input
-                                            type="radio"
-                                            name="shippingMethod"
-                                            value="standard"
-                                            checked={formData.shippingMethod === 'standard'}
-                                            onChange={handleChange}
-                                            className="w-4 h-4 text-[var(--color-primary)] focus:ring-0"
-                                        />
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-900">Standard Delivery</p>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">3-5 Business Days</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-sm font-black text-gray-900">{totalPrice >= 5000 ? 'FREE' : '৳60'}</span>
-                                </label>
-                                <label className={`flex items-center justify-between p-5 border rounded-md cursor-pointer transition-all ${formData.shippingMethod === 'express' ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5' : 'border-gray-100 hover:border-gray-200'}`}>
-                                    <div className="flex items-center gap-4">
-                                        <input
-                                            type="radio"
-                                            name="shippingMethod"
-                                            value="express"
-                                            checked={formData.shippingMethod === 'express'}
-                                            onChange={handleChange}
-                                            className="w-4 h-4 text-[var(--color-primary)] focus:ring-0"
-                                        />
-                                        <div>
-                                            <p className="text-sm font-bold text-gray-900">Express Delivery</p>
-                                            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Next Day Delivery</p>
-                                        </div>
-                                    </div>
-                                    <span className="text-sm font-black text-gray-900">৳150</span>
-                                </label>
-                            </div>
-                        </div>
 
                         {/* Payment Method */}
                         <div className="bg-white rounded-md border border-gray-100 p-8 shadow-sm">
@@ -436,10 +386,6 @@ const CheckoutPage = () => {
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500 font-medium">Subtotal</span>
                                     <span className="font-bold text-gray-900">৳{totalPrice.toLocaleString()}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500 font-medium">Shipping Cost</span>
-                                    <span className="font-bold text-gray-900">৳{shippingCost.toLocaleString()}</span>
                                 </div>
                                 <div className="flex justify-between text-sm text-[var(--color-primary)]">
                                     <span className="font-bold italic">Promo Discount</span>
