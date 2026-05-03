@@ -77,14 +77,14 @@ export default function ReportAnalysisPage() {
     const allOrders = allOrdersData?.data?.orders || allOrdersData?.data || [];
     const orderStats = orderStatsData?.data || {};
 
-    const catColors = ['#0B4222', '#3B82F6', '#F59E0B', '#EC4899', '#8B5CF6', '#06B6D4', '#EF4444', '#10B981'];
+    const catColors = ['var(--color-primary)', '#3B82F6', '#F59E0B', '#EC4899', '#8B5CF6', '#06B6D4', '#EF4444', '#10B981'];
 
     const statusConfig: Record<string, { color: string; bg: string; icon: any; label: string }> = {
         pending: { color: '#D97706', bg: '#FEF3C7', icon: FiClock, label: 'Pending' },
         confirmed: { color: '#2563EB', bg: '#DBEAFE', icon: FiCheckCircle, label: 'Confirmed' },
         processing: { color: '#7C3AED', bg: '#EDE9FE', icon: FiPackage, label: 'Processing' },
         shipped: { color: '#4F46E5', bg: '#E0E7FF', icon: FiTruck, label: 'Shipped' },
-        delivered: { color: '#059669', bg: '#D1FAE5', icon: FiCheckCircle, label: 'Delivered' },
+        delivered: { color: 'var(--color-primary)', bg: 'var(--color-primary-border)', icon: FiCheckCircle, label: 'Delivered' },
         cancelled: { color: '#DC2626', bg: '#FEE2E2', icon: FiAlertCircle, label: 'Cancelled' },
     };
 
@@ -177,12 +177,12 @@ export default function ReportAnalysisPage() {
                 <div className="flex items-center gap-2">
                     <label className="text-xs font-semibold text-gray-500">From:</label>
                     <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[#0B4222] transition" />
+                        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--color-primary)] transition" />
                 </div>
                 <div className="flex items-center gap-2">
                     <label className="text-xs font-semibold text-gray-500">To:</label>
                     <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[#0B4222] transition" />
+                        className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-[var(--color-primary)] transition" />
                 </div>
                 {(dateFrom || dateTo) && (
                     <button onClick={() => { setDateFrom(''); setDateTo(''); }}
@@ -190,7 +190,7 @@ export default function ReportAnalysisPage() {
                 )}
                 <div className="ml-auto flex items-center gap-2">
                     <button onClick={exportSummary}
-                        className="px-3 py-1.5 bg-[#0B4222] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[#093519] transition">
+                        className="px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)] transition">
                         <FiDownload size={12} /> Summary
                     </button>
                     <button onClick={exportOrders}
@@ -208,7 +208,7 @@ export default function ReportAnalysisPage() {
             <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                 {tabs.map(tab => (
                     <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.key ? 'bg-white text-[#0B4222] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                        className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.key ? 'bg-white text-[var(--color-primary)] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                         <tab.icon size={15} /> {tab.label}
                     </button>
                 ))}
@@ -222,7 +222,7 @@ export default function ReportAnalysisPage() {
                         <StatCard title="Total Orders" value={(stats.totalOrders || 0).toLocaleString()} sub={`${stats.todayOrders || 0} today`} icon={FiShoppingCart} color="#3B82F6" bgColor="#3B82F615" />
                         <StatCard title="Total Customers" value={(stats.totalCustomers || 0).toLocaleString()} sub="Registered" icon={FiUsers} color="#8B5CF6" bgColor="#8B5CF615" />
                         <StatCard title="Total Products" value={(stats.totalProducts || 0).toLocaleString()} sub={`${stats.totalCategories || 0} categories`} icon={FiPackage} color="#F59E0B" bgColor="#F59E0B15" />
-                        <StatCard title="Delivered" value={(stats.deliveredOrders || 0).toLocaleString()} sub={`${stats.pendingOrders || 0} pending`} icon={FiCheckCircle} color="#059669" bgColor="#05966915" />
+                        <StatCard title="Delivered" value={(stats.deliveredOrders || 0).toLocaleString()} sub={`${stats.pendingOrders || 0} pending`} icon={FiCheckCircle} color="var(--color-primary)" bgColor="var(--color-primary)15" />
                     </div>
 
                     {/* Order Pipeline */}
@@ -274,7 +274,7 @@ export default function ReportAnalysisPage() {
                             Orders Report <span className="text-sm font-normal text-gray-400 ml-2">({filteredOrders.length} records)</span>
                         </h2>
                         <button onClick={exportOrders}
-                            className="px-3 py-1.5 bg-[#0B4222] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[#093519]">
+                            className="px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)]">
                             <FiDownload size={12} /> Download Excel
                         </button>
                     </div>
@@ -303,7 +303,7 @@ export default function ReportAnalysisPage() {
                                             <td className="px-4 py-2.5">
                                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded capitalize" style={{ color: sc.color, background: sc.bg }}>{order.status}</span>
                                             </td>
-                                            <td className="px-4 py-2.5 text-right font-bold text-[#0B4222]">{formatCurrency(order.total)}</td>
+                                            <td className="px-4 py-2.5 text-right font-bold text-[var(--color-primary)]">{formatCurrency(order.total)}</td>
                                             <td className="px-4 py-2.5 text-gray-400 text-xs">{order.createdAt ? formatDate(order.createdAt) : '—'}</td>
                                         </tr>
                                     );
@@ -324,7 +324,7 @@ export default function ReportAnalysisPage() {
                             Products Report <span className="text-sm font-normal text-gray-400 ml-2">({topProducts.length} products)</span>
                         </h2>
                         <button onClick={exportProducts}
-                            className="px-3 py-1.5 bg-[#0B4222] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[#093519]">
+                            className="px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)]">
                             <FiDownload size={12} /> Download Excel
                         </button>
                     </div>
@@ -354,7 +354,7 @@ export default function ReportAnalysisPage() {
                                                 <span className="font-semibold text-gray-700 truncate max-w-[200px]">{product.name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.5 text-right font-semibold text-[#0B4222]">{formatCurrency(product.price)}</td>
+                                        <td className="px-4 py-2.5 text-right font-semibold text-[var(--color-primary)]">{formatCurrency(product.price)}</td>
                                         <td className="px-4 py-2.5 text-right text-gray-600">{product.totalSold || 0}</td>
                                         <td className="px-4 py-2.5 text-right">
                                             <span className={`font-semibold ${(product.stock || 0) > 0 ? 'text-green-600' : 'text-red-500'}`}>{product.stock || 0}</span>

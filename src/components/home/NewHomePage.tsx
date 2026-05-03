@@ -231,17 +231,17 @@ const NewHomePage: React.FC = () => {
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-4">
                                 {imageSearch.previewImage && (
-                                    <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-[#0B4222]/20 shadow-sm flex-shrink-0">
+                                    <div className="w-16 h-16 rounded-xl overflow-hidden border-2 border-[var(--color-primary)]/20 shadow-sm flex-shrink-0">
                                         <img src={imageSearch.previewImage} alt="Search" className="w-full h-full object-cover" />
                                     </div>
                                 )}
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <FiCamera className="text-[#0B4222]" size={16} />
+                                        <FiCamera className="text-[var(--color-primary)]" size={16} />
                                         <h3 className="text-lg font-bold text-gray-800">Image Search Results</h3>
                                     </div>
                                     <p className="text-sm text-gray-500">
-                                        Found <span className="font-bold text-[#0B4222]">{imageSearch.products.length}</span> matching products
+                                        Found <span className="font-bold text-[var(--color-primary)]">{imageSearch.products.length}</span> matching products
                                         {(imageSearch.searchMeta?.labels?.length ?? 0) > 0 && (
                                             <span> — detected: <span className="font-medium">{imageSearch.searchMeta!.labels.slice(0, 5).join(', ')}</span></span>
                                         )}
@@ -276,7 +276,7 @@ const NewHomePage: React.FC = () => {
                 {/* ── Image Search Loading State ── */}
                 {imageSearch.isSearching && (
                     <div className="mb-6 bg-white border border-gray-200 rounded-xl p-8 text-center shadow-sm animate-fadeIn">
-                        <div className="w-12 h-12 border-4 border-[#0B4222]/20 border-t-[#0B4222] rounded-full animate-spin mx-auto mb-4" />
+                        <div className="w-12 h-12 border-4 border-[var(--color-primary)]/20 border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-4" />
                         <h3 className="text-lg font-bold text-gray-800 mb-1">Analyzing your image...</h3>
                         <p className="text-sm text-gray-500">Using AI to identify products and colors</p>
                     </div>
@@ -287,15 +287,15 @@ const NewHomePage: React.FC = () => {
                     <div className="mb-6 bg-white border border-gray-200 rounded-xl p-5 shadow-sm animate-fadeIn">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-[#0B4222]/10 flex items-center justify-center flex-shrink-0">
-                                    <FiSearch className="text-[#0B4222]" size={18} />
+                                <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center flex-shrink-0">
+                                    <FiSearch className="text-[var(--color-primary)]" size={18} />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-800">
-                                        Search results for &quot;<span className="text-[#0B4222]">{searchTerm}</span>&quot;
+                                        Search results for &quot;<span className="text-[var(--color-primary)]">{searchTerm}</span>&quot;
                                     </h3>
                                     <p className="text-sm text-gray-500">
-                                        Found <span className="font-bold text-[#0B4222]">{meta?.total || displayProducts.length}</span> products
+                                        Found <span className="font-bold text-[var(--color-primary)]">{meta?.total || displayProducts.length}</span> products
                                     </p>
                                 </div>
                             </div>
@@ -318,7 +318,7 @@ const NewHomePage: React.FC = () => {
                         </div>
                         <button
                             onClick={() => handleCategoryChange('')}
-                            className="mt-4 text-[#0B4222] hover:underline"
+                            className="mt-4 text-[var(--color-primary)] hover:underline"
                         >
                             View all products
                         </button>
@@ -331,7 +331,7 @@ const NewHomePage: React.FC = () => {
                         <h3 className="text-xl font-bold text-gray-900">Popular Products</h3>
                         <p className="text-[13px] text-gray-400 mt-0.5">Trending items loved by our customers worldwide</p>
                     </div>
-                    <Link href="/products" className="text-sm text-[#0B4222] hover:underline font-medium whitespace-nowrap">
+                    <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium whitespace-nowrap">
                         View All →
                     </Link>
                 </div>
@@ -376,7 +376,7 @@ const NewHomePage: React.FC = () => {
                         <h3 className="text-xl font-bold text-gray-900">New Arrivals</h3>
                         <p className="text-[13px] text-gray-400 mt-0.5">Freshly added products you don't want to miss</p>
                     </div>
-                    <Link href="/products" className="text-sm text-[#0B4222] hover:underline font-medium whitespace-nowrap">
+                    <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium whitespace-nowrap">
                         View All →
                     </Link>
                 </div>
@@ -418,7 +418,7 @@ const NewHomePage: React.FC = () => {
                         <p className="text-gray-500 mb-6">Try browsing another category</p>
                         <button
                             onClick={() => handleCategoryChange('')}
-                            className="px-8 py-3 bg-[#0B4222] text-white rounded-full font-semibold hover:bg-[#093519] transition-colors"
+                            className="px-8 py-3 bg-[var(--color-primary)] text-white rounded-full font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
                         >
                             View All Products
                         </button>
@@ -431,7 +431,7 @@ const NewHomePage: React.FC = () => {
                         <button
                             onClick={handleLoadMore}
                             disabled={isLoadingMore || isFetching}
-                            className="group relative px-10 py-3.5 bg-[#0B4222] text-white rounded-full font-bold text-sm tracking-wide hover:bg-[#093519] transition-all shadow-md hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden"
+                            className="group relative px-10 py-3.5 bg-[var(--color-primary)] text-white rounded-full font-bold text-sm tracking-wide hover:bg-[var(--color-primary-dark)] transition-all shadow-md hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden"
                         >
                             {/* Shiny effect on hover */}
                             <div className="absolute top-0 left-0 w-full h-full">

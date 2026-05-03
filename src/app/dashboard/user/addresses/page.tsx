@@ -98,7 +98,7 @@ export default function AddressesPage() {
                     </div>
                     <button
                         onClick={openAdd}
-                        className="px-5 py-2.5 bg-[#0B4222] text-white rounded-xl font-semibold text-sm hover:bg-[#093519] transition-all shadow-md shadow-[#0B4222]/20 flex items-center gap-2"
+                        className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
                     >
                         <FiPlus size={16} />
                         Add New
@@ -124,7 +124,7 @@ export default function AddressesPage() {
                     <p className="text-sm text-gray-400 mb-4">Add your first shipping address</p>
                     <button
                         onClick={openAdd}
-                        className="px-6 py-2.5 bg-[#0B4222] text-white rounded-xl font-semibold text-sm hover:bg-[#093519] transition-all shadow-md"
+                        className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md"
                     >
                         Add Address
                     </button>
@@ -133,7 +133,7 @@ export default function AddressesPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {addresses.map((addr) => (
                         <div key={addr._id} className={`bg-white rounded-2xl border p-5 shadow-sm relative group transition-all ${
-                            addr.isDefault ? 'border-[#0B4222]/30 ring-1 ring-[#0B4222]/10' : 'border-gray-100 hover:border-gray-200'
+                            addr.isDefault ? 'border-[var(--color-primary)]/30 ring-1 ring-[var(--color-primary)]/10' : 'border-gray-100 hover:border-gray-200'
                         }`}>
                             {/* Label Badge */}
                             <div className="flex items-center justify-between mb-3">
@@ -142,7 +142,7 @@ export default function AddressesPage() {
                                         {addr.label || 'Home'}
                                     </span>
                                     {addr.isDefault && (
-                                        <span className="px-2.5 py-0.5 bg-[#0B4222]/10 text-[#0B4222] text-xs font-bold rounded-md flex items-center gap-1">
+                                        <span className="px-2.5 py-0.5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-md flex items-center gap-1">
                                             <FiCheck size={10} /> Default
                                         </span>
                                     )}
@@ -200,7 +200,7 @@ export default function AddressesPage() {
                                             onClick={() => setForm({ ...form, label })}
                                             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                                                 form.label === label
-                                                    ? 'bg-[#0B4222] text-white shadow-md'
+                                                    ? 'bg-[var(--color-primary)] text-white shadow-md'
                                                     : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                                             }`}
                                         >
@@ -214,34 +214,34 @@ export default function AddressesPage() {
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-2">Full Name</label>
                                     <input type="text" required value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] outline-none text-sm transition-all" placeholder="John Doe" />
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] outline-none text-sm transition-all" placeholder="John Doe" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-2">Phone</label>
                                     <input type="tel" required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] outline-none text-sm transition-all" placeholder="+880 XXXX" />
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] outline-none text-sm transition-all" placeholder="+880 XXXX" />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-gray-500 mb-2">Address</label>
                                 <textarea required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })}
-                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] outline-none text-sm transition-all resize-none h-20" placeholder="House, Road, Area..." />
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] outline-none text-sm transition-all resize-none h-20" placeholder="House, Road, Area..." />
                             </div>
                             <div className="grid grid-cols-3 gap-4">
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-2">City</label>
                                     <input type="text" required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] outline-none text-sm transition-all" placeholder="Dhaka" />
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] outline-none text-sm transition-all" placeholder="Dhaka" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-2">Area</label>
                                     <input type="text" required value={form.area} onChange={(e) => setForm({ ...form, area: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] outline-none text-sm transition-all" placeholder="Mirpur" />
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] outline-none text-sm transition-all" placeholder="Mirpur" />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-bold text-gray-500 mb-2">Zip Code</label>
                                     <input type="text" required value={form.zipCode} onChange={(e) => setForm({ ...form, zipCode: e.target.value })}
-                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] outline-none text-sm transition-all" placeholder="1200" />
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] outline-none text-sm transition-all" placeholder="1200" />
                                 </div>
                             </div>
                             <div className="flex justify-end gap-3 pt-3">
@@ -250,7 +250,7 @@ export default function AddressesPage() {
                                     Cancel
                                 </button>
                                 <button type="submit" disabled={adding || updating}
-                                    className="px-6 py-2.5 bg-[#0B4222] text-white rounded-xl text-sm font-semibold hover:bg-[#093519] transition-all shadow-md disabled:opacity-50">
+                                    className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50">
                                     {adding || updating ? 'Saving...' : editingId ? 'Update' : 'Add Address'}
                                 </button>
                             </div>

@@ -19,7 +19,7 @@ import { HiArrowNarrowRight } from 'react-icons/hi';
 const categories = [
     { id: 1, name: 'Electronics', icon: MdOutlinePhoneIphone, items: 234, color: '#3B82F6', bgColor: '#EFF6FF' },
     { id: 2, name: 'Fashion', icon: MdOutlineCheckroom, items: 567, color: '#EC4899', bgColor: '#FDF2F8' },
-    { id: 3, name: 'Home & Living', icon: MdOutlineHome, items: 189, color: '#10B981', bgColor: '#ECFDF5' },
+    { id: 3, name: 'Home & Living', icon: MdOutlineHome, items: 189, color: '#10B981', bgColor: 'var(--color-primary-lightest)' },
     { id: 4, name: 'Beauty', icon: MdOutlineFace, items: 342, color: '#F59E0B', bgColor: '#FFFBEB' },
     { id: 5, name: 'Sports', icon: MdOutlineSportsSoccer, items: 156, color: '#EF4444', bgColor: '#FEF2F2' },
     { id: 6, name: 'Books', icon: MdOutlineMenuBook, items: 423, color: '#8B5CF6', bgColor: '#F5F3FF' },

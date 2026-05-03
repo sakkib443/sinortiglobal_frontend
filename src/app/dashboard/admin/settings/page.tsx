@@ -14,8 +14,8 @@ const SettingSection = ({ icon: Icon, title, description, children }: any) => (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[#0B4222]/10 flex items-center justify-center">
-                    <Icon size={18} className="text-[#0B4222]" />
+                <div className="w-9 h-9 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center">
+                    <Icon size={18} className="text-[var(--color-primary)]" />
                 </div>
                 <div>
                     <h3 className="font-bold text-gray-800 text-sm">{title}</h3>
@@ -34,13 +34,13 @@ const InputField = ({ label, type = 'text', value, onChange, placeholder, helper
         <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">{label}</label>
         {type === 'textarea' ? (
             <textarea
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0B4222] focus:border-transparent outline-none font-medium text-sm h-20 resize-none"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none font-medium text-sm h-20 resize-none"
                 value={value} onChange={onChange} placeholder={placeholder} {...props}
             />
         ) : (
             <input
                 type={type}
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0B4222] focus:border-transparent outline-none font-medium text-sm"
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none font-medium text-sm"
                 value={value} onChange={onChange} placeholder={placeholder} {...props}
             />
         )}
@@ -93,8 +93,8 @@ export default function SettingsPage() {
                     facebookPixel: '',
                 },
                 theme: res.data.theme || {
-                    primaryColor: '#0B4222',
-                    secondaryColor: '#E4525C',
+                    primaryColor: 'var(--color-primary)',
+                    secondaryColor: 'var(--color-secondary)',
                     logoUrl: '',
                     faviconUrl: '',
                 },
@@ -126,7 +126,7 @@ export default function SettingsPage() {
     if (isLoading || !formData) {
         return (
             <div className="flex justify-center items-center min-h-[300px]">
-                <div className="w-8 h-8 border-3 border-gray-200 border-t-[#0B4222] rounded-full animate-spin" />
+                <div className="w-8 h-8 border-3 border-gray-200 border-t-[var(--color-primary)] rounded-full animate-spin" />
             </div>
         );
     }
@@ -146,7 +146,7 @@ export default function SettingsPage() {
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="px-6 py-2.5 bg-[#0B4222] text-white rounded-lg text-sm font-bold hover:bg-[#093519] transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-lg text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
                 >
                     {isSaving ? <FiRefreshCw size={16} className="animate-spin" /> : saveSuccess ? <FiCheckCircle size={16} /> : <FiSave size={16} />}
                     {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
@@ -176,13 +176,13 @@ export default function SettingsPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <ColorPicker
                                 label="Primary Color"
-                                value={theme.primaryColor || '#0B4222'}
+                                value={theme.primaryColor || 'var(--color-primary)'}
                                 onChange={v => updateTheme('primaryColor', v)}
                                 description="Main brand color — buttons, links, headers"
                             />
                             <ColorPicker
                                 label="Secondary Color"
-                                value={theme.secondaryColor || '#E4525C'}
+                                value={theme.secondaryColor || 'var(--color-secondary)'}
                                 onChange={v => updateTheme('secondaryColor', v)}
                                 description="Sale badges, accent buttons, highlights"
                             />
@@ -197,28 +197,28 @@ export default function SettingsPage() {
                                 {theme.logoUrl ? (
                                     <img src={theme.logoUrl} alt="Logo" className="h-8 object-contain" />
                                 ) : (
-                                    <div className="h-8 px-4 rounded-md flex items-center text-white font-bold text-sm" style={{ background: theme.primaryColor || '#0B4222' }}>
+                                    <div className="h-8 px-4 rounded-md flex items-center text-white font-bold text-sm" style={{ background: theme.primaryColor || 'var(--color-primary)' }}>
                                         {g.storeName || 'Sinotri Global'}
                                     </div>
                                 )}
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.primaryColor || '#0B4222' }}>
+                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.primaryColor || 'var(--color-primary)' }}>
                                     Buy Now
                                 </button>
-                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.secondaryColor || '#E4525C' }}>
+                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.secondaryColor || 'var(--color-secondary)' }}>
                                     Sale 50% Off
                                 </button>
-                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.primaryColor || '#0B4222' }}>
+                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.primaryColor || 'var(--color-primary)' }}>
                                     New Arrival
                                 </span>
-                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.secondaryColor || '#E4525C' }}>
+                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.secondaryColor || 'var(--color-secondary)' }}>
                                     Hot Deal
                                 </span>
                             </div>
                             <div className="mt-3 flex gap-3">
-                                <a href="#" className="text-sm font-bold underline" style={{ color: theme.primaryColor || '#0B4222' }}>Sample Link</a>
-                                <span className="text-sm font-bold" style={{ color: theme.secondaryColor || '#E4525C' }}>৳2,499</span>
+                                <a href="#" className="text-sm font-bold underline" style={{ color: theme.primaryColor || 'var(--color-primary)' }}>Sample Link</a>
+                                <span className="text-sm font-bold" style={{ color: theme.secondaryColor || 'var(--color-secondary)' }}>৳2,499</span>
                             </div>
                         </div>
                     </div>
@@ -244,8 +244,8 @@ export default function SettingsPage() {
                     {/* Reset */}
                     <button
                         onClick={() => {
-                            updateTheme('primaryColor', '#0B4222');
-                            updateTheme('secondaryColor', '#E4525C');
+                            updateTheme('primaryColor', 'var(--color-primary)');
+                            updateTheme('secondaryColor', 'var(--color-secondary)');
                             toast.success('Colors reset to default');
                         }}
                         className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-200 transition-all"
@@ -264,7 +264,7 @@ export default function SettingsPage() {
                         <div>
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Currency</label>
                             <select value={g.currency || 'BDT'} onChange={(e) => updateGeneral('currency', e.target.value)}
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0B4222] outline-none font-medium text-sm"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium text-sm"
                             >
                                 <option value="BDT">৳ BDT - Bangladeshi Taka</option>
                                 <option value="USD">$ USD - US Dollar</option>

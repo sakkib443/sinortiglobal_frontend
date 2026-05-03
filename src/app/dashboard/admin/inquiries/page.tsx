@@ -109,7 +109,7 @@ const InquiriesPage = () => {
                     <input
                         type="text"
                         placeholder="Search by name, product or message..."
-                        className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] transition-all"
+                        className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -117,7 +117,7 @@ const InquiriesPage = () => {
                 <select
                     value={statusFilter}
                     onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] cursor-pointer"
+                    className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer"
                 >
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
@@ -131,7 +131,7 @@ const InquiriesPage = () => {
                 <div className="flex-1 bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
                     {isLoading ? (
                         <div className="p-20 text-center">
-                            <div className="animate-spin w-10 h-10 border-4 border-[#0B4222] border-t-transparent rounded-full mx-auto mb-4"></div>
+                            <div className="animate-spin w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full mx-auto mb-4"></div>
                             <p className="text-gray-500">Loading inquiries...</p>
                         </div>
                     ) : inquiries.length === 0 ? (
@@ -146,7 +146,7 @@ const InquiriesPage = () => {
                                 <div
                                     key={inq._id}
                                     onClick={() => { setSelectedInquiry(inq); if (inq.status === 'pending') handleStatusUpdate(inq._id, 'read'); }}
-                                    className={`flex items-start gap-4 px-5 py-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-all ${selectedInquiry?._id === inq._id ? 'bg-[#0B4222]/5 border-l-4 border-l-[#0B4222]' : ''}`}
+                                    className={`flex items-start gap-4 px-5 py-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-all ${selectedInquiry?._id === inq._id ? 'bg-[var(--color-primary)]/5 border-l-4 border-l-[var(--color-primary)]' : ''}`}
                                 >
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0 ${inq.status === 'pending' ? 'bg-yellow-500' : inq.status === 'resolved' ? 'bg-green-600' : 'bg-blue-500'}`}>
                                         {(inq.name || inq.customerName || 'U')[0].toUpperCase()}
@@ -160,7 +160,7 @@ const InquiriesPage = () => {
                                                 {inq.status}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-[#0B4222] font-medium truncate mt-0.5 flex items-center gap-1">
+                                        <p className="text-xs text-[var(--color-primary)] font-medium truncate mt-0.5 flex items-center gap-1">
                                             <FiPackage size={10} /> {inq.product?.name || inq.productName || 'General Inquiry'}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-1 truncate">{inq.message}</p>
@@ -201,7 +201,7 @@ const InquiriesPage = () => {
                             <div className="space-y-3">
                                 <h4 className="text-xs font-bold text-gray-400 uppercase">Customer</h4>
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
-                                    <div className="w-10 h-10 rounded-full bg-[#0B4222] text-white flex items-center justify-center font-bold">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center font-bold">
                                         {(selectedInquiry.name || selectedInquiry.customerName || 'U')[0].toUpperCase()}
                                     </div>
                                     <div>
@@ -220,7 +220,7 @@ const InquiriesPage = () => {
                                         {selectedInquiry.product?.thumbnail && (
                                             <img src={selectedInquiry.product.thumbnail} className="w-10 h-10 rounded-md object-cover border border-gray-200" alt="" />
                                         )}
-                                        <p className="text-sm font-semibold text-[#0B4222]">{selectedInquiry.product?.name || selectedInquiry.productName}</p>
+                                        <p className="text-sm font-semibold text-[var(--color-primary)]">{selectedInquiry.product?.name || selectedInquiry.productName}</p>
                                     </div>
                                 </div>
                             )}
@@ -245,7 +245,7 @@ const InquiriesPage = () => {
                                     {selectedInquiry.status !== 'resolved' && (
                                         <button
                                             onClick={() => handleStatusUpdate(selectedInquiry._id, 'resolved')}
-                                            className="flex items-center justify-center gap-2 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-bold hover:bg-[#093519] transition-all"
+                                            className="flex items-center justify-center gap-2 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all"
                                         >
                                             <FiCheckCircle size={15} /> Resolve
                                         </button>

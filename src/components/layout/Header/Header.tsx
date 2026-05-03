@@ -197,29 +197,29 @@ const Header: React.FC = () => {
                         <div className="flex items-center justify-between h-[34px] text-[12.5px] text-gray-600">
                             {/* Left */}
                             <div className="flex items-center gap-5">
-                                <Link href="/" className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                <Link href="/" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
                                     <FiSmartphone size={13} />
                                     <span>Sinotri App</span>
                                 </Link>
                                 <span className="text-gray-300">|</span>
-                                <Link href="/contact" className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                <Link href="/contact" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
                                     <FiHeadphones size={13} />
                                     <span>Support</span>
                                 </Link>
                             </div>
                             {/* Right */}
                             <div className="flex items-center gap-5">
-                                <Link href="/wishlist" className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                <Link href="/wishlist" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
                                     <FiHeart size={13} />
                                     <span>Wishlist</span>
                                 </Link>
                                 <span className="text-gray-300">|</span>
-                                <button className="flex items-center gap-1.5 hover:text-[#0B4222] transition-colors">
+                                <button className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
                                     <span>Ship to</span>
                                     <span className="text-base leading-none">🇧🇩</span>
                                 </button>
                                 <span className="text-gray-300">|</span>
-                                <button className="flex items-center gap-1 hover:text-[#0B4222] transition-colors">
+                                <button className="flex items-center gap-1 hover:text-[var(--color-primary)] transition-colors">
                                     <FiGlobe size={13} />
                                     <span>EN/BDT</span>
                                     <FiChevronDown size={11} />
@@ -236,7 +236,7 @@ const Header: React.FC = () => {
 
                             {/* Mobile Menu Button */}
                             <button
-                                className="lg:hidden text-gray-700 hover:text-[#0B4222] p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                className="lg:hidden text-gray-700 hover:text-[var(--color-primary)] p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             >
                                 {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
@@ -254,7 +254,7 @@ const Header: React.FC = () => {
                                 onMouseLeave={handleCategoryMouseLeave}
                             >
                                 <button
-                                    className="flex items-center gap-2 bg-[#0B4222] text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-[#093a1d] transition-colors"
+                                    className="flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-[#093a1d] transition-colors"
                                     tabIndex={-1}
                                 >
                                     <span>Categories</span>
@@ -274,7 +274,7 @@ const Header: React.FC = () => {
                                 >
                                     <Link
                                         href="/products"
-                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-[#0B4222] hover:text-white transition-colors border-b border-gray-50 font-medium"
+                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-[var(--color-primary)] hover:text-white transition-colors border-b border-gray-50 font-medium"
                                         onClick={() => { setIsCategoryHovered(false); }}
                                     >
                                         <span>🛒</span> All Products
@@ -284,7 +284,7 @@ const Header: React.FC = () => {
                                             <Link
                                                 key={category._id}
                                                 href={`/products?category=${category._id}`}
-                                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
                                                 onClick={() => setIsCategoryHovered(false)}
                                             >
                                                 {category.icon && <span>{category.icon}</span>}
@@ -317,13 +317,13 @@ const Header: React.FC = () => {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                         placeholder={isSearching ? 'Searching by image...' : 'Search products...'}
-                                        className={`w-full h-full bg-white border border-gray-300 border-r-0 rounded-l-md ${selectedImage ? 'pl-12' : 'pl-4'} pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#0B4222] transition-all text-sm`}
+                                        className={`w-full h-full bg-white border border-gray-300 border-r-0 rounded-l-md ${selectedImage ? 'pl-12' : 'pl-4'} pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[var(--color-primary)] transition-all text-sm`}
                                     />
                                     {/* Image Search icon inside search bar */}
                                     <button
                                         onClick={() => setIsImageSearchOpen(true)}
                                         title="Search by Image"
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#0B4222] transition-colors"
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[var(--color-primary)] transition-colors"
                                     >
                                         <FiCamera size={18} />
                                     </button>
@@ -332,7 +332,7 @@ const Header: React.FC = () => {
                                 {/* Search Button */}
                                 <button
                                     onClick={handleSearch}
-                                    className="h-[42px] px-5 bg-[#0B4222] text-white rounded-r-md hover:bg-[#093a1d] transition-colors flex items-center justify-center"
+                                    className="h-[42px] px-5 bg-[var(--color-primary)] text-white rounded-r-md hover:bg-[#093a1d] transition-colors flex items-center justify-center"
                                     title="Search"
                                 >
                                     {isSearching
@@ -345,12 +345,12 @@ const Header: React.FC = () => {
                             <div className="flex items-center gap-1 lg:gap-2 shrink-0">
 
                                 {/* Services Link */}
-                                <Link href="/services" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0B4222] transition-colors">
+                                <Link href="/services" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-primary)] transition-colors">
                                     Services
                                 </Link>
 
                                 {/* Cart */}
-                                <Link href="/cart" className="relative flex items-center justify-center w-9 h-9 text-gray-600 hover:text-[#0B4222] transition-colors">
+                                <Link href="/cart" className="relative flex items-center justify-center w-9 h-9 text-gray-600 hover:text-[var(--color-primary)] transition-colors">
                                     <FiShoppingCart size={20} />
                                     {cartItems.length > 0 && (
                                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold">
@@ -370,9 +370,9 @@ const Header: React.FC = () => {
                                             className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
                                         >
                                             {user.avatar ? (
-                                                <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border-2 border-[#0B4222]" />
+                                                <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border-2 border-[var(--color-primary)]" />
                                             ) : (
-                                                <div className="w-8 h-8 rounded-full bg-[#0B4222] text-white flex items-center justify-center text-sm font-bold">
+                                                <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-sm font-bold">
                                                     {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                                                 </div>
                                             )}
@@ -397,7 +397,7 @@ const Header: React.FC = () => {
                                                 <div className="py-1">
                                                     <Link
                                                         href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'}
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -405,7 +405,7 @@ const Header: React.FC = () => {
                                                     </Link>
                                                     <Link
                                                         href="/dashboard/user/orders"
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -413,7 +413,7 @@ const Header: React.FC = () => {
                                                     </Link>
                                                     <Link
                                                         href="/wishlist"
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
                                                         <FiHeart size={15} />
@@ -434,7 +434,7 @@ const Header: React.FC = () => {
                                         )}
                                     </div>
                                 ) : (
-                                    <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0B4222] transition-colors">
+                                    <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-primary)] transition-colors">
                                         <FiUser size={18} />
                                         <span className="hidden lg:inline">Sign In/ Register</span>
                                     </Link>
@@ -463,7 +463,7 @@ const Header: React.FC = () => {
                                         className={`w-full bg-white border border-gray-300 rounded-l-md py-2.5 ${selectedImage ? 'pl-11' : 'pl-4'} pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm`}
                                     />
                                 </div>
-                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[#0B4222] text-white flex items-center">
+                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[var(--color-primary)] text-white flex items-center">
                                     <FiSearch size={16} />
                                 </button>
                                 <button onClick={() => setIsImageSearchOpen(true)} className="h-[42px] px-3 bg-gray-100 border border-l-0 border-gray-300 rounded-r-md text-gray-500">
@@ -485,20 +485,20 @@ const Header: React.FC = () => {
                                     </button>
                                     {isMobileCategoryOpen && (
                                         <div className="pl-2 space-y-1">
-                                            <Link href="/products" className="block px-4 py-2 text-gray-600 hover:text-[#0B4222] text-sm" onClick={() => { setIsMobileMenuOpen(false); }}>
+                                            <Link href="/products" className="block px-4 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm" onClick={() => { setIsMobileMenuOpen(false); }}>
                                                 All Products
                                             </Link>
                                             {categories.map((cat) => (
-                                                <Link key={cat._id} href={`/products?category=${cat._id}`} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-[#0B4222] rounded-lg text-sm transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <Link key={cat._id} href={`/products?category=${cat._id}`} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] rounded-lg text-sm transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                                                     {cat.icon && <span>{cat.icon}</span>}
                                                     {cat.name}
                                                 </Link>
                                             ))}
                                         </div>
                                     )}
-                                    <Link href="/services" className="block px-3 py-2 text-gray-600 hover:text-[#0B4222] text-sm font-semibold">Services</Link>
-                                    <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[#0B4222] text-sm font-semibold">Support</Link>
-                                    <Link href="/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[#0B4222] text-sm font-semibold">Wishlist</Link>
+                                    <Link href="/services" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Services</Link>
+                                    <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Support</Link>
+                                    <Link href="/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Wishlist</Link>
                                 </div>
                             </div>
                         )}
@@ -524,10 +524,10 @@ const Header: React.FC = () => {
                                 onDragOver={handleDragOver}
                                 onDragLeave={handleDragLeave}
                                 onDrop={handleDrop}
-                                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging ? 'border-[#0B4222] bg-[#0B4222]/5 scale-[1.02]' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50'}`}
+                                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 scale-[1.02]' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50'}`}
                             >
                                 <div className="flex flex-col items-center gap-4">
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-[#0B4222]/10 text-[#0B4222]' : 'bg-gray-100 text-gray-400'}`}>
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'bg-gray-100 text-gray-400'}`}>
                                         <FiUpload size={24} />
                                     </div>
                                     <div>
@@ -538,7 +538,7 @@ const Header: React.FC = () => {
                                     </div>
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="px-8 py-2.5 bg-[#0B4222] text-white rounded-full text-sm font-semibold hover:bg-[#093519] transition-colors shadow-md hover:shadow-lg"
+                                        className="px-8 py-2.5 bg-[var(--color-primary)] text-white rounded-full text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-colors shadow-md hover:shadow-lg"
                                     >
                                         Browse File
                                     </button>

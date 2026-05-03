@@ -53,7 +53,7 @@ export default function AdminProfilePage() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="animate-spin w-10 h-10 border-4 border-[#0B4222] border-t-transparent rounded-full"></div>
+                <div className="animate-spin w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full"></div>
             </div>
         );
     }
@@ -87,7 +87,7 @@ export default function AdminProfilePage() {
                         width: '36px', height: '36px', borderRadius: '8px', background: '#f0fdf4',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                        <FiUser size={18} color="#0B4222" />
+                        <FiUser size={18} color="var(--color-primary)" />
                     </div>
                     <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#1a1a1a', margin: 0 }}>Personal Information</h2>
                 </div>
@@ -115,7 +115,7 @@ export default function AdminProfilePage() {
                             onChange={e => setProfile({ ...profile, firstName: e.target.value })}
                             style={inputStyle}
                             placeholder="First name"
-                            onFocus={e => e.target.style.borderColor = '#0B4222'}
+                            onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
                             onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                         />
                     </div>
@@ -126,7 +126,7 @@ export default function AdminProfilePage() {
                             onChange={e => setProfile({ ...profile, lastName: e.target.value })}
                             style={inputStyle}
                             placeholder="Last name"
-                            onFocus={e => e.target.style.borderColor = '#0B4222'}
+                            onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
                             onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                         />
                     </div>
@@ -143,7 +143,7 @@ export default function AdminProfilePage() {
                         onChange={e => setProfile({ ...profile, phone: e.target.value })}
                         style={inputStyle}
                         placeholder="01XXXXXXXXX"
-                        onFocus={e => e.target.style.borderColor = '#0B4222'}
+                        onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
                         onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                     />
                 </div>
@@ -153,7 +153,7 @@ export default function AdminProfilePage() {
                     disabled={isUpdating}
                     style={{
                         display: 'inline-flex', alignItems: 'center', gap: '8px',
-                        padding: '11px 28px', background: '#0B4222', color: '#fff',
+                        padding: '11px 28px', background: 'var(--color-primary)', color: '#fff',
                         border: 'none', borderRadius: '8px', fontSize: '13px',
                         fontWeight: 700, cursor: 'pointer', letterSpacing: '0.5px',
                         opacity: isUpdating ? 0.7 : 1, transition: 'all 0.2s ease',
@@ -187,7 +187,7 @@ export default function AdminProfilePage() {
                             onChange={e => setPw({ ...pw, currentPassword: e.target.value })}
                             style={inputStyle}
                             placeholder="Enter current password"
-                            onFocus={e => e.target.style.borderColor = '#0B4222'}
+                            onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
                             onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                         />
                     </div>
@@ -199,7 +199,7 @@ export default function AdminProfilePage() {
                             onChange={e => setPw({ ...pw, newPassword: e.target.value })}
                             style={inputStyle}
                             placeholder="Enter new password (min 6 chars)"
-                            onFocus={e => e.target.style.borderColor = '#0B4222'}
+                            onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
                             onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                         />
                     </div>
@@ -211,7 +211,7 @@ export default function AdminProfilePage() {
                             onChange={e => setPw({ ...pw, confirmPassword: e.target.value })}
                             style={inputStyle}
                             placeholder="Re-enter new password"
-                            onFocus={e => e.target.style.borderColor = '#0B4222'}
+                            onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
                             onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                         />
                         {pw.confirmPassword && pw.newPassword !== pw.confirmPassword && (

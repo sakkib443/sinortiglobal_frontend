@@ -46,7 +46,7 @@ export default function OrdersPage() {
 
     // Stats
     const stats = [
-        { label: 'Total Orders', value: ordersData.length, icon: FiPackage, color: '#0B4222' },
+        { label: 'Total Orders', value: ordersData.length, icon: FiPackage, color: 'var(--color-primary)' },
         { label: 'Pending', value: ordersData.filter(o => o.status === 'Pending').length, icon: FiX, color: '#F59E0B' },
         { label: 'Shipped', value: ordersData.filter(o => o.status === 'Shipped').length, icon: FiTruck, color: '#A855F7' },
         { label: 'Delivered', value: ordersData.filter(o => o.status === 'Delivered').length, icon: FiCheck, color: '#22C55E' },
@@ -90,7 +90,7 @@ export default function OrdersPage() {
                             placeholder="Search orders..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                         />
                     </div>
                     <div className="flex gap-3">
@@ -133,7 +133,7 @@ export default function OrdersPage() {
                         <tbody className="divide-y divide-gray-100">
                             {filteredOrders.map((order) => (
                                 <tr key={order.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 text-sm font-medium text-[#0B4222]">{order.id}</td>
+                                    <td className="px-6 py-4 text-sm font-medium text-[var(--color-primary)]">{order.id}</td>
                                     <td className="px-6 py-4">
                                         <p className="font-medium text-gray-800">{order.customer}</p>
                                         <p className="text-sm text-gray-500">{order.email}</p>
@@ -153,7 +153,7 @@ export default function OrdersPage() {
                                     <td className="px-6 py-4 text-sm text-gray-500">{order.date}</td>
                                     <td className="px-6 py-4">
                                         <div className="flex justify-end">
-                                            <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-[#0B4222]">
+                                            <button className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 hover:text-[var(--color-primary)]">
                                                 <FiEye size={18} />
                                             </button>
                                         </div>
@@ -169,7 +169,7 @@ export default function OrdersPage() {
                     <p className="text-sm text-gray-500">Showing 1-{filteredOrders.length} of {ordersData.length} orders</p>
                     <div className="flex gap-2">
                         <button className="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Previous</button>
-                        <button className="px-3 py-1 bg-[#0B4222] text-white rounded-lg">1</button>
+                        <button className="px-3 py-1 bg-[var(--color-primary)] text-white rounded-lg">1</button>
                         <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">Next</button>
                     </div>
                 </div>

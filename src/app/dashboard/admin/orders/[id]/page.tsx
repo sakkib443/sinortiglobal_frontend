@@ -98,7 +98,7 @@ export default function OrderDetailsPage() {
     if (isLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="animate-spin w-10 h-10 border-4 border-[#0B4222] border-t-transparent rounded-full font-medium"></div>
+                <div className="animate-spin w-10 h-10 border-4 border-[var(--color-primary)] border-t-transparent rounded-full font-medium"></div>
             </div>
         );
     }
@@ -131,7 +131,7 @@ export default function OrderDetailsPage() {
                         <FiPrinter size={16} />
                         Invoice
                     </button>
-                    <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 bg-[#0B4222] text-white rounded-md text-sm font-bold hover:bg-[#093519] transition-all shadow-md">
+                    <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all shadow-md">
                         <FiCheckCircle size={16} />
                         Finish Prep
                     </button>
@@ -144,7 +144,7 @@ export default function OrderDetailsPage() {
                     {/* Items Table */}
                     <div className="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
                         <div className="p-5 border-b border-gray-100 flex items-center gap-2">
-                            <FiPackage className="text-[#0B4222]" size={20} />
+                            <FiPackage className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold text-gray-800">Order Items</h2>
                             <span className="ml-auto bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-bold">{order.items.length} Items</span>
                         </div>
@@ -218,7 +218,7 @@ export default function OrderDetailsPage() {
                                 <div className="h-px bg-gray-200 my-2"></div>
                                 <div className="flex justify-between text-lg font-bold text-gray-900">
                                     <span>Total:</span>
-                                    <span className="text-[#0B4222]">৳{(order.total || 0).toLocaleString()}</span>
+                                    <span className="text-[var(--color-primary)]">৳{(order.total || 0).toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>
@@ -227,7 +227,7 @@ export default function OrderDetailsPage() {
                     {/* Timeline */}
                     <div className="bg-white rounded-md border border-gray-200 shadow-sm p-6">
                         <div className="flex items-center gap-2 mb-6 text-gray-800">
-                            <FiClock className="text-[#0B4222]" size={20} />
+                            <FiClock className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold">Order Journey</h2>
                         </div>
                         <div className="space-y-6">
@@ -236,9 +236,9 @@ export default function OrderDetailsPage() {
                                     {idx !== order.timeline.length - 1 && (
                                         <div className="absolute left-3 top-7 bottom-0 w-px bg-gray-100"></div>
                                     )}
-                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 z-10 bg-white ${idx === 0 ? 'border-[#0B4222] text-[#0B4222]' : 'border-gray-200 text-gray-400'
+                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 z-10 bg-white ${idx === 0 ? 'border-[var(--color-primary)] text-[var(--color-primary)]' : 'border-gray-200 text-gray-400'
                                         }`}>
-                                        <div className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-[#0B4222]' : 'bg-gray-200'}`}></div>
+                                        <div className={`w-2 h-2 rounded-full ${idx === 0 ? 'bg-[var(--color-primary)]' : 'bg-gray-200'}`}></div>
                                     </div>
                                     <div className="flex-1 -mt-1">
                                         <div className="flex justify-between">
@@ -260,12 +260,12 @@ export default function OrderDetailsPage() {
                     {/* Customer Info */}
                     <div className="bg-white rounded-md border border-gray-200 shadow-sm p-6">
                         <div className="flex items-center gap-2 mb-4 text-gray-800">
-                            <FiUser className="text-[#0B4222]" size={20} />
+                            <FiUser className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold">Customer Details</h2>
                         </div>
                         <div className="space-y-4">
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-md bg-gray-50 border border-gray-100 flex items-center justify-center font-bold text-[#0B4222]">
+                                <div className="w-10 h-10 rounded-md bg-gray-50 border border-gray-100 flex items-center justify-center font-bold text-[var(--color-primary)]">
                                     {(order.user?.firstName || order.shippingAddress?.fullName || '?')[0]}{(order.user?.lastName || '')[0]}
                                 </div>
                                 <div>
@@ -289,7 +289,7 @@ export default function OrderDetailsPage() {
                     {/* Shipping Address */}
                     <div className="bg-white rounded-md border border-gray-200 shadow-sm p-6">
                         <div className="flex items-center gap-2 mb-4 text-gray-800">
-                            <FiMapPin className="text-[#0B4222]" size={20} />
+                            <FiMapPin className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold">Shipping To</h2>
                         </div>
                         <div className="text-sm text-gray-600 leading-relaxed">
@@ -307,7 +307,7 @@ export default function OrderDetailsPage() {
                     {/* Payment Status */}
                     <div className="bg-white rounded-md border border-gray-200 shadow-sm p-6">
                         <div className="flex items-center gap-2 mb-4 text-gray-800">
-                            <FiDollarSign className="text-[#0B4222]" size={20} />
+                            <FiDollarSign className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold">Payment Information</h2>
                         </div>
                         <div className="space-y-4">
@@ -329,7 +329,7 @@ export default function OrderDetailsPage() {
                                         <option value="refunded">Refunded</option>
                                     </select>
                                     {selectedPaymentStatus && (
-                                        <button onClick={handleUpdatePayment} className="p-1 bg-[#0B4222] text-white rounded-md shadow-sm">
+                                        <button onClick={handleUpdatePayment} className="p-1 bg-[var(--color-primary)] text-white rounded-md shadow-sm">
                                             <FiCheckCircle size={12} />
                                         </button>
                                     )}
@@ -347,7 +347,7 @@ export default function OrderDetailsPage() {
                     {/* Change Status */}
                     <div className="bg-white rounded-md border border-gray-200 shadow-sm p-6">
                         <div className="flex items-center gap-2 mb-4 text-gray-800">
-                            <FiEdit3 className="text-[#0B4222]" size={20} />
+                            <FiEdit3 className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold">Order Actions</h2>
                         </div>
                         <div className="space-y-4">
@@ -370,7 +370,7 @@ export default function OrderDetailsPage() {
                                     <button
                                         onClick={handleUpdateStatus}
                                         disabled={!selectedStatus || isUpdatingStatus}
-                                        className="px-4 py-2 bg-[#0B4222] text-white rounded-md hover:bg-[#093519] transition-all shadow-md disabled:opacity-50"
+                                        className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-md hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50"
                                     >
                                         <FiSave size={16} />
                                     </button>

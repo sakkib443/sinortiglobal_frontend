@@ -51,7 +51,7 @@ const RegisterPageInner = () => {
             localStorage.setItem('token', token);
             toast.success('Account created! Welcome 🎉', {
                 duration: 4000,
-                style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
+                style: { borderRadius: '10px', background: 'var(--color-primary)', color: '#fff' },
             });
 
             // ── Smart Redirect Logic ──
@@ -72,7 +72,7 @@ const RegisterPageInner = () => {
 
     const inputStyle = (name: string): React.CSSProperties => ({
         width: '100%', padding: '14px 16px 14px 44px',
-        border: `1.5px solid ${focused === name ? '#0B4222' : '#e5e7eb'}`,
+        border: `1.5px solid ${focused === name ? 'var(--color-primary)' : '#e5e7eb'}`,
         borderRadius: '10px', fontSize: '14px', fontFamily: 'inherit',
         background: '#fff', outline: 'none', transition: 'border-color 0.2s ease',
         boxSizing: 'border-box', color: '#111',
@@ -86,7 +86,7 @@ const RegisterPageInner = () => {
         <div style={{ background: '#fff', borderRadius: '20px', padding: '44px 40px', boxShadow: '0 4px 40px rgba(0,0,0,0.08)', border: '1px solid #f0f0f0' }}>
 
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#0B4222', margin: '0 0 6px', letterSpacing: '-0.5px' }}>Create Account</h1>
+                <h1 style={{ fontSize: '28px', fontWeight: 900, color: 'var(--color-primary)', margin: '0 0 6px', letterSpacing: '-0.5px' }}>Create Account</h1>
                 <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Join Sinotri Global for a better trading experience</p>
             </div>
 
@@ -96,7 +96,7 @@ const RegisterPageInner = () => {
                 <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Full Name</label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ ...iconStyle, color: focused === 'name' ? '#0B4222' : '#9ca3af' }}><FiUser size={17} /></div>
+                        <div style={{ ...iconStyle, color: focused === 'name' ? 'var(--color-primary)' : '#9ca3af' }}><FiUser size={17} /></div>
                         <input type="text" name="name" required value={formData.name}
                             onChange={handleChange} onFocus={() => setFocused('name')} onBlur={() => setFocused(null)}
                             style={inputStyle('name')} placeholder="Enter your full name" autoComplete="name" />
@@ -107,7 +107,7 @@ const RegisterPageInner = () => {
                 <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Email Address</label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ ...iconStyle, color: focused === 'email' ? '#0B4222' : '#9ca3af' }}><FiMail size={17} /></div>
+                        <div style={{ ...iconStyle, color: focused === 'email' ? 'var(--color-primary)' : '#9ca3af' }}><FiMail size={17} /></div>
                         <input type="email" name="email" required value={formData.email}
                             onChange={handleChange} onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
                             style={inputStyle('email')} placeholder="name@example.com" autoComplete="email" />
@@ -118,7 +118,7 @@ const RegisterPageInner = () => {
                 <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Phone Number</label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ ...iconStyle, color: focused === 'phone' ? '#0B4222' : '#9ca3af' }}><FiPhone size={17} /></div>
+                        <div style={{ ...iconStyle, color: focused === 'phone' ? 'var(--color-primary)' : '#9ca3af' }}><FiPhone size={17} /></div>
                         <input type="tel" name="phone" required value={formData.phone}
                             onChange={handleChange} onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)}
                             style={inputStyle('phone')} placeholder="01XXXXXXXXX" autoComplete="tel" />
@@ -129,7 +129,7 @@ const RegisterPageInner = () => {
                 <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Location</label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ ...iconStyle, color: focused === 'loc' ? '#0B4222' : '#9ca3af' }}><FiMapPin size={17} /></div>
+                        <div style={{ ...iconStyle, color: focused === 'loc' ? 'var(--color-primary)' : '#9ca3af' }}><FiMapPin size={17} /></div>
                         <input type="text" name="location" required value={formData.location}
                             onChange={handleChange} onFocus={() => setFocused('loc')} onBlur={() => setFocused(null)}
                             style={inputStyle('loc')} placeholder="e.g. Dhaka, Mirpur" autoComplete="address-level2" />
@@ -140,7 +140,7 @@ const RegisterPageInner = () => {
                 <div>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Password</label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ ...iconStyle, color: focused === 'pw' ? '#0B4222' : '#9ca3af' }}><FiLock size={17} /></div>
+                        <div style={{ ...iconStyle, color: focused === 'pw' ? 'var(--color-primary)' : '#9ca3af' }}><FiLock size={17} /></div>
                         <input type={showPassword ? 'text' : 'password'} name="password" required minLength={6}
                             value={formData.password} onChange={handleChange}
                             onFocus={() => setFocused('pw')} onBlur={() => setFocused(null)}
@@ -157,7 +157,7 @@ const RegisterPageInner = () => {
                 <button type="submit" disabled={isLoading}
                     style={{
                         width: '100%', padding: '15px', marginTop: '6px',
-                        background: isLoading ? '#5a8a6e' : 'linear-gradient(135deg, #0B4222 0%, #0d5229 100%)',
+                        background: isLoading ? '#5a8a6e' : 'linear-gradient(135deg, var(--color-primary) 0%, #0d5229 100%)',
                         color: '#fff', border: 'none', borderRadius: '12px', fontSize: '15px', fontWeight: 800,
                         cursor: isLoading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center',
                         justifyContent: 'center', gap: '8px', transition: 'all 0.2s ease', letterSpacing: '0.3px', fontFamily: 'inherit',
@@ -179,7 +179,7 @@ const RegisterPageInner = () => {
                 <p style={{ fontSize: '13px', color: '#6b7280', margin: 0, fontWeight: 500 }}>
                     Already have an account?{' '}
                     <Link href={redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : '/login'}
-                        style={{ color: '#0B4222', fontWeight: 800, textDecoration: 'none' }}>
+                        style={{ color: 'var(--color-primary)', fontWeight: 800, textDecoration: 'none' }}>
                         Sign In &rarr;
                     </Link>
                 </p>
@@ -191,7 +191,7 @@ const RegisterPageInner = () => {
 };
 
 const RegisterPage = () => (
-    <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center', color: '#0B4222' }}>Loading...</div>}>
+    <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-primary)' }}>Loading...</div>}>
         <RegisterPageInner />
     </Suspense>
 );

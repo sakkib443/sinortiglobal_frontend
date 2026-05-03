@@ -8,7 +8,7 @@ export default function RefundPage() {
             slug="refund"
             fallbackTitle="Refund Policy"
             icon={<FiRefreshCw size={24} />}
-            accentColor="#0B4222"
+            accentColor="var(--color-primary)"
             ctaTitle="Need a refund or return?"
             ctaDescription="Contact our support team and we'll help resolve your issue."
             ctaButtonText="Contact Support"

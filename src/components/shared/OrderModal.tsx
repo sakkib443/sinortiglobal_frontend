@@ -189,12 +189,12 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
             if (!isAuthenticated) {
                 toast.success('Order placed! Account created — your email is your login ID & password.', {
-                    style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
+                    style: { borderRadius: '10px', background: 'var(--color-primary)', color: '#fff' },
                     duration: 6000, icon: '🎉',
                 });
             } else {
                 toast.success('Order placed successfully! 🎉', {
-                    style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
+                    style: { borderRadius: '10px', background: 'var(--color-primary)', color: '#fff' },
                     duration: 4000,
                 });
             }
@@ -242,7 +242,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                             onChange={e => setField('name', e.target.value)}
                             onBlur={() => onBlur('name')}
                             placeholder="Enter your full name" style={inputStyle('name')}
-                            onFocus={e => { if (!errors.name) e.target.style.borderColor = '#0B4222'; }} />
+                            onFocus={e => { if (!errors.name) e.target.style.borderColor = 'var(--color-primary)'; }} />
                         {errors.name && <p style={errorTextStyle}>⚠ {errors.name}</p>}
                     </div>
 
@@ -256,7 +256,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                             onChange={e => setField('email', e.target.value)}
                             onBlur={() => onBlur('email')}
                             placeholder="name@example.com" style={inputStyle('email')}
-                            onFocus={e => { if (!errors.email) e.target.style.borderColor = '#0B4222'; }} />
+                            onFocus={e => { if (!errors.email) e.target.style.borderColor = 'var(--color-primary)'; }} />
                         {errors.email && <p style={errorTextStyle}>⚠ {errors.email}</p>}
                     </div>
 
@@ -267,7 +267,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                             onChange={e => setField('phone', e.target.value)}
                             onBlur={() => onBlur('phone')}
                             placeholder="01XXXXXXXXX" style={inputStyle('phone')}
-                            onFocus={e => { if (!errors.phone) e.target.style.borderColor = '#0B4222'; }} />
+                            onFocus={e => { if (!errors.phone) e.target.style.borderColor = 'var(--color-primary)'; }} />
                         {errors.phone && <p style={errorTextStyle}>⚠ {errors.phone}</p>}
                     </div>
 
@@ -279,7 +279,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                             onBlur={() => onBlur('location')}
                             placeholder="Enter your full delivery address" rows={2}
                             style={{ ...inputStyle('location'), resize: 'none' }}
-                            onFocus={e => { if (!errors.location) e.target.style.borderColor = '#0B4222'; }} />
+                            onFocus={e => { if (!errors.location) e.target.style.borderColor = 'var(--color-primary)'; }} />
                         {errors.location && <p style={errorTextStyle}>⚠ {errors.location}</p>}
                     </div>
 
@@ -290,7 +290,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         </label>
                         <input type="text" value={formData.query} onChange={e => setFormData({ ...formData, query: e.target.value })}
                             placeholder="Any special instructions?" style={baseInputStyle}
-                            onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                            onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                     </div>
                 </div>
 
@@ -313,7 +313,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
                 {/* Submit */}
                 <button onClick={handleSubmit} disabled={isLoading}
-                    style={{ width: '100%', marginTop: '16px', padding: '14px', background: isLoading ? '#999' : '#0B4222', color: '#fff', fontSize: '14px', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', border: 'none', borderRadius: '8px', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    style={{ width: '100%', marginTop: '16px', padding: '14px', background: isLoading ? '#999' : 'var(--color-primary)', color: '#fff', fontSize: '14px', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', border: 'none', borderRadius: '8px', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     {isLoading ? (
                         <>
                             <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'omSpin 0.8s linear infinite' }} />

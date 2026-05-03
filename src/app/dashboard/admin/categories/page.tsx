@@ -92,7 +92,7 @@ const CategoriesPage = () => {
                 </div>
                 <button onClick={openCreate} style={{
                     display: 'flex', alignItems: 'center', gap: '6px',
-                    padding: '8px 16px', background: '#0B4222', color: '#fff',
+                    padding: '8px 16px', background: 'var(--color-primary)', color: '#fff',
                     border: 'none', borderRadius: '7px', fontSize: '12.5px', fontWeight: 700,
                     cursor: 'pointer',
                 }}>
@@ -116,7 +116,7 @@ const CategoriesPage = () => {
             <div style={{ background: '#fff', border: '1px solid #eee', borderRadius: '10px', overflow: 'hidden' }}>
                 {isLoading ? (
                     <div style={{ padding: '40px', textAlign: 'center' }}>
-                        <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
+                        <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
                     </div>
                 ) : filtered.length > 0 ? (
                     <div>
@@ -145,7 +145,7 @@ const CategoriesPage = () => {
                                             <span style={{
                                                 fontSize: '9px', fontWeight: 700,
                                                 padding: '1px 6px', borderRadius: '999px',
-                                                background: cat.isActive ? '#f0faf4' : '#fef2f2',
+                                                background: cat.isActive ? 'var(--color-primary-lightest)' : '#fef2f2',
                                                 color: cat.isActive ? '#16a34a' : '#dc2626',
                                             }}>
                                                 {cat.isActive ? 'Active' : 'Inactive'}
@@ -158,9 +158,9 @@ const CategoriesPage = () => {
                                     <button onClick={() => openEdit(cat)} style={{
                                         width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         background: 'transparent', border: '1px solid transparent', borderRadius: '6px',
-                                        cursor: 'pointer', color: '#0B4222', transition: 'all 0.15s',
+                                        cursor: 'pointer', color: 'var(--color-primary)', transition: 'all 0.15s',
                                     }}
-                                        onMouseEnter={e => { e.currentTarget.style.background = '#f0faf4'; e.currentTarget.style.borderColor = '#e5e7eb'; }}
+                                        onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-primary-lightest)'; e.currentTarget.style.borderColor = '#e5e7eb'; }}
                                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent'; }}
                                     >
                                         <FiEdit2 size={14} />
@@ -184,7 +184,7 @@ const CategoriesPage = () => {
                         <FiGrid size={28} color="#ddd" style={{ margin: '0 auto 10px' }} />
                         <p style={{ fontSize: '13px', color: '#aaa', margin: '0 0 12px' }}>No categories found</p>
                         <button onClick={openCreate} style={{
-                            padding: '7px 16px', background: '#0B4222', color: '#fff',
+                            padding: '7px 16px', background: 'var(--color-primary)', color: '#fff',
                             border: 'none', borderRadius: '7px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
                         }}>
                             <FiPlus size={12} style={{ marginRight: '4px', verticalAlign: '-2px' }} /> Create Category
@@ -232,7 +232,7 @@ const CategoriesPage = () => {
                         <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {/* Name */}
                             <div>
-                                <label style={lbl}>Category Name <span style={{ color: '#E4525C' }}>*</span></label>
+                                <label style={lbl}>Category Name <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                 <input
                                     type="text"
                                     placeholder="e.g. Electronics, Fashion"
@@ -269,7 +269,7 @@ const CategoriesPage = () => {
                                             style={{
                                                 position: 'relative', width: '36px', height: '20px',
                                                 borderRadius: '999px', cursor: 'pointer',
-                                                background: (form as any)[toggle.key] ? '#0B4222' : '#ddd',
+                                                background: (form as any)[toggle.key] ? 'var(--color-primary)' : '#ddd',
                                                 transition: 'background 0.2s',
                                             }}
                                         >
@@ -300,7 +300,7 @@ const CategoriesPage = () => {
                             </button>
                             <button onClick={handleSave} disabled={isSaving} style={{
                                 flex: 1, padding: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                background: isSaving ? '#888' : '#0B4222', color: '#fff',
+                                background: isSaving ? '#888' : 'var(--color-primary)', color: '#fff',
                                 border: 'none', borderRadius: '7px', fontSize: '12.5px', fontWeight: 700,
                                 cursor: isSaving ? 'not-allowed' : 'pointer',
                             }}>

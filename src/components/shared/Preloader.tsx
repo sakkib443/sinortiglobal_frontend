@@ -39,7 +39,7 @@ const Preloader: React.FC = () => {
         <div
             className={`fixed inset-0 z-[99999] flex items-center justify-center transition-all duration-700 ${fadeOut ? 'opacity-0 scale-105' : 'opacity-100 scale-100'}`}
             style={{
-                background: 'linear-gradient(135deg, #041a0e 0%, #0B4222 40%, #0d5229 70%, #083d1f 100%)',
+                background: 'linear-gradient(135deg, #041a0e 0%, var(--color-primary) 40%, #0d5229 70%, #083d1f 100%)',
                 pointerEvents: fadeOut ? 'none' : 'auto',
             }}
         >

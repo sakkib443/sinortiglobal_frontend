@@ -71,10 +71,10 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                                 {mobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
                             </button>
                             <Link href="/" className="flex items-center gap-3 group">
-                                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#0B4222] to-[#1a6b3c] flex items-center justify-center text-white font-black text-sm shadow-md shadow-[#0B4222]/20">
+                                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[#1a6b3c] flex items-center justify-center text-white font-black text-sm shadow-md shadow-[var(--color-primary)]/20">
                                     M
                                 </div>
-                                <span className="hidden sm:block text-lg font-bold text-gray-800 group-hover:text-[#0B4222] transition-colors">
+                                <span className="hidden sm:block text-lg font-bold text-gray-800 group-hover:text-[var(--color-primary)] transition-colors">
                                     Sinotri Global
                                 </span>
                             </Link>
@@ -82,7 +82,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
 
                         {/* Center: Breadcrumb */}
                         <div className="hidden md:flex items-center gap-2 text-sm text-gray-400">
-                            <Link href="/" className="hover:text-[#0B4222] transition-colors">
+                            <Link href="/" className="hover:text-[var(--color-primary)] transition-colors">
                                 <FiHome size={14} />
                             </Link>
                             <FiChevronRight size={12} />
@@ -121,7 +121,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                             {/* User Card */}
                             <div className="bg-white rounded-md border border-gray-100 p-5 mb-4 shadow-sm">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#0B4222] to-[#1a6b3c] flex items-center justify-center text-white font-bold text-lg shadow-md shadow-[#0B4222]/20">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[#1a6b3c] flex items-center justify-center text-white font-bold text-lg shadow-md shadow-[var(--color-primary)]/20">
                                         {getInitials()}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -146,7 +146,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                                                     : 'text-gray-500 hover:bg-[#f5f5f5] hover:text-gray-800'
                                             }`}
                                         >
-                                            <item.icon size={18} className={isActive(item.href) ? '' : 'group-hover:text-[#0B4222]'} />
+                                            <item.icon size={18} className={isActive(item.href) ? '' : 'group-hover:text-[var(--color-primary)]'} />
                                             <span>{item.label}</span>
                                             {isActive(item.href) && (
                                                 <FiChevronRight size={14} className="ml-auto" />
@@ -178,7 +178,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                             <div className="fixed left-0 top-0 bottom-0 w-72 bg-white z-50 lg:hidden shadow-2xl overflow-y-auto">
                                 <div className="p-4 border-b border-gray-100 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0B4222] to-[#1a6b3c] flex items-center justify-center text-white font-bold shadow-md">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[#1a6b3c] flex items-center justify-center text-white font-bold shadow-md">
                                             {getInitials()}
                                         </div>
                                         <div>

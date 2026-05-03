@@ -46,7 +46,7 @@ const LoginPageInner = () => {
             dispatch(loginSuccess({ user, token }));
             localStorage.setItem('token', token);
             toast.success('Welcome back! Login successful.', {
-                style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
+                style: { borderRadius: '10px', background: 'var(--color-primary)', color: '#fff' },
                 icon: '✅',
             });
 
@@ -84,7 +84,7 @@ const LoginPageInner = () => {
 
     const inputStyle = (name: string): React.CSSProperties => ({
         width: '100%', padding: '14px 16px 14px 44px',
-        border: `1.5px solid ${focused === name ? '#0B4222' : '#e5e7eb'}`,
+        border: `1.5px solid ${focused === name ? 'var(--color-primary)' : '#e5e7eb'}`,
         borderRadius: '10px', fontSize: '14px', fontFamily: 'inherit',
         background: '#fff', outline: 'none', transition: 'border-color 0.2s ease',
         boxSizing: 'border-box', color: '#111',
@@ -105,7 +105,7 @@ const LoginPageInner = () => {
             )}
 
             <div style={{ marginBottom: '36px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 900, color: '#0B4222', margin: '0 0 6px', letterSpacing: '-0.5px' }}>Welcome Back</h1>
+                <h1 style={{ fontSize: '28px', fontWeight: 900, color: 'var(--color-primary)', margin: '0 0 6px', letterSpacing: '-0.5px' }}>Welcome Back</h1>
                 <p style={{ fontSize: '14px', color: '#6b7280', margin: 0, fontWeight: 500 }}>Please enter your credentials to sign in</p>
             </div>
 
@@ -117,7 +117,7 @@ const LoginPageInner = () => {
                         Email or Phone Number
                     </label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: '50%', left: '14px', transform: 'translateY(-50%)', color: focused === 'id' ? '#0B4222' : '#9ca3af', transition: 'color 0.2s' }}>
+                        <div style={{ position: 'absolute', top: '50%', left: '14px', transform: 'translateY(-50%)', color: focused === 'id' ? 'var(--color-primary)' : '#9ca3af', transition: 'color 0.2s' }}>
                             <FiUser size={17} />
                         </div>
                         <input
@@ -140,7 +140,7 @@ const LoginPageInner = () => {
                         Password
                     </label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: '50%', left: '14px', transform: 'translateY(-50%)', color: focused === 'pw' ? '#0B4222' : '#9ca3af', transition: 'color 0.2s' }}>
+                        <div style={{ position: 'absolute', top: '50%', left: '14px', transform: 'translateY(-50%)', color: focused === 'pw' ? 'var(--color-primary)' : '#9ca3af', transition: 'color 0.2s' }}>
                             <FiLock size={17} />
                         </div>
                         <input
@@ -170,7 +170,7 @@ const LoginPageInner = () => {
                     disabled={isLoading}
                     style={{
                         width: '100%', padding: '15px', marginTop: '4px',
-                        background: isLoading ? '#5a8a6e' : 'linear-gradient(135deg, #0B4222 0%, #0d5229 100%)',
+                        background: isLoading ? '#5a8a6e' : 'linear-gradient(135deg, var(--color-primary) 0%, #0d5229 100%)',
                         color: '#fff', border: 'none', borderRadius: '12px',
                         fontSize: '15px', fontWeight: 800, cursor: isLoading ? 'not-allowed' : 'pointer',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
@@ -198,7 +198,7 @@ const LoginPageInner = () => {
                     {"Don't have an account? "}
                     <Link
                         href={redirectPath ? `/register?redirect=${encodeURIComponent(redirectPath)}` : '/register'}
-                        style={{ color: '#0B4222', fontWeight: 800, textDecoration: 'none' }}
+                        style={{ color: 'var(--color-primary)', fontWeight: 800, textDecoration: 'none' }}
                     >
                         Create Account &rarr;
                     </Link>
@@ -211,7 +211,7 @@ const LoginPageInner = () => {
 };
 
 const LoginPage = () => (
-    <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center', color: '#0B4222' }}>Loading...</div>}>
+    <Suspense fallback={<div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-primary)' }}>Loading...</div>}>
         <LoginPageInner />
     </Suspense>
 );

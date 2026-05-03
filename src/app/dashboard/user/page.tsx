@@ -23,7 +23,7 @@ const StatusBadge = ({ status }: { status: string }) => {
         confirmed:  { bg: '#EFF6FF', color: '#1D4ED8', label: 'Confirmed' },
         processing: { bg: '#F5F3FF', color: '#7C3AED', label: 'Processing' },
         shipped:    { bg: '#EEF2FF', color: '#3730A3', label: 'Shipped' },
-        delivered:  { bg: '#ECFDF5', color: '#065F46', label: 'Delivered' },
+        delivered:  { bg: 'var(--color-primary-lightest)', color: '#065F46', label: 'Delivered' },
         cancelled:  { bg: '#FEF2F2', color: '#991B1B', label: 'Cancelled' },
     };
     const s = map[status] || map.pending;
@@ -201,7 +201,7 @@ const UserDashboard = () => {
                     <h2 style={{ fontSize: '15px', fontWeight: 800, color: '#111', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         Recent Orders
                     </h2>
-                    <Link href="/dashboard/user/orders" style={{ fontSize: '12px', color: '#0B4222', fontWeight: 700, textDecoration: 'none' }}>
+                    <Link href="/dashboard/user/orders" style={{ fontSize: '12px', color: 'var(--color-primary)', fontWeight: 700, textDecoration: 'none' }}>
                         View All →
                     </Link>
                 </div>
@@ -209,7 +209,7 @@ const UserDashboard = () => {
                 <div style={{ background: '#fff', borderRadius: '8px', border: '1px solid #f0f0f0', overflow: 'hidden' }}>
                     {ordersLoading ? (
                         <div style={{ padding: '48px', textAlign: 'center' }}>
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '3px solid #f0f0f0', borderTopColor: '#0B4222', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', border: '3px solid #f0f0f0', borderTopColor: 'var(--color-primary)', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
                             <p style={{ color: '#bbb', fontSize: '13px', marginTop: '12px' }}>Loading orders...</p>
                         </div>
                     ) : orders.length === 0 ? (
@@ -219,7 +219,7 @@ const UserDashboard = () => {
                             <p style={{ color: '#aaa', fontSize: '13px', margin: '0 0 20px' }}>Start shopping to see your orders here</p>
                             <Link href="/" style={{
                                 display: 'inline-flex', alignItems: 'center', gap: '8px',
-                                padding: '12px 28px', background: '#0B4222', color: '#fff',
+                                padding: '12px 28px', background: 'var(--color-primary)', color: '#fff',
                                 borderRadius: '8px', fontWeight: 700, fontSize: '13px',
                                 textDecoration: 'none', letterSpacing: '0.5px',
                             }}>
@@ -244,7 +244,7 @@ const UserDashboard = () => {
                                             background: '#F0F7F3', display: 'flex',
                                             alignItems: 'center', justifyContent: 'center',
                                         }}>
-                                            <FiPackage size={17} color="#0B4222" />
+                                            <FiPackage size={17} color="var(--color-primary)" />
                                         </div>
                                         <div>
                                             <p style={{ fontSize: '13px', fontWeight: 700, color: '#111', margin: '0 0 2px' }}>

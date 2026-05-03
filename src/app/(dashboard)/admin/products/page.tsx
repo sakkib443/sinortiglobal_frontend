@@ -34,7 +34,7 @@ export default function ProductsPage() {
                     <h1 className="text-2xl font-bold text-gray-800">Products</h1>
                     <p className="text-gray-500">Manage your product inventory</p>
                 </div>
-                <Link href="/dashboard/admin/products/new" className="flex items-center gap-2 px-4 py-2 bg-[#0B4222] text-white rounded-lg font-medium hover:opacity-90" style={{ textDecoration: 'none' }}>
+                <Link href="/dashboard/admin/products/new" className="flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:opacity-90" style={{ textDecoration: 'none' }}>
                     <FiPlus size={20} />
                     Add Product
                 </Link>
@@ -50,7 +50,7 @@ export default function ProductsPage() {
                             placeholder="Search products..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                         />
                     </div>
                     <div className="flex gap-3">
@@ -143,7 +143,7 @@ export default function ProductsPage() {
                     <p className="text-sm text-gray-500">Showing 1-{filteredProducts.length} of {productsData.length} products</p>
                     <div className="flex gap-2">
                         <button className="px-3 py-1 border rounded-lg hover:bg-gray-50 disabled:opacity-50">Previous</button>
-                        <button className="px-3 py-1 bg-[#0B4222] text-white rounded-lg">1</button>
+                        <button className="px-3 py-1 bg-[var(--color-primary)] text-white rounded-lg">1</button>
                         <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">2</button>
                         <button className="px-3 py-1 border rounded-lg hover:bg-gray-50">Next</button>
                     </div>

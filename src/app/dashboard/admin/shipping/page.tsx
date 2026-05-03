@@ -109,7 +109,7 @@ const ShipmentsTab = ({
                                         <div className="flex items-center justify-end gap-2">
                                             <button
                                                 onClick={() => onUpdateStatus(shipment._id, shipment.status)}
-                                                className="p-2 text-gray-400 hover:text-[#0B4222] bg-gray-50 rounded-md border border-gray-100"
+                                                className="p-2 text-gray-400 hover:text-[var(--color-primary)] bg-gray-50 rounded-md border border-gray-100"
                                             >
                                                 <FiEdit2 size={16} />
                                             </button>
@@ -252,7 +252,7 @@ const ZoneModal = ({ isOpen, onClose, onSubmit, editingZone }: { isOpen: boolean
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Zone Name</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] focus:border-transparent outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none font-medium"
                             placeholder="e.g. Dhaka City"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -261,7 +261,7 @@ const ZoneModal = ({ isOpen, onClose, onSubmit, editingZone }: { isOpen: boolean
                     <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Areas (Comma separated)</label>
                         <textarea
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] focus:border-transparent outline-none font-medium h-24 resize-none"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none font-medium h-24 resize-none"
                             placeholder="e.g. Dhanmondi, Gulshan, Banani"
                             value={areas}
                             onChange={(e) => setAreas(e.target.value)}
@@ -273,7 +273,7 @@ const ZoneModal = ({ isOpen, onClose, onSubmit, editingZone }: { isOpen: boolean
                             id="isActive"
                             checked={isActive}
                             onChange={(e) => setIsActive(e.target.checked)}
-                            className="w-4 h-4 text-[#0B4222] rounded focus:ring-0"
+                            className="w-4 h-4 text-[var(--color-primary)] rounded focus:ring-0"
                         />
                         <label htmlFor="isActive" className="text-sm font-semibold text-gray-700">Zone is Active</label>
                     </div>
@@ -282,7 +282,7 @@ const ZoneModal = ({ isOpen, onClose, onSubmit, editingZone }: { isOpen: boolean
                     <button onClick={onClose} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors">Cancel</button>
                     <button
                         onClick={() => onSubmit({ name, areas: areas.split(',').map((a: string) => a.trim()).filter(Boolean), isActive })}
-                        className="px-6 py-2 bg-[#0B4222] text-white rounded-md text-sm font-bold shadow-md hover:bg-[#093519] transition-all"
+                        className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold shadow-md hover:bg-[var(--color-primary-dark)] transition-all"
                     >
                         Save Zone
                     </button>
@@ -313,7 +313,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                     <div className="col-span-2">
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Target Zone</label>
                         <select
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                             value={zoneId}
                             onChange={(e) => setZoneId(e.target.value)}
                         >
@@ -325,7 +325,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Rate Name</label>
                         <input
                             type="text"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                             placeholder="e.g. Next Day Delivery"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -335,7 +335,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Shipping Price (৳)</label>
                         <input
                             type="number"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                             value={price}
                             onChange={(e) => setPrice(Number(e.target.value))}
                         />
@@ -344,7 +344,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Free Minimum (৳)</label>
                         <input
                             type="number"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                             placeholder="0 for disabled"
                             value={freeMin}
                             onChange={(e) => setFreeMin(Number(e.target.value))}
@@ -354,7 +354,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Min Days</label>
                         <input
                             type="number"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                             value={minDays}
                             onChange={(e) => setMinDays(Number(e.target.value))}
                         />
@@ -363,7 +363,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                         <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Max Days</label>
                         <input
                             type="number"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                             value={maxDays}
                             onChange={(e) => setMaxDays(Number(e.target.value))}
                         />
@@ -379,7 +379,7 @@ const RateModal = ({ isOpen, onClose, onSubmit, zones, editingRate }: { isOpen: 
                             freeShippingMinimum: freeMin || undefined,
                             estimatedDays: { min: minDays, max: maxDays }
                         })}
-                        className="px-6 py-2 bg-[#0B4222] text-white rounded-md text-sm font-bold shadow-md hover:bg-[#093519] transition-all"
+                        className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold shadow-md hover:bg-[var(--color-primary-dark)] transition-all"
                     >
                         Save Rate
                     </button>
@@ -525,7 +525,7 @@ export default function ShippingPage() {
                             if (activeTab === 'zones') setIsZoneModalOpen(true);
                             if (activeTab === 'rates') setIsRateModalOpen(true);
                         }}
-                        className="px-4 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-semibold hover:bg-[#093519] flex items-center gap-2 transition-all shadow-sm"
+                        className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-sm"
                     >
                         <FiPlus size={16} />
                         Add {activeTab === 'zones' ? 'Zone' : activeTab === 'rates' ? 'Rate' : 'Manual Shipment'}
@@ -576,7 +576,7 @@ export default function ShippingPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`flex items-center gap-2 px-6 py-2 rounded-md text-sm font-semibold transition-all ${activeTab === tab.id
-                                ? 'bg-[#0B4222] text-white shadow-md'
+                                ? 'bg-[var(--color-primary)] text-white shadow-md'
                                 : 'text-gray-500 hover:bg-gray-50'
                                 }`}
                         >

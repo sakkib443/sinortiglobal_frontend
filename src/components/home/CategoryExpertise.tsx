@@ -26,10 +26,10 @@ const CategoryExpertise: React.FC = () => {
                     {/* Header */}
                     <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-3">
-                            <div className="w-1 h-6 bg-[#0B4222] rounded-full"></div>
+                            <div className="w-1 h-6 bg-[var(--color-primary)] rounded-full"></div>
                             <h3 className="text-lg font-bold text-gray-800">Top Categories</h3>
                         </div>
-                        <Link href="/products" className="text-sm text-[#0B4222] hover:underline font-medium">
+                        <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium">
                             View All →
                         </Link>
                     </div>
@@ -43,14 +43,14 @@ const CategoryExpertise: React.FC = () => {
                                     href={`/products?category=${cat._id}`}
                                     className="category-carousel-item flex flex-col items-center gap-3 group"
                                 >
-                                    <div className="w-[80px] h-[80px] rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-[#0B4222]/30 group-hover:shadow-xl group-hover:scale-110 group-hover:from-[#0B4222]/5 group-hover:to-[#0B4222]/10">
+                                    <div className="w-[80px] h-[80px] rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-[var(--color-primary)]/30 group-hover:shadow-xl group-hover:scale-110 group-hover:from-[var(--color-primary)]/5 group-hover:to-[var(--color-primary)]/10">
                                         {cat.image ? (
                                             <img src={cat.image} alt={cat.name} className="w-full h-full object-cover rounded-2xl" />
                                         ) : (
                                             <span className="text-3xl transition-transform duration-300 group-hover:scale-110">{cat.icon || '📦'}</span>
                                         )}
                                     </div>
-                                    <span className="text-[13px] text-gray-600 text-center font-medium group-hover:text-[#0B4222] transition-colors whitespace-nowrap">{cat.name}</span>
+                                    <span className="text-[13px] text-gray-600 text-center font-medium group-hover:text-[var(--color-primary)] transition-colors whitespace-nowrap">{cat.name}</span>
                                 </Link>
                             )) : (
                                 [...Array(8)].map((_, i) => (

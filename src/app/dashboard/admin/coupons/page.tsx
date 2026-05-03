@@ -67,7 +67,7 @@ const SelectionBox = ({
         <div className="space-y-2 border border-gray-100 rounded-md p-3 bg-gray-50/30">
             <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-gray-500 uppercase">{label}</label>
-                <span className="text-[10px] font-bold text-[#0B4222] bg-green-50 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-[var(--color-primary)] bg-green-50 px-2 py-0.5 rounded-full">
                     {selectedIds.length} Selected
                 </span>
             </div>
@@ -76,7 +76,7 @@ const SelectionBox = ({
                 <input
                     type="text"
                     placeholder={`Search ${label.toLowerCase()}...`}
-                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded outline-none focus:ring-1 focus:ring-[#0B4222]"
+                    className="w-full pl-8 pr-3 py-1.5 text-xs bg-white border border-gray-200 rounded outline-none focus:ring-1 focus:ring-[var(--color-primary)]"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -93,7 +93,7 @@ const SelectionBox = ({
                                 type="checkbox"
                                 checked={selectedIds.includes(item._id)}
                                 onChange={() => onToggle(item._id)}
-                                className="w-3.5 h-3.5 text-[#0B4222] border-gray-300 rounded focus:ring-0"
+                                className="w-3.5 h-3.5 text-[var(--color-primary)] border-gray-300 rounded focus:ring-0"
                             />
                             <span className="text-xs text-gray-700 truncate">{item.name || item.title}</span>
                         </label>
@@ -211,7 +211,7 @@ const CouponModal = ({
                             <input
                                 name="code"
                                 type="text"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-bold uppercase"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-bold uppercase"
                                 placeholder="MEGA2024"
                                 value={formData.code}
                                 onChange={handleChange}
@@ -222,7 +222,7 @@ const CouponModal = ({
                             <input
                                 name="name"
                                 type="text"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 placeholder="Summer Sale"
                                 value={formData.name}
                                 onChange={handleChange}
@@ -234,7 +234,7 @@ const CouponModal = ({
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Description</label>
                         <textarea
                             name="description"
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium h-20 resize-none"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium h-20 resize-none"
                             placeholder="Get 20% off on all items..."
                             value={formData.description}
                             onChange={handleChange}
@@ -256,7 +256,7 @@ const CouponModal = ({
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, applicableTo: option.id }))}
                                         className={`flex flex-col items-center justify-center p-3 rounded-md border transition-all gap-2 ${formData.applicableTo === option.id
-                                                ? 'bg-green-50 border-[#0B4222] text-[#0B4222] shadow-sm'
+                                                ? 'bg-green-50 border-[var(--color-primary)] text-[var(--color-primary)] shadow-sm'
                                                 : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'
                                             }`}
                                     >
@@ -293,7 +293,7 @@ const CouponModal = ({
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Discount Type</label>
                             <select
                                 name="discountType"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 value={formData.discountType}
                                 onChange={handleChange}
                             >
@@ -306,7 +306,7 @@ const CouponModal = ({
                             <input
                                 name="discountValue"
                                 type="number"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 value={formData.discountValue}
                                 onChange={handleChange}
                             />
@@ -319,7 +319,7 @@ const CouponModal = ({
                             <input
                                 name="minPurchase"
                                 type="number"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 value={formData.minPurchase}
                                 onChange={handleChange}
                             />
@@ -329,7 +329,7 @@ const CouponModal = ({
                             <input
                                 name="maxDiscount"
                                 type="number"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 disabled={formData.discountType !== 'percentage'}
                                 value={formData.maxDiscount}
                                 onChange={handleChange}
@@ -343,7 +343,7 @@ const CouponModal = ({
                             <input
                                 name="startDate"
                                 type="date"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 value={formData.startDate}
                                 onChange={handleChange}
                             />
@@ -353,7 +353,7 @@ const CouponModal = ({
                             <input
                                 name="endDate"
                                 type="date"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 value={formData.endDate}
                                 onChange={handleChange}
                             />
@@ -366,7 +366,7 @@ const CouponModal = ({
                             <input
                                 name="usageLimit"
                                 type="number"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 placeholder="0 for unlimited"
                                 value={formData.usageLimit}
                                 onChange={handleChange}
@@ -377,7 +377,7 @@ const CouponModal = ({
                             <input
                                 name="usagePerUser"
                                 type="number"
-                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium"
+                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium"
                                 value={formData.usagePerUser}
                                 onChange={handleChange}
                             />
@@ -391,7 +391,7 @@ const CouponModal = ({
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-                            className="w-4 h-4 text-[#0B4222] rounded focus:ring-0"
+                            className="w-4 h-4 text-[var(--color-primary)] rounded focus:ring-0"
                         />
                         <label htmlFor="isActive" className="text-sm font-semibold text-gray-700">Coupon is Active</label>
                     </div>
@@ -400,7 +400,7 @@ const CouponModal = ({
                     <button onClick={onClose} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors">Cancel</button>
                     <button
                         onClick={() => onSubmit(formData)}
-                        className="px-6 py-2 bg-[#0B4222] text-white rounded-md text-sm font-bold shadow-md hover:bg-[#093519] transition-all"
+                        className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold shadow-md hover:bg-[var(--color-primary-dark)] transition-all"
                     >
                         {editingCoupon ? 'Update Coupon' : 'Create Coupon'}
                     </button>
@@ -478,7 +478,7 @@ export default function CouponsPage() {
                     </button>
                     <button
                         onClick={handleCreate}
-                        className="px-4 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-semibold hover:bg-[#093519] flex items-center gap-2 transition-all shadow-sm"
+                        className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-sm"
                     >
                         <FiPlus size={16} />
                         Add Coupon
@@ -493,7 +493,7 @@ export default function CouponsPage() {
                     <input
                         type="text"
                         placeholder="Search by code or name..."
-                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none"
+                        className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -529,7 +529,7 @@ export default function CouponsPage() {
                                     <tr key={coupon._id} className="hover:bg-gray-50/50">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center text-[#0B4222]">
+                                                <div className="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center text-[var(--color-primary)]">
                                                     <FiTag size={20} />
                                                 </div>
                                                 <div>

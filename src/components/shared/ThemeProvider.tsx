@@ -23,6 +23,38 @@ const ThemeContext = createContext<ThemeContextType>(defaultTheme);
 
 export const useTheme = () => useContext(ThemeContext);
 
+/* ─── Color Helpers ─── */
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+    try {
+        hex = hex.replace('#', '');
+        return {
+            r: parseInt(hex.substring(0, 2), 16),
+            g: parseInt(hex.substring(2, 4), 16),
+            b: parseInt(hex.substring(4, 6), 16),
+        };
+    } catch { return null; }
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
+function darken(hex: string, amount: number): string {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return hex;
+    return rgbToHex(Math.max(0, rgb.r - amount), Math.max(0, rgb.g - amount), Math.max(0, rgb.b - amount));
+}
+
+function lighten(hex: string, factor: number): string {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return hex;
+    return rgbToHex(
+        Math.min(255, Math.round(rgb.r + (255 - rgb.r) * factor)),
+        Math.min(255, Math.round(rgb.g + (255 - rgb.g) * factor)),
+        Math.min(255, Math.round(rgb.b + (255 - rgb.b) * factor)),
+    );
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const { data: res } = useGetSiteContentQuery({});
     const [themeData, setThemeData] = useState<ThemeContextType>(defaultTheme);
@@ -33,63 +65,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             const primary = t.primaryColor || '#0B4222';
             const secondary = t.secondaryColor || '#E4525C';
 
-            // Apply to CSS variables
+            // Calculate derivative colors from primary
+            const primaryDark = darken(primary, 20);
+            const primaryLight = lighten(primary, 0.85);      // soft background
+            const primaryLightest = lighten(primary, 0.93);    // very light bg
+            const primaryBorder = lighten(primary, 0.7);       // border color
+            const primarySurface = lighten(primary, 0.96);     // surface bg
+
+            // Apply all to CSS variables
             const root = document.documentElement;
             root.style.setProperty('--color-primary', primary);
+            root.style.setProperty('--color-primary-dark', primaryDark);
+            root.style.setProperty('--color-primary-light', primaryLight);
+            root.style.setProperty('--color-primary-lightest', primaryLightest);
+            root.style.setProperty('--color-primary-border', primaryBorder);
+            root.style.setProperty('--color-primary-surface', primarySurface);
             root.style.setProperty('--color-secondary', secondary);
-
-            // Inject dynamic utility classes for hardcoded Tailwind selectors
-            let styleEl = document.getElementById('dynamic-theme-colors');
-            if (!styleEl) {
-                styleEl = document.createElement('style');
-                styleEl.id = 'dynamic-theme-colors';
-                document.head.appendChild(styleEl);
-            }
-            styleEl.innerHTML = `
-                /* Dynamic Primary Color Overrides */
-                .bg-\\[\\#0B4222\\] { background-color: ${primary} !important; }
-                .bg-\\[\\#0B4222\\]\\/10 { background-color: ${primary}1a !important; }
-                .bg-\\[\\#0B4222\\]\\/5 { background-color: ${primary}0d !important; }
-                .text-\\[\\#0B4222\\] { color: ${primary} !important; }
-                .border-\\[\\#0B4222\\] { border-color: ${primary} !important; }
-                .hover\\:bg-\\[\\#093519\\]:hover { background-color: ${primary}dd !important; }
-                .focus\\:ring-\\[\\#0B4222\\]:focus { --tw-ring-color: ${primary} !important; }
-                .from-\\[\\#0B4222\\] { --tw-gradient-from: ${primary} !important; }
-                .to-\\[\\#0B4222\\] { --tw-gradient-to: ${primary} !important; }
-                .via-\\[\\#0B4222\\] { --tw-gradient-via: ${primary} !important; }
-
-                /* Dynamic Secondary Color Overrides */
-                .bg-\\[\\#E4525C\\] { background-color: ${secondary} !important; }
-                .text-\\[\\#E4525C\\] { color: ${secondary} !important; }
-                .border-\\[\\#E4525C\\] { border-color: ${secondary} !important; }
-
-                /* Inline style overrides for common patterns */
-                [style*="color: #0B4222"],
-                [style*="color:#0B4222"],
-                [style*="color: rgb(11, 66, 34)"] {
-                    color: ${primary} !important;
-                }
-                [style*="background-color: #0B4222"],
-                [style*="background:#0B4222"],
-                [style*="background-color:#0B4222"],
-                [style*="background: #0B4222"] {
-                    background-color: ${primary} !important;
-                }
-                [style*="border-color: #0B4222"],
-                [style*="border-color:#0B4222"] {
-                    border-color: ${primary} !important;
-                }
-                [style*="background-color: #E4525C"],
-                [style*="background:#E4525C"],
-                [style*="background-color:#E4525C"],
-                [style*="background: #E4525C"] {
-                    background-color: ${secondary} !important;
-                }
-                [style*="color: #E4525C"],
-                [style*="color:#E4525C"] {
-                    color: ${secondary} !important;
-                }
-            `;
 
             setThemeData({
                 primaryColor: primary,

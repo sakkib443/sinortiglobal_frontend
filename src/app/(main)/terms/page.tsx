@@ -8,7 +8,7 @@ export default function TermsPage() {
             slug="terms"
             fallbackTitle="Terms & Conditions"
             icon={<FiFileText size={24} />}
-            accentColor="#0B4222"
+            accentColor="var(--color-primary)"
             ctaTitle="Have questions about these terms?"
             ctaDescription="Our team is happy to help clarify anything."
             ctaButtonText="Contact Us"

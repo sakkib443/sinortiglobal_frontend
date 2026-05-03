@@ -38,7 +38,7 @@ const Toggle = ({ label, name, checked, onChange, color = 'bg-emerald-500' }: an
 const Input = ({ label, required, error, ...props }: any) => (
     <div className="space-y-1.5">
         <label className="text-sm font-semibold text-gray-700">{label} {required && <span className="text-red-400">*</span>}</label>
-        <input className={`w-full px-4 py-2.5 bg-white border rounded-md outline-none focus:ring-1 transition-all text-sm ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-200 bg-red-50/30' : 'border-gray-200 focus:border-[#0B4222] focus:ring-[#0B4222]/10'}`} {...props} />
+        <input className={`w-full px-4 py-2.5 bg-white border rounded-md outline-none focus:ring-1 transition-all text-sm ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-200 bg-red-50/30' : 'border-gray-200 focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10'}`} {...props} />
         {error && <p className="text-xs text-red-500 font-medium flex items-center gap-1">⚠ {error}</p>}
     </div>
 );
@@ -303,7 +303,7 @@ const ProductFormInner = () => {
         }
     };
 
-    if (isEditing && isFetching) return <div className="p-20 text-center text-[#0B4222] font-bold animate-pulse">Loading product data...</div>;
+    if (isEditing && isFetching) return <div className="p-20 text-center text-[var(--color-primary)] font-bold animate-pulse">Loading product data...</div>;
 
     const categories = categoriesData?.data || [];
 
@@ -328,7 +328,7 @@ const ProductFormInner = () => {
                     <button onClick={() => router.push('/dashboard/admin/products')} className="flex-1 sm:flex-none px-6 py-2.5 border border-gray-200 rounded-md font-semibold text-gray-600 hover:bg-gray-50 transition-all text-sm">
                         Cancel
                     </button>
-                    <button onClick={handleSubmit} disabled={isCreating || isUpdating} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 bg-[#0B4222] text-white rounded-md font-semibold hover:bg-[#093519] transition-all shadow-md disabled:opacity-50 text-sm">
+                    <button onClick={handleSubmit} disabled={isCreating || isUpdating} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 bg-[var(--color-primary)] text-white rounded-md font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50 text-sm">
                         <FiSave size={18} />
                         {isCreating || isUpdating ? 'Saving...' : (isEditing ? 'Update Product' : 'Publish Product')}
                     </button>
@@ -366,11 +366,11 @@ const ProductFormInner = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Tagline <span className="text-xs text-gray-400">(scrolling text on card)</span></label>
-                                <input type="text" name="tagline" placeholder="Lower price than others but quality higher" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[#0B4222] transition-all text-sm" value={formData.tagline} onChange={handleChange} />
+                                <input type="text" name="tagline" placeholder="Lower price than others but quality higher" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[var(--color-primary)] transition-all text-sm" value={formData.tagline} onChange={handleChange} />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Price Type</label>
-                                <select name="priceType" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none focus:border-[#0B4222] cursor-pointer" value={formData.priceType} onChange={handleChange}>
+                                <select name="priceType" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.priceType} onChange={handleChange}>
                                     <option value="negotiable">Negotiable</option>
                                     <option value="fixed">Fixed</option>
                                 </select>
@@ -416,7 +416,7 @@ const ProductFormInner = () => {
                                 <label className="text-sm font-semibold text-gray-700">Selling Price <span className="text-red-400">*</span></label>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">৳</span>
-                                    <input type="number" name="price" placeholder="0" className={`w-full pl-8 pr-3 py-2.5 bg-white border rounded-md outline-none text-base font-bold ${errors.price ? 'border-red-400 bg-red-50/30' : 'border-gray-200 focus:border-[#0B4222]'}`} value={formData.price} onChange={handleChange} />
+                                    <input type="number" name="price" placeholder="0" className={`w-full pl-8 pr-3 py-2.5 bg-white border rounded-md outline-none text-base font-bold ${errors.price ? 'border-red-400 bg-red-50/30' : 'border-gray-200 focus:border-[var(--color-primary)]'}`} value={formData.price} onChange={handleChange} />
                                 </div>
                                 {errors.price && <p className="text-xs text-red-500 font-medium">⚠ {errors.price}</p>}
                             </div>
@@ -424,14 +424,14 @@ const ProductFormInner = () => {
                                 <label className="text-sm font-semibold text-gray-700">Original Price</label>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">৳</span>
-                                    <input type="number" name="originalPrice" placeholder="0" className="w-full pl-8 pr-3 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[#0B4222] text-base font-bold text-red-600" value={formData.originalPrice} onChange={handleChange} />
+                                    <input type="number" name="originalPrice" placeholder="0" className="w-full pl-8 pr-3 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[var(--color-primary)] text-base font-bold text-red-600" value={formData.originalPrice} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Cost Price</label>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">৳</span>
-                                    <input type="number" name="costPrice" placeholder="0" className="w-full pl-8 pr-3 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[#0B4222] text-base font-bold text-gray-500" value={formData.costPrice} onChange={handleChange} />
+                                    <input type="number" name="costPrice" placeholder="0" className="w-full pl-8 pr-3 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[var(--color-primary)] text-base font-bold text-gray-500" value={formData.costPrice} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="space-y-2">
@@ -445,7 +445,7 @@ const ProductFormInner = () => {
                             <Input label="Low Stock Alert" name="lowStockThreshold" type="number" placeholder="5" value={formData.lowStockThreshold} onChange={handleChange} />
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Unit</label>
-                                <select name="unit" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] cursor-pointer" value={formData.unit} onChange={handleChange}>
+                                <select name="unit" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.unit} onChange={handleChange}>
                                     <option value="piece">Piece</option>
                                     <option value="kg">Kg</option>
                                     <option value="liter">Liter</option>
@@ -474,7 +474,7 @@ const ProductFormInner = () => {
                                     onClick={() => setFormData((prev: any) => ({ ...prev, productType: t.value }))}
                                     className={`p-4 rounded-lg border-2 text-left transition-all ${
                                         formData.productType === t.value
-                                            ? 'border-[#0B4222] bg-green-50 shadow-md'
+                                            ? 'border-[var(--color-primary)] bg-green-50 shadow-md'
                                             : 'border-gray-200 bg-white hover:border-gray-300'
                                     }`}
                                 >
@@ -517,7 +517,7 @@ const ProductFormInner = () => {
                             </div>
                             <div className="flex gap-2 items-center">
                                 <input type="color" id="varColorHex" defaultValue="#000000" className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5 shrink-0" />
-                                <input type="text" id="varColorName" placeholder="Color নাম (e.g. Sky Blue)" className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]"
+                                <input type="text" id="varColorName" placeholder="Color নাম (e.g. Sky Blue)" className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]"
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             e.preventDefault();
@@ -545,7 +545,7 @@ const ProductFormInner = () => {
                                         colorHex: [...prev.colorHex, hexEl.value],
                                     }));
                                     nameEl.value = '';
-                                }} className="px-4 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-bold hover:bg-[#093519] shrink-0">+ Add</button>
+                                }} className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] shrink-0">+ Add</button>
                             </div>
                         </div>
                         )}
@@ -565,7 +565,7 @@ const ProductFormInner = () => {
                                 ))}
                             </div>
                             <div className="flex gap-2">
-                                <input type="text" id="varSizeName" placeholder="S, M, L, XL, XXL, Free Size..." className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]"
+                                <input type="text" id="varSizeName" placeholder="S, M, L, XL, XXL, Free Size..." className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]"
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
                                             e.preventDefault();
@@ -585,7 +585,7 @@ const ProductFormInner = () => {
                                         setFormData((prev: any) => ({ ...prev, sizes: [...prev.sizes, val] }));
                                     }
                                     el.value = '';
-                                }} className="px-4 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-bold hover:bg-[#093519] shrink-0">+ Add</button>
+                                }} className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] shrink-0">+ Add</button>
                             </div>
                         </div>
                         )}
@@ -618,7 +618,7 @@ const ProductFormInner = () => {
                                 }
                                 if (newVars.length > 0) setFormData((prev: any) => ({ ...prev, variants: [...(prev.variants || []), ...newVars] }));
                             }} className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-bold transition-all ${
-                                (formData.colors.length === 0 && formData.sizes.length === 0) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#0B4222] text-white hover:bg-[#093519] shadow-md'
+                                (formData.colors.length === 0 && formData.sizes.length === 0) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] shadow-md'
                             }`}>
                                 🔄 Generate Variants {formData.colors.length > 0 && formData.sizes.length > 0 && `(${formData.colors.length} × ${formData.sizes.length} = ${formData.colors.length * formData.sizes.length})`}
                             </button>
@@ -713,15 +713,15 @@ const ProductFormInner = () => {
                                         </div>
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase">Price (৳) *</label>
-                                            <input type="number" value={v.price || 0} min="0" onChange={e => { const vars = [...formData.variants]; vars[i] = { ...vars[i], price: Number(e.target.value) }; setFormData((prev: any) => ({ ...prev, variants: vars })); }} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] font-bold" />
+                                            <input type="number" value={v.price || 0} min="0" onChange={e => { const vars = [...formData.variants]; vars[i] = { ...vars[i], price: Number(e.target.value) }; setFormData((prev: any) => ({ ...prev, variants: vars })); }} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] font-bold" />
                                         </div>
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase">MRP (৳)</label>
-                                            <input type="number" value={v.originalPrice || 0} min="0" onChange={e => { const vars = [...formData.variants]; vars[i] = { ...vars[i], originalPrice: Number(e.target.value) }; setFormData((prev: any) => ({ ...prev, variants: vars })); }} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]" />
+                                            <input type="number" value={v.originalPrice || 0} min="0" onChange={e => { const vars = [...formData.variants]; vars[i] = { ...vars[i], originalPrice: Number(e.target.value) }; setFormData((prev: any) => ({ ...prev, variants: vars })); }} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" />
                                         </div>
                                         <div className="space-y-1">
                                             <label className="text-[10px] font-bold text-gray-400 uppercase">Stock</label>
-                                            <input type="number" value={v.stock || 0} min="0" onChange={e => { const vars = [...formData.variants]; vars[i] = { ...vars[i], stock: Number(e.target.value) }; setFormData((prev: any) => ({ ...prev, variants: vars })); }} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]" />
+                                            <input type="number" value={v.stock || 0} min="0" onChange={e => { const vars = [...formData.variants]; vars[i] = { ...vars[i], stock: Number(e.target.value) }; setFormData((prev: any) => ({ ...prev, variants: vars })); }} className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" />
                                         </div>
                                     </div>
                                     {v.originalPrice > 0 && v.price > 0 && v.originalPrice > v.price && (
@@ -771,12 +771,12 @@ const ProductFormInner = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Material <span className="text-xs text-gray-400">(comma-separated)</span></label>
-                                <input type="text" placeholder="e.g. cotton, polyester" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]" value={formData.material.join(', ')} onChange={(e) => handleArrayChange('material', e.target.value)} />
+                                <input type="text" placeholder="e.g. cotton, polyester" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.material.join(', ')} onChange={(e) => handleArrayChange('material', e.target.value)} />
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-gray-700">Pattern</label>
-                                    <select name="pattern" className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] cursor-pointer" value={formData.pattern} onChange={handleChange}>
+                                    <select name="pattern" className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.pattern} onChange={handleChange}>
                                         <option value="">None</option>
                                         <option value="solid">Solid</option>
                                         <option value="striped">Striped</option>
@@ -788,7 +788,7 @@ const ProductFormInner = () => {
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-semibold text-gray-700">Gender</label>
-                                    <select name="gender" className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] cursor-pointer" value={formData.gender} onChange={handleChange}>
+                                    <select name="gender" className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.gender} onChange={handleChange}>
                                         <option value="">Any</option>
                                         <option value="men">Men</option>
                                         <option value="women">Women</option>
@@ -879,7 +879,7 @@ const ProductFormInner = () => {
                             <div className="grid grid-cols-3 gap-1.5">
                                 {['active', 'draft', 'out-of-stock'].map(s => (
                                     <button key={s} type="button" onClick={() => setFormData((prev: any) => ({ ...prev, status: s }))}
-                                        className={`py-2 rounded-md text-xs font-bold uppercase transition-all ${formData.status === s ? 'bg-[#0B4222] text-white shadow-md' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                                        className={`py-2 rounded-md text-xs font-bold uppercase transition-all ${formData.status === s ? 'bg-[var(--color-primary)] text-white shadow-md' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
                                         {s === 'out-of-stock' ? 'Out' : s}
                                     </button>
                                 ))}
@@ -912,7 +912,7 @@ const ProductFormInner = () => {
 
                         <div className="space-y-3 p-4 bg-gray-50 rounded-md border border-gray-100">
                             <label className="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="warranty.hasWarranty" className="w-4 h-4 accent-[#0B4222]" checked={formData.warranty.hasWarranty} onChange={handleChange} />
+                                <input type="checkbox" name="warranty.hasWarranty" className="w-4 h-4 accent-[var(--color-primary)]" checked={formData.warranty.hasWarranty} onChange={handleChange} />
                                 <span className="text-sm font-bold text-gray-700">Has Warranty</span>
                             </label>
                             {formData.warranty.hasWarranty && (
@@ -936,9 +936,9 @@ const ProductFormInner = () => {
                         <div className="space-y-2 pt-2">
                             <label className="text-xs font-bold text-gray-400 uppercase">Dimensions (cm)</label>
                             <div className="grid grid-cols-3 gap-2">
-                                <input type="number" name="dimensions.length" placeholder="L" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]" value={formData.dimensions.length} onChange={handleChange} />
-                                <input type="number" name="dimensions.width" placeholder="W" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]" value={formData.dimensions.width} onChange={handleChange} />
-                                <input type="number" name="dimensions.height" placeholder="H" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222]" value={formData.dimensions.height} onChange={handleChange} />
+                                <input type="number" name="dimensions.length" placeholder="L" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.dimensions.length} onChange={handleChange} />
+                                <input type="number" name="dimensions.width" placeholder="W" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.dimensions.width} onChange={handleChange} />
+                                <input type="number" name="dimensions.height" placeholder="H" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.dimensions.height} onChange={handleChange} />
                             </div>
                         </div>
                     </div>
@@ -949,7 +949,7 @@ const ProductFormInner = () => {
 };
 
 const ProductForm = () => (
-    <Suspense fallback={<div className="p-20 text-center text-[#0B4222] font-bold animate-pulse">Loading Product Form...</div>}>
+    <Suspense fallback={<div className="p-20 text-center text-[var(--color-primary)] font-bold animate-pulse">Loading Product Form...</div>}>
         <ProductFormInner />
     </Suspense>
 );

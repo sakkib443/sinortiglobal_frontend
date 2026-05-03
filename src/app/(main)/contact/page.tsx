@@ -52,7 +52,7 @@ export default function ContactPage() {
     const field = (name: keyof FormState): React.CSSProperties => ({
         width: '100%',
         padding: '10px 14px',
-        border: `1.5px solid ${errors[name] ? '#E4525C' : focusField === name ? '#0B4222' : '#e5e7eb'}`,
+        border: `1.5px solid ${errors[name] ? 'var(--color-secondary)' : focusField === name ? 'var(--color-primary)' : '#e5e7eb'}`,
         borderRadius: '8px',
         fontSize: '13.5px',
         color: '#1a1a1a',
@@ -67,7 +67,7 @@ export default function ContactPage() {
     if (contentLoading || !c) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-                <div style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'preloaderSpin 0.8s linear infinite' }} />
+                <div style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'preloaderSpin 0.8s linear infinite' }} />
             </div>
         );
     }
@@ -80,7 +80,7 @@ export default function ContactPage() {
             primary: c.phone || '01XXXXXXXXX',
             secondary: 'Sun – Thu, 9 AM – 6 PM',
             href: `tel:${c.phone || ''}`,
-            accent: '#0B4222',
+            accent: 'var(--color-primary)',
         },
         {
             icon: <BsWhatsapp size={22} />,
@@ -104,7 +104,7 @@ export default function ContactPage() {
             primary: c.address || 'Dhaka, Bangladesh',
             secondary: 'Come visit our office',
             href: '#',
-            accent: '#E4525C',
+            accent: 'var(--color-secondary)',
         },
     ];
 
@@ -219,8 +219,8 @@ export default function ContactPage() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
                             <div style={{
                                 width: '32px', height: '32px', borderRadius: '8px',
-                                background: '#0B422214', display: 'flex',
-                                alignItems: 'center', justifyContent: 'center', color: '#0B4222',
+                                background: 'var(--color-primary)14', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', color: 'var(--color-primary)',
                             }}>
                                 <FiMessageCircle size={16} />
                             </div>
@@ -234,7 +234,7 @@ export default function ContactPage() {
                         {submitted && (
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: '10px',
-                                background: 'linear-gradient(135deg, #f0faf4, #dcfce7)',
+                                background: 'linear-gradient(135deg, var(--color-primary-lightest), var(--color-primary-border))',
                                 border: '1.5px solid #16a34a',
                                 borderRadius: '10px', padding: '14px 16px',
                                 marginBottom: '20px', color: '#15803d',
@@ -253,13 +253,13 @@ export default function ContactPage() {
                             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                                 <div style={{ flex: '1 1 160px' }}>
                                     <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '5px' }}>
-                                        Full Name <span style={{ color: '#E4525C' }}>*</span>
+                                        Full Name <span style={{ color: 'var(--color-secondary)' }}>*</span>
                                     </label>
                                     <input name="name" value={form.name} onChange={handleChange} placeholder="Your full name"
                                         style={field('name')}
                                         onFocus={() => setFocusField('name')}
                                         onBlur={() => setFocusField(null)} />
-                                    {errors.name && <p style={{ fontSize: '11px', color: '#E4525C', margin: '3px 0 0' }}>{errors.name}</p>}
+                                    {errors.name && <p style={{ fontSize: '11px', color: 'var(--color-secondary)', margin: '3px 0 0' }}>{errors.name}</p>}
                                 </div>
                                 <div style={{ flex: '1 1 160px' }}>
                                     <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '5px' }}>Phone Number</label>
@@ -273,13 +273,13 @@ export default function ContactPage() {
                             {/* Email */}
                             <div>
                                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '5px' }}>
-                                    Email Address <span style={{ color: '#E4525C' }}>*</span>
+                                    Email Address <span style={{ color: 'var(--color-secondary)' }}>*</span>
                                 </label>
                                 <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="example@email.com"
                                     style={field('email')}
                                     onFocus={() => setFocusField('email')}
                                     onBlur={() => setFocusField(null)} />
-                                {errors.email && <p style={{ fontSize: '11px', color: '#E4525C', margin: '3px 0 0' }}>{errors.email}</p>}
+                                {errors.email && <p style={{ fontSize: '11px', color: 'var(--color-secondary)', margin: '3px 0 0' }}>{errors.email}</p>}
                             </div>
 
                             {/* Subject */}
@@ -297,7 +297,7 @@ export default function ContactPage() {
                             {/* Message */}
                             <div>
                                 <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '5px' }}>
-                                    Message <span style={{ color: '#E4525C' }}>*</span>
+                                    Message <span style={{ color: 'var(--color-secondary)' }}>*</span>
                                 </label>
                                 <textarea name="message" value={form.message} onChange={handleChange}
                                     placeholder="Describe your issue or question in detail..."
@@ -305,14 +305,14 @@ export default function ContactPage() {
                                     style={{ ...field('message'), resize: 'vertical', minHeight: '120px' }}
                                     onFocus={() => setFocusField('message')}
                                     onBlur={() => setFocusField(null)} />
-                                {errors.message && <p style={{ fontSize: '11px', color: '#E4525C', margin: '3px 0 0' }}>{errors.message}</p>}
+                                {errors.message && <p style={{ fontSize: '11px', color: 'var(--color-secondary)', margin: '3px 0 0' }}>{errors.message}</p>}
                             </div>
 
                             {/* Submit */}
                             <button type="submit" disabled={loading} style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                                 padding: '12px 28px',
-                                background: loading ? '#6b7280' : 'linear-gradient(135deg, #0B4222, #0d5c30)',
+                                background: loading ? '#6b7280' : 'linear-gradient(135deg, var(--color-primary), #0d5c30)',
                                 color: '#fff', border: 'none', borderRadius: '8px',
                                 fontSize: '13.5px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer',
                                 transition: 'all 0.2s ease', alignSelf: 'flex-start',
@@ -356,8 +356,8 @@ export default function ContactPage() {
                                             <span style={{ fontSize: '12.5px', color: '#374151', fontWeight: 500 }}>{h.day}</span>
                                             <span style={{
                                                 fontSize: '12px', fontWeight: 600,
-                                                color: h.time === 'Closed' ? '#E4525C' : '#0B4222',
-                                                background: h.time === 'Closed' ? '#fef2f2' : '#f0faf4',
+                                                color: h.time === 'Closed' ? 'var(--color-secondary)' : 'var(--color-primary)',
+                                                background: h.time === 'Closed' ? '#fef2f2' : 'var(--color-primary-lightest)',
                                                 padding: '2px 8px', borderRadius: '999px',
                                             }}>
                                                 {h.time}
@@ -371,14 +371,14 @@ export default function ContactPage() {
                         {/* Quick Tips */}
                         {TIPS.length > 0 && (
                             <div style={{
-                                background: 'linear-gradient(135deg, #f0faf4, #fafffe)',
+                                background: 'linear-gradient(135deg, var(--color-primary-lightest), #fafffe)',
                                 border: '1.5px solid #bbf7d0',
                                 borderRadius: '12px', padding: '16px 18px',
                             }}>
-                                <p style={{ fontSize: '12.5px', fontWeight: 700, color: '#0B4222', margin: '0 0 10px' }}>💡 Quick Tips</p>
+                                <p style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--color-primary)', margin: '0 0 10px' }}>💡 Quick Tips</p>
                                 {TIPS.map((tip: string, i: number) => (
                                     <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: i < TIPS.length - 1 ? '8px' : 0 }}>
-                                        <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#0B4222', marginTop: '6px', flexShrink: 0 }} />
+                                        <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'var(--color-primary)', marginTop: '6px', flexShrink: 0 }} />
                                         <p style={{ fontSize: '12px', color: '#374151', margin: 0, lineHeight: 1.6 }}>{tip}</p>
                                     </div>
                                 ))}

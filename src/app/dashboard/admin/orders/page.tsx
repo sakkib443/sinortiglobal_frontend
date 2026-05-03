@@ -86,7 +86,7 @@ export default function OrdersPage() {
         try {
             await updateStatus({ id: orderId, status: newStatus }).unwrap();
             toast.success(`Order status updated to ${newStatus}`, {
-                style: { borderRadius: '8px', background: '#0B4222', color: '#fff' },
+                style: { borderRadius: '8px', background: 'var(--color-primary)', color: '#fff' },
             });
             refetch();
         } catch (err: any) {
@@ -98,7 +98,7 @@ export default function OrdersPage() {
         try {
             await updatePayment({ id: orderId, paymentStatus: newStatus }).unwrap();
             toast.success(`Payment status updated to ${newStatus}`, {
-                style: { borderRadius: '8px', background: '#0B4222', color: '#fff' },
+                style: { borderRadius: '8px', background: 'var(--color-primary)', color: '#fff' },
             });
             refetch();
         } catch (err: any) {
@@ -146,7 +146,7 @@ export default function OrdersPage() {
                         <FiRefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
                         Refresh
                     </button>
-                    <button className="px-5 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-semibold hover:bg-[#093519] transition-all shadow-md flex items-center gap-2">
+                    <button className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md flex items-center gap-2">
                         <FiDownload size={16} />
                         Export Orders
                     </button>
@@ -158,7 +158,7 @@ export default function OrdersPage() {
                 {statsConfig.map((stat, i) => (
                     <div
                         key={i}
-                        className={`${stat.bg} border rounded-md p-4 cursor-pointer transition-all hover:shadow-md bg-white ${statusFilter === stat.key ? 'ring-2 ring-[#0B4222] border-transparent' : ''}`}
+                        className={`${stat.bg} border rounded-md p-4 cursor-pointer transition-all hover:shadow-md bg-white ${statusFilter === stat.key ? 'ring-2 ring-[var(--color-primary)] border-transparent' : ''}`}
                         onClick={() => {
                             setStatusFilter(stat.key);
                             setPage(1);
@@ -180,7 +180,7 @@ export default function OrdersPage() {
                         placeholder="Search by order number, customer name..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-1 focus:ring-[#0B4222]/20 focus:border-[#0B4222] focus:bg-white transition-all outline-none text-sm"
+                        className="w-full pl-12 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-1 focus:ring-[var(--color-primary)]/20 focus:border-[var(--color-primary)] focus:bg-white transition-all outline-none text-sm"
                     />
                 </div>
 
@@ -192,7 +192,7 @@ export default function OrdersPage() {
                             setStatusFilter(e.target.value);
                             setPage(1);
                         }}
-                        className="px-4 py-2.5 border border-gray-200 rounded-md focus:ring-1 focus:ring-[#0B4222]/20 focus:border-[#0B4222] transition-all outline-none text-sm bg-white min-w-[150px]"
+                        className="px-4 py-2.5 border border-gray-200 rounded-md focus:ring-1 focus:ring-[var(--color-primary)]/20 focus:border-[var(--color-primary)] transition-all outline-none text-sm bg-white min-w-[150px]"
                     >
                         <option value="all">Total Orders</option>
                         <option value="pending">Pending</option>
@@ -252,7 +252,7 @@ export default function OrdersPage() {
                                 orders.map((order: any) => (
                                     <tr key={order._id} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="px-6 py-4">
-                                            <p className="font-semibold text-[#0B4222]">{order.orderNumber}</p>
+                                            <p className="font-semibold text-[var(--color-primary)]">{order.orderNumber}</p>
                                             <p className="text-[10px] text-gray-400 font-medium">VIA {order.paymentMethod.toUpperCase()}</p>
                                         </td>
                                         <td className="px-6 py-4">
@@ -316,7 +316,7 @@ export default function OrdersPage() {
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
                                                     href={`/dashboard/admin/orders/${order._id}`}
-                                                    className="p-2 hover:bg-white hover:shadow-md rounded-md text-gray-400 hover:text-[#0B4222] transition-all border border-transparent hover:border-gray-100"
+                                                    className="p-2 hover:bg-white hover:shadow-md rounded-md text-gray-400 hover:text-[var(--color-primary)] transition-all border border-transparent hover:border-gray-100"
                                                     title="View Details"
                                                 >
                                                     <FiEye size={18} />
@@ -352,7 +352,7 @@ export default function OrdersPage() {
                                     key={i}
                                     onClick={() => setPage(i + 1)}
                                     className={`w-8 h-8 rounded-md text-sm font-medium transition-all ${page === i + 1
-                                            ? 'bg-[#0B4222] text-white shadow-md'
+                                            ? 'bg-[var(--color-primary)] text-white shadow-md'
                                             : 'text-gray-600 hover:bg-gray-100'
                                         }`}
                                 >

@@ -23,7 +23,7 @@ const emptyVariant = (): Variant => ({
 const Section = ({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) => (
     <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 20px', borderBottom: '1px solid #f3f4f6', background: '#fafafa' }}>
-            <span style={{ color: '#0B4222' }}>{icon}</span>
+            <span style={{ color: 'var(--color-primary)' }}>{icon}</span>
             <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>{title}</h2>
         </div>
         <div style={{ padding: '20px' }}>{children}</div>
@@ -50,15 +50,15 @@ function TagInput({ label, value, onChange, placeholder }: { label: string; valu
             <label style={lbl}>{label}</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                 {value.map((tag, i) => (
-                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f0faf4', border: '1px solid #bbf7d0', color: '#0B4222', fontSize: '12px', fontWeight: 500, padding: '3px 8px', borderRadius: '999px' }}>
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--color-primary-lightest)', border: '1px solid #bbf7d0', color: 'var(--color-primary)', fontSize: '12px', fontWeight: 500, padding: '3px 8px', borderRadius: '999px' }}>
                         {tag}
-                        <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#0B4222', fontSize: '14px', lineHeight: 1, padding: 0 }}>×</button>
+                        <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontSize: '14px', lineHeight: 1, padding: 0 }}>×</button>
                     </span>
                 ))}
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
                 <input value={inp2} onChange={e => setInp2(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); add(); } }} placeholder={placeholder || 'Type and press Enter'} style={{ ...inp, flex: 1 }} />
-                <button type="button" onClick={add} style={{ padding: '8px 14px', background: '#0B4222', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>Add</button>
+                <button type="button" onClick={add} style={{ padding: '8px 14px', background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>Add</button>
             </div>
         </div>
     );
@@ -159,7 +159,7 @@ export default function CreateProductPage() {
                 <div style={{
                     position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
                     display: 'flex', alignItems: 'center', gap: '10px',
-                    background: toast.type === 'success' ? '#f0faf4' : '#fef2f2',
+                    background: toast.type === 'success' ? 'var(--color-primary-lightest)' : '#fef2f2',
                     border: `1.5px solid ${toast.type === 'success' ? '#16a34a' : '#ef4444'}`,
                     color: toast.type === 'success' ? '#15803d' : '#dc2626',
                     padding: '12px 18px', borderRadius: '10px', boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
@@ -192,17 +192,17 @@ export default function CreateProductPage() {
                         <Section icon={<FiTag size={16} />} title="Basic Info">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 <div>
-                                    <label style={lbl}>Product Name <span style={{ color: '#E4525C' }}>*</span></label>
-                                    <input value={form.name} onChange={e => setF('name', e.target.value)} placeholder="e.g. Premium Cotton T-Shirt" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <label style={lbl}>Product Name <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
+                                    <input value={form.name} onChange={e => setF('name', e.target.value)} placeholder="e.g. Premium Cotton T-Shirt" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                 </div>
                                 <div>
-                                    <label style={lbl}>Description <span style={{ color: '#E4525C' }}>*</span></label>
-                                    <textarea value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Product এর বিস্তারিত বিবরণ লিখুন..." rows={5} style={{ ...inp, resize: 'vertical', minHeight: '120px' }} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <label style={lbl}>Description <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
+                                    <textarea value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Product এর বিস্তারিত বিবরণ লিখুন..." rows={5} style={{ ...inp, resize: 'vertical', minHeight: '120px' }} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                 </div>
                                 <div style={row}>
                                     <div style={col()}>
                                         <label style={lbl}>Tagline</label>
-                                        <input value={form.tagline} onChange={e => setF('tagline', e.target.value)} placeholder="Lower price than others but quality higher" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                        <input value={form.tagline} onChange={e => setF('tagline', e.target.value)} placeholder="Lower price than others but quality higher" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                     </div>
                                     <div style={col('0 0 160px')}>
                                         <label style={lbl}>Price Type</label>
@@ -219,16 +219,16 @@ export default function CreateProductPage() {
                         <Section icon={<span style={{ fontWeight: 800, fontSize: '14px' }}>৳</span>} title="Pricing">
                             <div style={row}>
                                 <div style={col()}>
-                                    <label style={lbl}>Selling Price (৳) <span style={{ color: '#E4525C' }}>*</span></label>
-                                    <input type="number" value={form.price} onChange={e => setF('price', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <label style={lbl}>Selling Price (৳) <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
+                                    <input type="number" value={form.price} onChange={e => setF('price', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                 </div>
                                 <div style={col()}>
                                     <label style={lbl}>Original / MRP (৳) <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>— discount auto-calculate হবে</span></label>
-                                    <input type="number" value={form.originalPrice} onChange={e => setF('originalPrice', e.target.value)} placeholder="0 (optional)" style={inp} min="0" onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <input type="number" value={form.originalPrice} onChange={e => setF('originalPrice', e.target.value)} placeholder="0 (optional)" style={inp} min="0" onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                 </div>
                             </div>
                             {form.price && form.originalPrice && Number(form.originalPrice) > Number(form.price) && (
-                                <div style={{ marginTop: '10px', padding: '8px 12px', background: '#f0faf4', borderRadius: '8px', fontSize: '12.5px', color: '#0B4222', fontWeight: 600 }}>
+                                <div style={{ marginTop: '10px', padding: '8px 12px', background: 'var(--color-primary-lightest)', borderRadius: '8px', fontSize: '12.5px', color: 'var(--color-primary)', fontWeight: 600 }}>
                                     ✅ Discount: {Math.round(((Number(form.originalPrice) - Number(form.price)) / Number(form.originalPrice)) * 100)}% (auto-calculated)
                                 </div>
                             )}
@@ -238,15 +238,15 @@ export default function CreateProductPage() {
                         <Section icon={<FiImage size={16} />} title="Images">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 <div>
-                                    <label style={lbl}>Thumbnail URL <span style={{ color: '#E4525C' }}>*</span></label>
-                                    <input value={form.thumbnail} onChange={e => setF('thumbnail', e.target.value)} placeholder="https://example.com/image.jpg" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <label style={lbl}>Thumbnail URL <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
+                                    <input value={form.thumbnail} onChange={e => setF('thumbnail', e.target.value)} placeholder="https://example.com/image.jpg" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                     {form.thumbnail && (
                                         <img src={form.thumbnail} alt="thumb" style={{ marginTop: '8px', width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e5e7eb' }} onError={e => (e.currentTarget.style.display = 'none')} />
                                     )}
                                 </div>
                                 <div>
                                     <label style={lbl}>Extra Images <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>— প্রতিটা URL আলাদা লাইনে দিন</span></label>
-                                    <textarea value={form.images} onChange={e => setF('images', e.target.value)} placeholder={"https://example.com/img1.jpg\nhttps://example.com/img2.jpg"} rows={3} style={{ ...inp, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <textarea value={form.images} onChange={e => setF('images', e.target.value)} placeholder={"https://example.com/img1.jpg\nhttps://example.com/img2.jpg"} rows={3} style={{ ...inp, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                 </div>
                             </div>
                         </Section>
@@ -261,7 +261,7 @@ export default function CreateProductPage() {
                             {variants.map((v, i) => (
                                 <div key={i} style={{ border: '1px solid #e5e7eb', borderRadius: '10px', padding: '16px', marginBottom: '12px', background: '#fafafa', position: 'relative' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#0B4222' }}>Variant #{i + 1} {v.color && v.size ? `— ${v.color} / ${v.size}` : v.color || v.size || ''}</span>
+                                        <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-primary)' }}>Variant #{i + 1} {v.color && v.size ? `— ${v.color} / ${v.size}` : v.color || v.size || ''}</span>
                                         <button type="button" onClick={() => removeVariant(i)} style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', borderRadius: '6px', padding: '4px 10px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                             <FiTrash2 size={12} /> Remove
                                         </button>
@@ -271,64 +271,64 @@ export default function CreateProductPage() {
                                         {/* Color */}
                                         <div>
                                             <label style={lbl}>Color Name</label>
-                                            <input value={v.color} onChange={e => setV(i, 'color', e.target.value)} placeholder="Red" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input value={v.color} onChange={e => setV(i, 'color', e.target.value)} placeholder="Red" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                         {/* Color Hex */}
                                         <div>
                                             <label style={lbl}>Color Hex</label>
                                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                                 <input type="color" value={v.colorHex} onChange={e => setV(i, 'colorHex', e.target.value)} style={{ width: '40px', height: '38px', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', padding: '2px' }} />
-                                                <input value={v.colorHex} onChange={e => setV(i, 'colorHex', e.target.value)} placeholder="#000000" style={{ ...inp, flex: 1 }} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                                <input value={v.colorHex} onChange={e => setV(i, 'colorHex', e.target.value)} placeholder="#000000" style={{ ...inp, flex: 1 }} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                             </div>
                                         </div>
                                         {/* Size */}
                                         <div>
                                             <label style={lbl}>Size</label>
-                                            <input value={v.size} onChange={e => setV(i, 'size', e.target.value)} placeholder="S / M / L / XL / 1kg" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input value={v.size} onChange={e => setV(i, 'size', e.target.value)} placeholder="S / M / L / XL / 1kg" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                         {/* Price */}
                                         <div>
                                             <label style={lbl}>Price (৳) *</label>
-                                            <input type="number" value={v.price} onChange={e => setV(i, 'price', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input type="number" value={v.price} onChange={e => setV(i, 'price', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                         {/* Original Price */}
                                         <div>
                                             <label style={lbl}>MRP (৳)</label>
-                                            <input type="number" value={v.originalPrice} onChange={e => setV(i, 'originalPrice', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input type="number" value={v.originalPrice} onChange={e => setV(i, 'originalPrice', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                         {/* Stock */}
                                         <div>
                                             <label style={lbl}>Stock</label>
-                                            <input type="number" value={v.stock} onChange={e => setV(i, 'stock', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input type="number" value={v.stock} onChange={e => setV(i, 'stock', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                         {/* SKU */}
                                         <div>
                                             <label style={lbl}>SKU (optional)</label>
-                                            <input value={v.sku} onChange={e => setV(i, 'sku', e.target.value)} placeholder="TSHIRT-RED-M" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input value={v.sku} onChange={e => setV(i, 'sku', e.target.value)} placeholder="TSHIRT-RED-M" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                         {/* Note */}
                                         <div>
                                             <label style={lbl}>Note (optional)</label>
-                                            <input value={v.note} onChange={e => setV(i, 'note', e.target.value)} placeholder="Limited stock" style={inp} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                            <input value={v.note} onChange={e => setV(i, 'note', e.target.value)} placeholder="Limited stock" style={inp} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                         </div>
                                     </div>
 
                                     {/* Variant Images */}
                                     <div style={{ marginTop: '10px' }}>
                                         <label style={lbl}>Variant Images <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>— প্রতিটা URL আলাদা লাইনে</span></label>
-                                        <textarea value={v.images} onChange={e => setV(i, 'images', e.target.value)} placeholder={"https://example.com/red-front.jpg\nhttps://example.com/red-back.jpg"} rows={2} style={{ ...inp, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                        <textarea value={v.images} onChange={e => setV(i, 'images', e.target.value)} placeholder={"https://example.com/red-front.jpg\nhttps://example.com/red-back.jpg"} rows={2} style={{ ...inp, resize: 'vertical' }} onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                     </div>
 
                                     {/* Auto discount preview */}
                                     {v.price && v.originalPrice && Number(v.originalPrice) > Number(v.price) && (
-                                        <p style={{ fontSize: '11.5px', color: '#0B4222', fontWeight: 600, margin: '8px 0 0', background: '#f0faf4', padding: '5px 10px', borderRadius: '6px', display: 'inline-block' }}>
+                                        <p style={{ fontSize: '11.5px', color: 'var(--color-primary)', fontWeight: 600, margin: '8px 0 0', background: 'var(--color-primary-lightest)', padding: '5px 10px', borderRadius: '6px', display: 'inline-block' }}>
                                             ✅ Discount: {Math.round(((Number(v.originalPrice) - Number(v.price)) / Number(v.originalPrice)) * 100)}%
                                         </p>
                                     )}
                                 </div>
                             ))}
 
-                            <button type="button" onClick={addVariant} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', background: '#f0faf4', border: '1.5px dashed #0B4222', color: '#0B4222', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, width: '100%', justifyContent: 'center' }}>
+                            <button type="button" onClick={addVariant} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', background: 'var(--color-primary-lightest)', border: '1.5px dashed var(--color-primary)', color: 'var(--color-primary)', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, width: '100%', justifyContent: 'center' }}>
                                 <FiPlus size={15} /> Add Variant
                             </button>
                         </Section>
@@ -343,7 +343,7 @@ export default function CreateProductPage() {
                         <Section icon={<span style={{ fontSize: '14px' }}>📂</span>} title="Category & Status">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 <div>
-                                    <label style={lbl}>Category <span style={{ color: '#E4525C' }}>*</span></label>
+                                    <label style={lbl}>Category <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                     <select value={form.category} onChange={e => setF('category', e.target.value)} style={{ ...inp, cursor: 'pointer' }}>
                                         <option value="">— Select Category —</option>
                                         {categories.map((cat: any) => (
@@ -368,7 +368,7 @@ export default function CreateProductPage() {
                                 </div>
                                 <div>
                                     <label style={lbl}>Base Stock <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(variant না থাকলে)</span></label>
-                                    <input type="number" value={form.stock} onChange={e => setF('stock', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = '#0B4222'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
+                                    <input type="number" value={form.stock} onChange={e => setF('stock', e.target.value)} placeholder="0" style={inp} min="0" onFocus={e => e.target.style.borderColor = 'var(--color-primary)'} onBlur={e => e.target.style.borderColor = '#e5e7eb'} />
                                 </div>
                             </div>
                         </Section>
@@ -391,7 +391,7 @@ export default function CreateProductPage() {
                                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
                                         <input type="color" value={colorInput.hex} onChange={e => setColorInput(p => ({ ...p, hex: e.target.value }))} style={{ width: '38px', height: '36px', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', padding: '2px', flexShrink: 0 }} />
                                         <input value={colorInput.name} onChange={e => setColorInput(p => ({ ...p, name: e.target.value }))} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addColor(); } }} placeholder="Color name" style={{ ...inp, flex: 1 }} />
-                                        <button type="button" onClick={addColor} style={{ padding: '8px 12px', background: '#0B4222', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>+</button>
+                                        <button type="button" onClick={addColor} style={{ padding: '8px 12px', background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>+</button>
                                     </div>
                                 </div>
                                 {/* Sizes */}
@@ -405,7 +405,7 @@ export default function CreateProductPage() {
                         <div style={{ position: 'sticky', bottom: '20px' }}>
                             <button type="submit" disabled={isLoading} style={{
                                 width: '100%', padding: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                background: isLoading ? '#6b7280' : 'linear-gradient(135deg, #0B4222, #0d5c30)',
+                                background: isLoading ? '#6b7280' : 'linear-gradient(135deg, var(--color-primary), #0d5c30)',
                                 color: '#fff', border: 'none', borderRadius: '10px',
                                 fontSize: '14px', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer',
                                 boxShadow: '0 4px 16px rgba(11,66,34,0.35)', transition: 'all 0.2s ease',

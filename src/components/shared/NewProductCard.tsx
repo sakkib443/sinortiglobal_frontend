@@ -207,7 +207,7 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                         {/* Flag + Product Name */}
                         <div className='flex items-start gap-1.5 mb-1'>
                             <span className='text-sm leading-none mt-0.5'>🇧🇩</span>
-                            <h3 className='text-[13px] text-gray-800 font-medium line-clamp-2 leading-[1.3] group-hover:text-[#0B4222] transition-colors'>
+                            <h3 className='text-[13px] text-gray-800 font-medium line-clamp-2 leading-[1.3] group-hover:text-[var(--color-primary)] transition-colors'>
                                 {product.name}
                             </h3>
                         </div>
@@ -335,7 +335,7 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                                 />
                                 <button
                                     onClick={handleCopyLink}
-                                    className='px-4 py-2.5 bg-[#0B4222] text-white text-xs font-semibold hover:bg-[#093519] transition-colors flex items-center gap-1.5 whitespace-nowrap'
+                                    className='px-4 py-2.5 bg-[var(--color-primary)] text-white text-xs font-semibold hover:bg-[var(--color-primary-dark)] transition-colors flex items-center gap-1.5 whitespace-nowrap'
                                 >
                                     {linkCopied ? (
                                         <><FiCheck size={13} /> Copied!</>
@@ -502,7 +502,7 @@ const CommentsPopup: React.FC<{
                 <div className='flex-1 overflow-y-auto px-4 py-2 space-y-2.5' style={{ minHeight: '60px' }}>
                     {isLoading ? (
                         <div className='flex items-center justify-center py-8'>
-                            <div className='w-6 h-6 border-2 border-gray-200 border-t-[#0B4222] rounded-full animate-spin' />
+                            <div className='w-6 h-6 border-2 border-gray-200 border-t-[var(--color-primary)] rounded-full animate-spin' />
                         </div>
                     ) : reviews.length > 0 ? (
                         <>
@@ -533,10 +533,10 @@ const CommentsPopup: React.FC<{
                                                 </span>
                                                 <button
                                                     onClick={() => handleLikeReview(reviewId)}
-                                                    className={`font-medium hover:underline flex items-center gap-1 ${isLiked ? 'text-[#E4525C]' : ''}`}
+                                                    className={`font-medium hover:underline flex items-center gap-1 ${isLiked ? 'text-[var(--color-secondary)]' : ''}`}
                                                     disabled={isLiked}
                                                 >
-                                                    <FiThumbsUp size={10} style={{ fill: isLiked ? '#E4525C' : 'none' }} />
+                                                    <FiThumbsUp size={10} style={{ fill: isLiked ? 'var(--color-secondary)' : 'none' }} />
                                                     <span>Like{likeCount > 0 ? ` (${likeCount})` : ''}</span>
                                                 </button>
                                                 <button
@@ -563,10 +563,10 @@ const CommentsPopup: React.FC<{
                                                                     <div className='flex items-center gap-3 px-3 mt-0.5 text-[10px] text-gray-400'>
                                                                         <button
                                                                             onClick={() => handleLikeReply(reviewId, reply._id)}
-                                                                            className={`font-medium hover:underline flex items-center gap-1 ${isReplyLiked ? 'text-[#E4525C]' : ''}`}
+                                                                            className={`font-medium hover:underline flex items-center gap-1 ${isReplyLiked ? 'text-[var(--color-secondary)]' : ''}`}
                                                                             disabled={isReplyLiked}
                                                                         >
-                                                                            <FiThumbsUp size={9} style={{ fill: isReplyLiked ? '#E4525C' : 'none' }} />
+                                                                            <FiThumbsUp size={9} style={{ fill: isReplyLiked ? 'var(--color-secondary)' : 'none' }} />
                                                                             <span>Like{reply.likes > 0 ? ` (${reply.likes})` : ''}</span>
                                                                         </button>
                                                                     </div>
@@ -594,10 +594,10 @@ const CommentsPopup: React.FC<{
                                                         <button
                                                             onClick={() => handleSubmitReply(reviewId)}
                                                             disabled={!replyText.trim() || isReplying}
-                                                            className='text-[#0B4222] font-semibold text-[11px] ml-2 disabled:opacity-30 flex items-center gap-1'
+                                                            className='text-[var(--color-primary)] font-semibold text-[11px] ml-2 disabled:opacity-30 flex items-center gap-1'
                                                         >
                                                             {isReplying ? (
-                                                                <div className='w-3 h-3 border-2 border-gray-300 border-t-[#0B4222] rounded-full animate-spin' />
+                                                                <div className='w-3 h-3 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin' />
                                                             ) : (
                                                                 <FiSend size={11} />
                                                             )}
@@ -662,10 +662,10 @@ const CommentsPopup: React.FC<{
                                 <button
                                     onClick={handleSubmitComment}
                                     disabled={!newComment.trim() || isSubmitting}
-                                    className='text-[#0B4222] font-semibold text-[13px] hover:text-[#093519] transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1'
+                                    className='text-[var(--color-primary)] font-semibold text-[13px] hover:text-[var(--color-primary-dark)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1'
                                 >
                                     {isSubmitting ? (
-                                        <div className='w-4 h-4 border-2 border-gray-300 border-t-[#0B4222] rounded-full animate-spin' />
+                                        <div className='w-4 h-4 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin' />
                                     ) : (
                                         <><FiSend size={13} /> Post</>
                                     )}

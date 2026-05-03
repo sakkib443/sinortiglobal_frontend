@@ -24,7 +24,7 @@ const emptyVariant = (): Variant => ({
 const Section = ({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) => (
     <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', overflow: 'hidden', marginBottom: '20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '14px 20px', borderBottom: '1px solid #f3f4f6', background: '#fafafa' }}>
-            <span style={{ color: '#0B4222' }}>{icon}</span>
+            <span style={{ color: 'var(--color-primary)' }}>{icon}</span>
             <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>{title}</h2>
         </div>
         <div style={{ padding: '20px' }}>{children}</div>
@@ -41,7 +41,7 @@ const inp: React.CSSProperties = {
 const lbl: React.CSSProperties = { fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '5px' };
 const row: React.CSSProperties = { display: 'flex', gap: '14px', flexWrap: 'wrap' };
 const col = (flex = '1 1 200px'): React.CSSProperties => ({ flex, display: 'flex', flexDirection: 'column' });
-const focus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => { e.target.style.borderColor = '#0B4222'; };
+const focus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => { e.target.style.borderColor = 'var(--color-primary)'; };
 const blur  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => { e.target.style.borderColor = '#e5e7eb'; };
 
 /* ─── Tag Input Component ─── */
@@ -53,15 +53,15 @@ function TagInput({ label, value, onChange, placeholder }: { label: string; valu
             <label style={lbl}>{label}</label>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                 {value.map((tag, i) => (
-                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f0faf4', border: '1px solid #bbf7d0', color: '#0B4222', fontSize: '12px', fontWeight: 500, padding: '3px 8px', borderRadius: '999px' }}>
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--color-primary-lightest)', border: '1px solid #bbf7d0', color: 'var(--color-primary)', fontSize: '12px', fontWeight: 500, padding: '3px 8px', borderRadius: '999px' }}>
                         {tag}
-                        <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#0B4222', fontSize: '14px', lineHeight: 1, padding: 0 }}>×</button>
+                        <button type="button" onClick={() => onChange(value.filter((_, j) => j !== i))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-primary)', fontSize: '14px', lineHeight: 1, padding: 0 }}>×</button>
                     </span>
                 ))}
             </div>
             <div style={{ display: 'flex', gap: '8px' }}>
                 <input value={text} onChange={e => setText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); add(); } }} placeholder={placeholder || 'Type and press Enter'} style={{ ...inp, flex: 1 }} onFocus={focus} onBlur={blur} />
-                <button type="button" onClick={add} style={{ padding: '8px 14px', background: '#0B4222', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>Add</button>
+                <button type="button" onClick={add} style={{ padding: '8px 14px', background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>Add</button>
             </div>
         </div>
     );
@@ -173,7 +173,7 @@ export default function NewProductPage() {
                 <div style={{
                     position: 'fixed', top: '20px', right: '20px', zIndex: 9999,
                     display: 'flex', alignItems: 'center', gap: '10px',
-                    background: toast.type === 'success' ? '#f0faf4' : '#fef2f2',
+                    background: toast.type === 'success' ? 'var(--color-primary-lightest)' : '#fef2f2',
                     border: `1.5px solid ${toast.type === 'success' ? '#16a34a' : '#ef4444'}`,
                     color: toast.type === 'success' ? '#166534' : '#dc2626',
                     padding: '12px 18px', borderRadius: '10px',
@@ -207,11 +207,11 @@ export default function NewProductPage() {
                         <Section icon={<FiTag size={16} />} title="Basic Info">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 <div>
-                                    <label style={lbl}>Product Name <span style={{ color: '#E4525C' }}>*</span></label>
+                                    <label style={lbl}>Product Name <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                     <input value={form.name} onChange={e => setF('name', e.target.value)} placeholder="e.g. Premium Cotton T-Shirt" style={inp} onFocus={focus} onBlur={blur} />
                                 </div>
                                 <div>
-                                    <label style={lbl}>Description <span style={{ color: '#E4525C' }}>*</span></label>
+                                    <label style={lbl}>Description <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                     <textarea value={form.description} onChange={e => setF('description', e.target.value)} placeholder="Product এর বিস্তারিত বিবরণ..." rows={5} style={{ ...inp, resize: 'vertical', minHeight: '120px' }} onFocus={focus} onBlur={blur} />
                                 </div>
                                 <div style={row}>
@@ -234,7 +234,7 @@ export default function NewProductPage() {
                         <Section icon={<span style={{ fontWeight: 800, fontSize: '15px' }}>৳</span>} title="Pricing">
                             <div style={row}>
                                 <div style={col()}>
-                                    <label style={lbl}>Selling Price (৳) <span style={{ color: '#E4525C' }}>*</span></label>
+                                    <label style={lbl}>Selling Price (৳) <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                     <input type="number" value={form.price} onChange={e => setF('price', e.target.value)} placeholder="0" style={inp} min="0" onFocus={focus} onBlur={blur} />
                                 </div>
                                 <div style={col()}>
@@ -243,7 +243,7 @@ export default function NewProductPage() {
                                 </div>
                             </div>
                             {discPct(form.price, form.originalPrice) > 0 && (
-                                <div style={{ marginTop: '10px', padding: '8px 14px', background: '#f0faf4', borderRadius: '8px', fontSize: '12.5px', color: '#0B4222', fontWeight: 700 }}>
+                                <div style={{ marginTop: '10px', padding: '8px 14px', background: 'var(--color-primary-lightest)', borderRadius: '8px', fontSize: '12.5px', color: 'var(--color-primary)', fontWeight: 700 }}>
                                     ✅ Discount: {discPct(form.price, form.originalPrice)}% — automatically saved হবে
                                 </div>
                             )}
@@ -292,7 +292,7 @@ export default function NewProductPage() {
                                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                     <input type="color" value={colorInput.hex} onChange={e => setColorInput(p => ({ ...p, hex: e.target.value }))} style={{ width: '42px', height: '40px', border: '1px solid #e5e7eb', borderRadius: '8px', cursor: 'pointer', padding: '2px', flexShrink: 0 }} />
                                     <input value={colorInput.name} onChange={e => setColorInput(p => ({ ...p, name: e.target.value }))} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addColor(); } }} placeholder="Color নাম লিখুন (e.g. Sky Blue)" style={{ ...inp, flex: 1 }} onFocus={focus} onBlur={blur} />
-                                    <button type="button" onClick={addColor} style={{ padding: '9px 16px', background: '#0B4222', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>+ Add</button>
+                                    <button type="button" onClick={addColor} style={{ padding: '9px 16px', background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap' }}>+ Add</button>
                                 </div>
                             </div>
 
@@ -328,7 +328,7 @@ export default function NewProductPage() {
                                     }
                                     if (newVariants.length > 0) setVariants(p => [...p, ...newVariants]);
                                 }} disabled={colors.length === 0 && sizes.length === 0} style={{
-                                    padding: '10px 20px', background: (colors.length === 0 && sizes.length === 0) ? '#e5e7eb' : '#0B4222',
+                                    padding: '10px 20px', background: (colors.length === 0 && sizes.length === 0) ? '#e5e7eb' : 'var(--color-primary)',
                                     color: (colors.length === 0 && sizes.length === 0) ? '#9ca3af' : '#fff',
                                     border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: 700,
                                     cursor: (colors.length === 0 && sizes.length === 0) ? 'not-allowed' : 'pointer',
@@ -345,8 +345,8 @@ export default function NewProductPage() {
 
                             {/* ── Bulk Set ── */}
                             {variants.length > 0 && (
-                                <div style={{ background: '#f0faf4', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px' }}>
-                                    <p style={{ fontSize: '12px', fontWeight: 700, color: '#0B4222', margin: '0 0 10px' }}>⚡ Bulk Set — সব variant এ একসাথে</p>
+                                <div style={{ background: 'var(--color-primary-lightest)', border: '1px solid #bbf7d0', borderRadius: '10px', padding: '12px 16px', marginBottom: '16px' }}>
+                                    <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-primary)', margin: '0 0 10px' }}>⚡ Bulk Set — সব variant এ একসাথে</p>
                                     <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
                                         <div style={{ flex: '1 1 120px' }}>
                                             <label style={{ ...lbl, fontSize: '11px' }}>Price (৳)</label>
@@ -414,7 +414,7 @@ export default function NewProductPage() {
                                                 <input value={v.size} onChange={e => setV(i, 'size', e.target.value)} placeholder="M" style={inp} onFocus={focus} onBlur={blur} />
                                             </div>
                                             <div>
-                                                <label style={lbl}>Price (৳) <span style={{ color: '#E4525C' }}>*</span></label>
+                                                <label style={lbl}>Price (৳) <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                                 <input type="number" value={v.price} onChange={e => setV(i, 'price', e.target.value)} placeholder="0" style={inp} min="0" onFocus={focus} onBlur={blur} />
                                             </div>
                                             <div>
@@ -432,7 +432,7 @@ export default function NewProductPage() {
                                             <textarea value={v.images} onChange={e => setV(i, 'images', e.target.value)} placeholder={"https://example.com/red-front.jpg\nhttps://example.com/red-back.jpg"} rows={2} style={{ ...inp, resize: 'vertical' }} onFocus={focus} onBlur={blur} />
                                         </div>
                                         {discPct(v.price, v.originalPrice) > 0 && (
-                                            <div style={{ marginTop: '8px', fontSize: '12px', color: '#0B4222', fontWeight: 700, background: '#f0faf4', padding: '5px 12px', borderRadius: '6px', display: 'inline-block' }}>
+                                            <div style={{ marginTop: '8px', fontSize: '12px', color: 'var(--color-primary)', fontWeight: 700, background: 'var(--color-primary-lightest)', padding: '5px 12px', borderRadius: '6px', display: 'inline-block' }}>
                                                 ✅ Discount: {discPct(v.price, v.originalPrice)}%
                                             </div>
                                         )}
@@ -456,7 +456,7 @@ export default function NewProductPage() {
                         <Section icon={<span style={{ fontSize: '14px' }}>📂</span>} title="Category & Status">
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                                 <div>
-                                    <label style={lbl}>Category <span style={{ color: '#E4525C' }}>*</span></label>
+                                    <label style={lbl}>Category <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
                                     <select value={form.category} onChange={e => setF('category', e.target.value)} style={{ ...inp, cursor: 'pointer' }} onFocus={focus} onBlur={blur}>
                                         <option value="">— Select Category —</option>
                                         {categories.map((cat: any) => (
@@ -501,7 +501,7 @@ export default function NewProductPage() {
                                 style={{
                                     width: '100%', padding: '14px 20px',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                    background: isLoading ? '#6b7280' : 'linear-gradient(135deg, #0B4222 0%, #0d5c30 100%)',
+                                    background: isLoading ? '#6b7280' : 'linear-gradient(135deg, var(--color-primary) 0%, #0d5c30 100%)',
                                     color: '#fff', border: 'none', borderRadius: '10px',
                                     fontSize: '14px', fontWeight: 700,
                                     cursor: isLoading ? 'not-allowed' : 'pointer',

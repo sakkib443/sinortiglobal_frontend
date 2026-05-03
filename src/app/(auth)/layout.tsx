@@ -10,7 +10,7 @@ export default function AuthLayout({
 
             {/* Left — Brand Panel (desktop only) */}
             <div style={{
-                width: '45%', background: 'linear-gradient(145deg, #0B4222 0%, #0d5229 40%, #0a3b1e 100%)',
+                width: '45%', background: 'linear-gradient(145deg, var(--color-primary) 0%, #0d5229 40%, #0a3b1e 100%)',
                 display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
                 padding: '60px 48px', position: 'relative', overflow: 'hidden',
             }} className="auth-brand-panel">
@@ -62,7 +62,7 @@ export default function AuthLayout({
                 {/* Mobile Logo */}
                 <div className="auth-mobile-logo" style={{ display: 'none', marginBottom: '32px', textAlign: 'center' }}>
                     <Link href="/" style={{ textDecoration: 'none' }}>
-                        <span style={{ fontSize: '28px', fontWeight: 900, color: '#0B4222', letterSpacing: '-1px' }}>SINOTRI</span>
+                        <span style={{ fontSize: '28px', fontWeight: 900, color: 'var(--color-primary)', letterSpacing: '-1px' }}>SINOTRI</span>
                     </Link>
                 </div>
 

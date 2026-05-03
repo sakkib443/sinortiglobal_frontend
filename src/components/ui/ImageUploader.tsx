@@ -49,7 +49,7 @@ export function SingleImageUploader({
     return (
         <div>
             <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
-                {label} {required && <span style={{ color: '#E4525C' }}>*</span>}
+                {label} {required && <span style={{ color: 'var(--color-secondary)' }}>*</span>}
             </label>
 
             {/* Upload Zone */}
@@ -61,14 +61,14 @@ export function SingleImageUploader({
                     border: `2px dashed ${error ? '#fca5a5' : value ? '#86efac' : '#d1d5db'}`,
                     borderRadius: '10px', padding: '20px', textAlign: 'center',
                     cursor: isLoading ? 'wait' : 'pointer',
-                    background: value ? '#f0faf4' : '#fafafa',
+                    background: value ? 'var(--color-primary-lightest)' : '#fafafa',
                     transition: 'all 0.2s ease', position: 'relative',
                     minHeight: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
             >
                 {isLoading ? (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                        <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                         <span style={{ fontSize: '12px', color: '#6b7280' }}>Uploading...</span>
                     </div>
                 ) : value ? (
@@ -158,7 +158,7 @@ export function MultipleImageUploader({
                     {/* Add more slot */}
                     {values.length < max && (
                         <button type="button" onClick={() => ref.current?.click()} style={{ width: '72px', height: '72px', border: '2px dashed #d1d5db', borderRadius: '8px', background: '#f9fafb', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af' }}>
-                            {isLoading ? <div style={{ width: '18px', height: '18px', border: '2px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : <FiImage size={20} />}
+                            {isLoading ? <div style={{ width: '18px', height: '18px', border: '2px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> : <FiImage size={20} />}
                         </button>
                     )}
                 </div>
@@ -174,7 +174,7 @@ export function MultipleImageUploader({
                 >
                     {isLoading ? (
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                            <div style={{ width: '24px', height: '24px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                            <div style={{ width: '24px', height: '24px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                             <span style={{ fontSize: '12px', color: '#6b7280' }}>Uploading...</span>
                         </div>
                     ) : (

@@ -33,16 +33,16 @@ const NewFooter: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Customer Services</h4>
                         <ul className="space-y-2.5">
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Contact Us</Link></li>
-                            <li><Link href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Email Us</Link></li>
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Live Chat</Link></li>
+                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Contact Us</Link></li>
+                            <li><Link href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Email Us</Link></li>
+                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Live Chat</Link></li>
                             {isAuthenticated ? (
                                 <>
-                                    <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">My Account</Link></li>
+                                    <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Account</Link></li>
                                     <li><button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-500 transition-colors">Logout</button></li>
                                 </>
                             ) : (
-                                <li><Link href="/login" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Sign In / Register</Link></li>
+                                <li><Link href="/login" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Sign In / Register</Link></li>
                             )}
                         </ul>
                     </div>
@@ -51,10 +51,10 @@ const NewFooter: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Our Expertise</h4>
                         <ul className="space-y-2.5">
-                            <li><Link href="/services/shipping" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Buy and Ship for Me</Link></li>
-                            <li><Link href="/services/shipping" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Ship for Me</Link></li>
-                            <li><Link href="/services/quotation" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Request for Quotation (RFQ)</Link></li>
-                            <li><Link href="/services/calculator" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Cost Calculator</Link></li>
+                            <li><Link href="/services/shipping" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Buy and Ship for Me</Link></li>
+                            <li><Link href="/services/shipping" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Ship for Me</Link></li>
+                            <li><Link href="/services/quotation" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Request for Quotation (RFQ)</Link></li>
+                            <li><Link href="/services/calculator" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Cost Calculator</Link></li>
                         </ul>
                     </div>
 
@@ -62,10 +62,10 @@ const NewFooter: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Important Links</h4>
                         <ul className="space-y-2.5">
-                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Sinotri Live</Link></li>
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Talk to the Expert</Link></li>
-                            <li><Link href="/blogs" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">Blog</Link></li>
-                            <li><Link href="/cart" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">My Cart</Link></li>
+                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Sinotri Live</Link></li>
+                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Talk to the Expert</Link></li>
+                            <li><Link href="/blogs" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Blog</Link></li>
+                            <li><Link href="/cart" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Cart</Link></li>
                         </ul>
                     </div>
                 </div>
@@ -88,7 +88,7 @@ const NewFooter: React.FC = () => {
                                 </div>
                                 <div className="flex items-center gap-2.5">
                                     <FiMail size={14} className="text-gray-400 shrink-0" />
-                                    <a href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[#0B4222] transition-colors">support@sinotriglobal.com</a>
+                                    <a href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">support@sinotriglobal.com</a>
                                 </div>
                             </div>
                             {/* Social Icons */}
@@ -99,7 +99,7 @@ const NewFooter: React.FC = () => {
                                     { icon: FaYoutube, url: '#', label: 'YouTube' },
                                     { icon: FaInstagram, url: '#', label: 'Instagram' },
                                 ].map((s) => (
-                                    <a key={s.label} href={s.url} aria-label={s.label} className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[#0B4222] transition-colors">
+                                    <a key={s.label} href={s.url} aria-label={s.label} className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] transition-colors">
                                         <s.icon size={14} />
                                     </a>
                                 ))}
@@ -111,8 +111,8 @@ const NewFooter: React.FC = () => {
                             <h4 className="text-sm font-bold text-gray-900 mb-4">24/7 Support</h4>
                             <p className="text-sm text-gray-500 mb-3">We're here for you 24/7, around the clock.</p>
                             <div className="flex items-center gap-2.5">
-                                <FiPhone size={16} className="text-[#0B4222]" />
-                                <a href="tel:+8809666786000" className="text-base font-semibold text-[#0B4222] hover:underline">+8809666786000</a>
+                                <FiPhone size={16} className="text-[var(--color-primary)]" />
+                                <a href="tel:+8809666786000" className="text-base font-semibold text-[var(--color-primary)] hover:underline">+8809666786000</a>
                             </div>
                         </div>
 
@@ -161,11 +161,11 @@ const NewFooter: React.FC = () => {
                             © 2019-{new Date().getFullYear()} Sinotri Global Technologies Ltd. All Rights Reserved.
                         </p>
                         <div className="flex items-center gap-4">
-                            <Link href="/terms" className="text-xs text-gray-400 hover:text-[#0B4222] transition-colors">Terms & Conditions</Link>
+                            <Link href="/terms" className="text-xs text-gray-400 hover:text-[var(--color-primary)] transition-colors">Terms & Conditions</Link>
                             <span className="text-gray-300">•</span>
-                            <Link href="/privacy" className="text-xs text-gray-400 hover:text-[#0B4222] transition-colors">Privacy Policy</Link>
+                            <Link href="/privacy" className="text-xs text-gray-400 hover:text-[var(--color-primary)] transition-colors">Privacy Policy</Link>
                             <span className="text-gray-300">•</span>
-                            <Link href="/refund" className="text-xs text-gray-400 hover:text-[#0B4222] transition-colors">Refund Policy</Link>
+                            <Link href="/refund" className="text-xs text-gray-400 hover:text-[var(--color-primary)] transition-colors">Refund Policy</Link>
                         </div>
                     </div>
                 </div>

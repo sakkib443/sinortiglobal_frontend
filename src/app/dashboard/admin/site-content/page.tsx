@@ -18,7 +18,7 @@ const card: React.CSSProperties = { background: '#fff', border: '1px solid #eee'
 const label: React.CSSProperties = { fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '5px' };
 const input: React.CSSProperties = { width: '100%', padding: '8px 12px', border: '1.5px solid #e5e7eb', borderRadius: '7px', fontSize: '13px', outline: 'none', boxSizing: 'border-box' as const };
 const btn: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 18px', borderRadius: '7px', fontSize: '13px', fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.2s' };
-const btnPrimary: React.CSSProperties = { ...btn, background: '#0B4222', color: '#fff' };
+const btnPrimary: React.CSSProperties = { ...btn, background: 'var(--color-primary)', color: '#fff' };
 const btnDanger: React.CSSProperties = { ...btn, background: '#fef2f2', color: '#dc2626', padding: '6px 10px' };
 const btnSmall: React.CSSProperties = { ...btn, background: '#f3f4f6', color: '#333', padding: '6px 12px', fontSize: '12px' };
 
@@ -65,7 +65,7 @@ export default function SiteContentPage() {
     if (isLoading || !formData) {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
-                <div style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                <div style={{ width: '32px', height: '32px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
             </div>
         );
     }
@@ -93,10 +93,10 @@ export default function SiteContentPage() {
                             display: 'flex', alignItems: 'center', gap: '6px',
                             padding: '8px 14px', border: 'none', cursor: 'pointer',
                             fontSize: '12.5px', fontWeight: activeTab === tab.key ? 700 : 500,
-                            color: activeTab === tab.key ? '#0B4222' : '#888',
-                            background: activeTab === tab.key ? '#f0faf4' : 'transparent',
+                            color: activeTab === tab.key ? 'var(--color-primary)' : '#888',
+                            background: activeTab === tab.key ? 'var(--color-primary-lightest)' : 'transparent',
                             borderRadius: '6px 6px 0 0',
-                            borderBottom: activeTab === tab.key ? '2px solid #0B4222' : '2px solid transparent',
+                            borderBottom: activeTab === tab.key ? '2px solid var(--color-primary)' : '2px solid transparent',
                             transition: 'all 0.15s',
                         }}
                     >
@@ -162,7 +162,7 @@ function ContactTab({ data, setData }: { data: any; setData: any }) {
     return (
         <div>
             {/* Status Badge */}
-            <div style={{ ...card, background: '#f0faf4', borderColor: '#bbf7d0' }}>
+            <div style={{ ...card, background: 'var(--color-primary-lightest)', borderColor: '#bbf7d0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <FiCheckCircle size={16} color="#16a34a" />
                     <span style={{ fontSize: '12px', fontWeight: 600, color: '#16a34a' }}>Active — This data is used on the <strong>Contact Us</strong> page</span>
@@ -319,7 +319,7 @@ function LegalPagesTab() {
     const pages = legalRes?.data || [];
 
     const LEGAL_PAGES = [
-        { slug: 'terms', label: 'Terms & Conditions', icon: '📜', color: '#0B4222' },
+        { slug: 'terms', label: 'Terms & Conditions', icon: '📜', color: 'var(--color-primary)' },
         { slug: 'privacy', label: 'Privacy Policy', icon: '🛡️', color: '#2563eb' },
         { slug: 'refund', label: 'Refund Policy', icon: '🔄', color: '#d97706' },
     ];
@@ -345,7 +345,7 @@ function LegalPagesTab() {
     if (isLoading) {
         return (
             <div style={{ textAlign: 'center', padding: '40px' }}>
-                <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
+                <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
             </div>
         );
     }
@@ -419,7 +419,7 @@ function LegalPagesTab() {
     // List Mode
     return (
         <div>
-            <div style={{ ...card, background: '#f8faf9', borderColor: '#bbf7d0' }}>
+            <div style={{ ...card, background: 'var(--color-primary-surface)', borderColor: '#bbf7d0' }}>
                 <p style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, margin: 0 }}>
                     ✅ These pages are live at: <strong>/terms</strong>, <strong>/privacy</strong>, <strong>/refund</strong>
                 </p>
@@ -441,7 +441,7 @@ function LegalPagesTab() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{
                                 fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '20px',
-                                background: hasContent ? '#f0faf4' : '#fef2f2',
+                                background: hasContent ? 'var(--color-primary-lightest)' : '#fef2f2',
                                 color: hasContent ? '#16a34a' : '#dc2626',
                                 textTransform: 'uppercase',
                             }}>

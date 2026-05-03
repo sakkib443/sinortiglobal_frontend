@@ -64,7 +64,7 @@ export default function OrderDetailPage() {
                 <FiPackage size={48} className="mx-auto text-gray-200 mb-4" />
                 <h3 className="text-lg font-bold text-gray-600 mb-1">Order not found</h3>
                 <p className="text-sm text-gray-400 mb-4">The order you&apos;re looking for doesn&apos;t exist</p>
-                <Link href="/dashboard/user/orders" className="text-[#0B4222] font-bold text-sm hover:underline">
+                <Link href="/dashboard/user/orders" className="text-[var(--color-primary)] font-bold text-sm hover:underline">
                     ← Back to My Orders
                 </Link>
             </div>
@@ -77,7 +77,7 @@ export default function OrderDetailPage() {
             <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-[#0B4222] mb-4 font-semibold transition-colors"
+                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-[var(--color-primary)] mb-4 font-semibold transition-colors"
                 >
                     <FiArrowLeft size={16} />
                     Back to My Orders
@@ -117,7 +117,7 @@ export default function OrderDetailPage() {
                         {/* Progress Line */}
                         <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-100">
                             <div
-                                className="h-full bg-gradient-to-r from-[#0B4222] to-[#1a6b3c] transition-all duration-500"
+                                className="h-full bg-gradient-to-r from-[var(--color-primary)] to-[#1a6b3c] transition-all duration-500"
                                 style={{ width: `${(currentStepIndex / (statusSteps.length - 1)) * 100}%` }}
                             ></div>
                         </div>
@@ -130,13 +130,13 @@ export default function OrderDetailPage() {
                                 <div key={step} className="flex flex-col items-center relative z-10">
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                                         isCompleted
-                                            ? 'bg-[#0B4222] text-white shadow-md shadow-[#0B4222]/20'
+                                            ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
                                             : 'bg-gray-100 text-gray-300'
-                                    } ${isCurrent ? 'ring-4 ring-[#0B4222]/10' : ''}`}>
+                                    } ${isCurrent ? 'ring-4 ring-[var(--color-primary)]/10' : ''}`}>
                                         <Icon size={18} />
                                     </div>
                                     <p className={`text-xs mt-2 capitalize font-semibold ${
-                                        isCompleted ? 'text-[#0B4222]' : 'text-gray-300'
+                                        isCompleted ? 'text-[var(--color-primary)]' : 'text-gray-300'
                                     }`}>
                                         {step}
                                     </p>
@@ -200,7 +200,7 @@ export default function OrderDetailPage() {
                             )}
                             <div className="flex justify-between text-base pt-2 border-t border-gray-200 mt-2">
                                 <span className="font-bold text-gray-700">Total</span>
-                                <span className="font-bold text-[#0B4222] text-lg">৳{order.total?.toLocaleString()}</span>
+                                <span className="font-bold text-[var(--color-primary)] text-lg">৳{order.total?.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -211,7 +211,7 @@ export default function OrderDetailPage() {
                     {/* Shipping Address */}
                     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
-                            <FiMapPin size={16} className="text-[#0B4222]" />
+                            <FiMapPin size={16} className="text-[var(--color-primary)]" />
                             <h3 className="text-sm font-bold text-gray-800">Shipping Address</h3>
                         </div>
                         {order.shippingAddress ? (
@@ -233,7 +233,7 @@ export default function OrderDetailPage() {
                     {/* Payment Info */}
                     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
-                            <FiCreditCard size={16} className="text-[#0B4222]" />
+                            <FiCreditCard size={16} className="text-[var(--color-primary)]" />
                             <h3 className="text-sm font-bold text-gray-800">Payment</h3>
                         </div>
                         <div className="space-y-3">
@@ -267,7 +267,7 @@ export default function OrderDetailPage() {
                             <div className="space-y-4">
                                 {order.timeline.map((event: any, idx: number) => (
                                     <div key={idx} className="flex gap-3">
-                                        <div className="w-2 h-2 rounded-full bg-[#0B4222] mt-1.5 flex-shrink-0"></div>
+                                        <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] mt-1.5 flex-shrink-0"></div>
                                         <div>
                                             <p className="text-xs font-semibold text-gray-700">{event.status || event.action}</p>
                                             <p className="text-[11px] text-gray-400 mt-0.5">

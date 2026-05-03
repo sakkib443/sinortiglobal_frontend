@@ -81,10 +81,10 @@ export default function ProfilePage() {
             <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                 <div className="flex items-center gap-5">
                     <div className="relative">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0B4222] to-[#1a6b3c] flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-[#0B4222]/20">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[#1a6b3c] flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-[var(--color-primary)]/20">
                             {user?.name?.charAt(0) || 'U'}
                         </div>
-                        <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-white border-2 border-gray-100 rounded-xl flex items-center justify-center text-gray-400 hover:text-[#0B4222] hover:border-[#0B4222] transition-all shadow-sm">
+                        <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-white border-2 border-gray-100 rounded-xl flex items-center justify-center text-gray-400 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all shadow-sm">
                             <FiCamera size={14} />
                         </button>
                     </div>
@@ -118,7 +118,7 @@ export default function ProfilePage() {
                             type="text"
                             value={form.name}
                             onChange={(e) => setForm({ ...form, name: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] focus:ring-2 focus:ring-[#0B4222]/10 outline-none text-sm transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 outline-none text-sm transition-all"
                             placeholder="Your full name"
                         />
                     </div>
@@ -130,7 +130,7 @@ export default function ProfilePage() {
                             type="email"
                             value={form.email}
                             onChange={(e) => setForm({ ...form, email: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] focus:ring-2 focus:ring-[#0B4222]/10 outline-none text-sm transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 outline-none text-sm transition-all"
                             placeholder="your@email.com"
                         />
                     </div>
@@ -142,7 +142,7 @@ export default function ProfilePage() {
                             type="tel"
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] focus:ring-2 focus:ring-[#0B4222]/10 outline-none text-sm transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 outline-none text-sm transition-all"
                             placeholder="+880 XXXX XXXXXX"
                         />
                     </div>
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="px-6 py-2.5 bg-[#0B4222] text-white rounded-xl font-semibold text-sm hover:bg-[#093519] transition-all shadow-md shadow-[#0B4222]/20 disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 disabled:opacity-50 flex items-center gap-2"
                     >
                         <FiSave size={16} />
                         {isLoading ? 'Saving...' : 'Save Changes'}
@@ -182,7 +182,7 @@ export default function ProfilePage() {
                             type="password"
                             value={passwordForm.currentPassword}
                             onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] focus:ring-2 focus:ring-[#0B4222]/10 outline-none text-sm transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 outline-none text-sm transition-all"
                             placeholder="••••••••"
                         />
                     </div>
@@ -194,7 +194,7 @@ export default function ProfilePage() {
                             type="password"
                             value={passwordForm.newPassword}
                             onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] focus:ring-2 focus:ring-[#0B4222]/10 outline-none text-sm transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 outline-none text-sm transition-all"
                             placeholder="••••••••"
                         />
                     </div>
@@ -206,7 +206,7 @@ export default function ProfilePage() {
                             type="password"
                             value={passwordForm.confirmPassword}
                             onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#0B4222] focus:ring-2 focus:ring-[#0B4222]/10 outline-none text-sm transition-all"
+                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/10 outline-none text-sm transition-all"
                             placeholder="••••••••"
                         />
                     </div>

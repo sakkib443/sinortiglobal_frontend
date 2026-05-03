@@ -58,7 +58,7 @@ const ReplyModal = ({
                     <div>
                         <label className="block text-xs font-bold text-gray-500 uppercase mb-1.5">Your Response</label>
                         <textarea
-                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none font-medium h-32 resize-none text-sm"
+                            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none font-medium h-32 resize-none text-sm"
                             placeholder="Type your reply here..."
                             value={reply}
                             onChange={(e) => setReply(e.target.value)}
@@ -69,7 +69,7 @@ const ReplyModal = ({
                     <button onClick={onClose} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors">Cancel</button>
                     <button
                         onClick={() => onSubmit(reply)}
-                        className="px-6 py-2 bg-[#0B4222] text-white rounded-md text-sm font-bold shadow-md hover:bg-[#093519] flex items-center gap-2 transition-all"
+                        className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold shadow-md hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all"
                     >
                         <FiSend size={16} />
                         Send Reply
@@ -328,7 +328,7 @@ export default function ReviewsPage() {
                                 key={i}
                                 onClick={() => setPage(i + 1)}
                                 className={`w-8 h-8 rounded-md text-sm font-bold transition-all ${page === i + 1
-                                    ? 'bg-[#0B4222] text-white shadow-md'
+                                    ? 'bg-[var(--color-primary)] text-white shadow-md'
                                     : 'bg-white text-gray-500 border border-gray-200 hover:bg-gray-50'
                                     }`}
                             >

@@ -60,7 +60,7 @@ const AdminDashboard: React.FC = () => {
             confirmed: { bg: '#DBEAFE', text: '#2563EB' },
             processing: { bg: '#EDE9FE', text: '#7C3AED' },
             shipped: { bg: '#E0E7FF', text: '#4F46E5' },
-            delivered: { bg: '#D1FAE5', text: '#059669' },
+            delivered: { bg: 'var(--color-primary-border)', text: 'var(--color-primary)' },
             cancelled: { bg: '#FEE2E2', text: '#DC2626' },
         };
         return map[status] || { bg: '#F3F4F6', text: '#6B7280' };
@@ -68,7 +68,7 @@ const AdminDashboard: React.FC = () => {
 
 
     // Category colors
-    const catColors = ['#0B4222', '#3B82F6', '#F59E0B', '#EC4899', '#8B5CF6', '#06B6D4', '#EF4444'];
+    const catColors = ['var(--color-primary)', '#3B82F6', '#F59E0B', '#EC4899', '#8B5CF6', '#06B6D4', '#EF4444'];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -128,9 +128,9 @@ const AdminDashboard: React.FC = () => {
                         value: (stats?.todayOrders || 0).toLocaleString(),
                         sub: `${stats?.deliveredOrders || 0} delivered total`,
                         icon: FiPackage,
-                        color: '#0B4222',
-                        bg: '#F0FAF4',
-                        gradient: 'linear-gradient(135deg, #F0FAF4 0%, #D1FAE5 100%)',
+                        color: 'var(--color-primary)',
+                        bg: 'var(--color-primary-lightest)',
+                        gradient: 'linear-gradient(135deg, var(--color-primary-lightest) 0%, var(--color-primary-border) 100%)',
                     },
                 ].map((item, i) => (
                     <div key={i} style={{
@@ -177,7 +177,7 @@ const AdminDashboard: React.FC = () => {
                     { label: 'Confirmed', value: orderStats.confirmed || 0, color: '#2563EB', bg: '#DBEAFE' },
                     { label: 'Processing', value: orderStats.processing || 0, color: '#7C3AED', bg: '#EDE9FE' },
                     { label: 'Shipped', value: orderStats.shipped || 0, color: '#4F46E5', bg: '#E0E7FF' },
-                    { label: 'Delivered', value: orderStats.delivered || 0, color: '#059669', bg: '#D1FAE5' },
+                    { label: 'Delivered', value: orderStats.delivered || 0, color: 'var(--color-primary)', bg: 'var(--color-primary-border)' },
                     { label: 'Cancelled', value: orderStats.cancelled || 0, color: '#DC2626', bg: '#FEE2E2' },
                 ].map((item, i) => (
                     <React.Fragment key={item.label}>
@@ -260,14 +260,14 @@ const AdminDashboard: React.FC = () => {
                             {recentOrders.length > 0 && (
                                 <span style={{
                                     fontSize: '10px', fontWeight: 700, color: '#fff',
-                                    background: '#0B4222', padding: '2px 8px', borderRadius: '999px',
+                                    background: 'var(--color-primary)', padding: '2px 8px', borderRadius: '999px',
                                 }}>
                                     {recentOrders.length}
                                 </span>
                             )}
                         </div>
                         <Link href="/dashboard/admin/orders" style={{
-                            fontSize: '12px', fontWeight: 600, color: '#0B4222',
+                            fontSize: '12px', fontWeight: 600, color: 'var(--color-primary)',
                             textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px',
                         }}>
                             View All <FiArrowRight size={12} />
@@ -323,7 +323,7 @@ const AdminDashboard: React.FC = () => {
                                                     {order.guestInfo?.phone && (
                                                         <>
                                                             <span style={{ fontSize: '11px', color: '#ddd' }}>•</span>
-                                                            <span style={{ fontSize: '10.5px', color: '#0B4222', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                                                            <span style={{ fontSize: '10.5px', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '2px' }}>
                                                                 <FiPhone size={9} /> {order.guestInfo.phone}
                                                             </span>
                                                         </>
@@ -332,7 +332,7 @@ const AdminDashboard: React.FC = () => {
                                             </div>
                                         </div>
                                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                            <p style={{ fontSize: '13px', fontWeight: 800, color: '#0B4222', margin: 0 }}>
+                                            <p style={{ fontSize: '13px', fontWeight: 800, color: 'var(--color-primary)', margin: 0 }}>
                                                 {formatCurrency(order.total)}
                                             </p>
                                             <p style={{ fontSize: '10px', color: '#ccc', margin: '2px 0 0', fontWeight: 500 }}>
@@ -362,7 +362,7 @@ const AdminDashboard: React.FC = () => {
                         <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111', margin: '0 0 12px' }}>Quick Actions</h3>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                             {[
-                                { label: 'Add Product', href: '/dashboard/admin/products/new', icon: FiPlus, color: '#0B4222', bg: '#F0FAF4' },
+                                { label: 'Add Product', href: '/dashboard/admin/products/new', icon: FiPlus, color: 'var(--color-primary)', bg: 'var(--color-primary-lightest)' },
                                 { label: 'All Orders', href: '/dashboard/admin/orders', icon: FiShoppingCart, color: '#3B82F6', bg: '#EFF6FF' },
                                 { label: 'Shipping', href: '/dashboard/admin/shipping', icon: FiTruck, color: '#F59E0B', bg: '#FFFBEB' },
                                 { label: 'Reports', href: '/dashboard/admin/analytics', icon: FiTrendingUp, color: '#8B5CF6', bg: '#F5F3FF' },
@@ -393,7 +393,7 @@ const AdminDashboard: React.FC = () => {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                             <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#111', margin: 0 }}>Top Products</h3>
                             <Link href="/dashboard/admin/products" style={{
-                                fontSize: '11px', fontWeight: 600, color: '#0B4222',
+                                fontSize: '11px', fontWeight: 600, color: 'var(--color-primary)',
                                 textDecoration: 'none',
                             }}>View All</Link>
                         </div>
@@ -426,7 +426,7 @@ const AdminDashboard: React.FC = () => {
                                     </div>
                                     <span style={{
                                         fontSize: '10px', fontWeight: 700,
-                                        color: '#0B4222', background: '#F0FAF4',
+                                        color: 'var(--color-primary)', background: 'var(--color-primary-lightest)',
                                         padding: '2px 6px', borderRadius: '4px',
                                     }}>
                                         #{i + 1}

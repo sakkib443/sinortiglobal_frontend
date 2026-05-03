@@ -151,7 +151,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                                 <FiShoppingCart size={18} className='group-hover/btn:scale-110 transition-transform' />
                             </button>
                             {showAlready && (
-                                <span className='absolute top-full right-0 mt-1 text-xs font-normal text-[#E4525C] whitespace-nowrap' style={{ opacity: 1 }}>
+                                <span className='absolute top-full right-0 mt-1 text-xs font-normal text-[var(--color-secondary)] whitespace-nowrap' style={{ opacity: 1 }}>
                                     Already Added
                                 </span>
                             )}

@@ -140,7 +140,7 @@ export default function CustomersPage() {
         { label: 'New This Month', value: 12, icon: FiCalendar, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
     ];
 
-    const inputStyle = "w-full px-3 py-2.5 border border-gray-200 rounded-md text-sm outline-none focus:border-[#0B4222] transition-colors";
+    const inputStyle = "w-full px-3 py-2.5 border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] transition-colors";
 
     return (
         <div className="space-y-6">
@@ -157,7 +157,7 @@ export default function CustomersPage() {
                     </button>
                     <button
                         onClick={() => setShowCreateAdmin(true)}
-                        className="px-4 py-2.5 bg-[#0B4222] text-white rounded-md text-sm font-bold hover:bg-[#093519] flex items-center gap-2 transition-all shadow-md"
+                        className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-md"
                     >
                         <FiUserPlus size={16} /> Create Admin
                     </button>
@@ -186,7 +186,7 @@ export default function CustomersPage() {
                         <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                         <input type="text" placeholder="Search by name, email, phone..."
                             value={search} onChange={(e) => setSearch(e.target.value)}
-                            className="w-full pl-12 pr-4 py-2.5 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] focus:border-transparent outline-none transition-all bg-gray-50/30" />
+                            className="w-full pl-12 pr-4 py-2.5 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all bg-gray-50/30" />
                     </div>
                     <div className="flex gap-3">
                         <select value={roleFilter} onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
@@ -269,7 +269,7 @@ export default function CustomersPage() {
                                                         defaultValue={user.role}
                                                         onChange={(e) => handleRoleChange(user._id, e.target.value)}
                                                         disabled={isUpdatingUser}
-                                                        className="text-xs border border-[#0B4222] rounded-md px-2 py-1.5 outline-none bg-white font-bold"
+                                                        className="text-xs border border-[var(--color-primary)] rounded-md px-2 py-1.5 outline-none bg-white font-bold"
                                                     >
                                                         <option value="user">User</option>
                                                         <option value="admin">Admin</option>
@@ -282,7 +282,7 @@ export default function CustomersPage() {
                                                 <div className="flex items-center gap-2">
                                                     <RoleBadge role={user.role} />
                                                     <button onClick={() => setEditingRole(user._id)}
-                                                        className="p-1 text-gray-300 hover:text-[#0B4222] transition-colors" title="Change role">
+                                                        className="p-1 text-gray-300 hover:text-[var(--color-primary)] transition-colors" title="Change role">
                                                         <FiEdit3 size={12} />
                                                     </button>
                                                 </div>
@@ -297,7 +297,7 @@ export default function CustomersPage() {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link href={`/dashboard/admin/customers/${user._id}`}
-                                                    className="p-2 bg-gray-50 hover:bg-white text-gray-500 hover:text-[#0B4222] border border-gray-100 hover:border-[#0B4222]/30 rounded-md transition-all shadow-sm" title="View">
+                                                    className="p-2 bg-gray-50 hover:bg-white text-gray-500 hover:text-[var(--color-primary)] border border-gray-100 hover:border-[var(--color-primary)]/30 rounded-md transition-all shadow-sm" title="View">
                                                     <FiEye size={18} />
                                                 </Link>
                                             </div>
@@ -381,7 +381,7 @@ export default function CustomersPage() {
                         </div>
 
                         <button onClick={handleCreateAdmin} disabled={isCreating}
-                            className="w-full mt-6 py-3 bg-[#0B4222] text-white rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#093519] transition-all disabled:opacity-60 shadow-md">
+                            className="w-full mt-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-60 shadow-md">
                             {isCreating ? 'Creating...' : <><FiUserPlus size={16} /> Create Admin Account</>}
                         </button>
                     </div>

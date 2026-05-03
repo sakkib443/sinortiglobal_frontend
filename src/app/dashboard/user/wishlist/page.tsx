@@ -38,7 +38,7 @@ export default function WishlistPage() {
                     </div>
                     <Link
                         href="/"
-                        className="px-5 py-2.5 bg-[#0B4222] text-white rounded-xl font-semibold text-sm hover:bg-[#093519] transition-all shadow-md shadow-[#0B4222]/20"
+                        className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20"
                     >
                         Continue Shopping
                     </Link>
@@ -63,7 +63,7 @@ export default function WishlistPage() {
                     <p className="text-sm text-gray-400 mb-4">Save items you love to your wishlist</p>
                     <Link
                         href="/"
-                        className="inline-block px-6 py-2.5 bg-[#0B4222] text-white rounded-xl font-semibold text-sm hover:bg-[#093519] transition-all shadow-md"
+                        className="inline-block px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md"
                     >
                         Explore Products
                     </Link>
@@ -90,11 +90,11 @@ export default function WishlistPage() {
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
                                     <Link
                                         href={`/product/${product.slug || product._id}`}
-                                        className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg hover:bg-[#0B4222] hover:text-white transition-all"
+                                        className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg hover:bg-[var(--color-primary)] hover:text-white transition-all"
                                     >
                                         <FiEye size={16} />
                                     </Link>
-                                    <button className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg hover:bg-[#0B4222] hover:text-white transition-all">
+                                    <button className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg hover:bg-[var(--color-primary)] hover:text-white transition-all">
                                         <FiShoppingCart size={16} />
                                     </button>
                                 </div>
@@ -119,7 +119,7 @@ export default function WishlistPage() {
                             {/* Info */}
                             <div className="p-4">
                                 <Link href={`/product/${product.slug || product._id}`}>
-                                    <h3 className="text-sm font-bold text-gray-800 hover:text-[#0B4222] transition-colors line-clamp-2">
+                                    <h3 className="text-sm font-bold text-gray-800 hover:text-[var(--color-primary)] transition-colors line-clamp-2">
                                         {product.name}
                                     </h3>
                                 </Link>
@@ -139,7 +139,7 @@ export default function WishlistPage() {
 
                                 {/* Price */}
                                 <div className="flex items-center gap-2 mt-3">
-                                    <span className="text-lg font-bold text-[#0B4222]">
+                                    <span className="text-lg font-bold text-[var(--color-primary)]">
                                         ৳{(product.discountPrice || product.price)?.toLocaleString()}
                                     </span>
                                     {product.discountPrice && product.discountPrice < product.price && (

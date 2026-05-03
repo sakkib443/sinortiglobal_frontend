@@ -9,7 +9,7 @@ const services = [
         icon: <FiPackage size={28} />,
         title: 'Product Sourcing',
         desc: 'We source high-quality products directly from verified manufacturers in China, ensuring the best prices and authentic items for your business.',
-        color: '#0B4222',
+        color: 'var(--color-primary)',
     },
     {
         icon: <FiTruck size={28} />,
@@ -47,7 +47,7 @@ export default function ServicesPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Hero */}
-            <div className="bg-gradient-to-br from-[#0B4222] to-[#18764a] text-white py-16 sm:py-20">
+            <div className="bg-gradient-to-br from-[var(--color-primary)] to-[#18764a] text-white py-16 sm:py-20">
                 <div className="container mx-auto px-4 text-center">
                     <h1 className="text-3xl sm:text-4xl font-extrabold mb-4">Our Services</h1>
                     <p className="text-white/70 max-w-xl mx-auto text-sm sm:text-base">
@@ -89,7 +89,7 @@ export default function ServicesPage() {
                     </p>
                     <Link
                         href="/contact"
-                        className="inline-flex items-center gap-2 bg-[#0B4222] text-white px-8 py-3 rounded-lg font-semibold text-sm hover:bg-[#093a1d] transition-colors"
+                        className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-8 py-3 rounded-lg font-semibold text-sm hover:bg-[#093a1d] transition-colors"
                     >
                         Contact Us →
                     </Link>

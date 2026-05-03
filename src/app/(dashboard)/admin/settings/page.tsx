@@ -31,7 +31,7 @@ export default function SettingsPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeTab === tab.id
-                                        ? 'bg-[#0B4222] text-white'
+                                        ? 'bg-[var(--color-primary)] text-white'
                                         : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                             >
@@ -56,7 +56,7 @@ export default function SettingsPage() {
                                         <input
                                             type="text"
                                             defaultValue="Sinotri Global"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
@@ -64,7 +64,7 @@ export default function SettingsPage() {
                                         <input
                                             type="email"
                                             defaultValue="info@megashop.com"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
@@ -72,12 +72,12 @@ export default function SettingsPage() {
                                         <input
                                             type="tel"
                                             defaultValue="+880 1234 567 890"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
-                                        <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]">
+                                        <select className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]">
                                             <option>BDT (৳)</option>
                                             <option>USD ($)</option>
                                             <option>EUR (€)</option>
@@ -88,7 +88,7 @@ export default function SettingsPage() {
                                         <textarea
                                             rows={3}
                                             defaultValue="123 Shopping Street, Dhaka 1000, Bangladesh"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div className="md:col-span-2">
@@ -96,7 +96,7 @@ export default function SettingsPage() {
                                         <textarea
                                             rows={4}
                                             defaultValue="Your one-stop destination for all your shopping needs. Quality products, best prices, and excellent customer service."
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@ export default function SettingsPage() {
                                             </div>
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" defaultChecked={method.enabled} className="sr-only peer" />
-                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B4222]"></div>
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--color-primary)]"></div>
                                             </label>
                                         </div>
                                     ))}
@@ -145,7 +145,7 @@ export default function SettingsPage() {
                                         <input
                                             type="number"
                                             defaultValue="60"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
@@ -153,7 +153,7 @@ export default function SettingsPage() {
                                         <input
                                             type="number"
                                             defaultValue="120"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                                         <input
                                             type="number"
                                             defaultValue="2000"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
@@ -169,7 +169,7 @@ export default function SettingsPage() {
                                         <input
                                             type="text"
                                             defaultValue="3-5"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                 </div>
@@ -196,7 +196,7 @@ export default function SettingsPage() {
                                             </div>
                                             <label className="relative inline-flex items-center cursor-pointer">
                                                 <input type="checkbox" defaultChecked={item.enabled} className="sr-only peer" />
-                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B4222]"></div>
+                                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--color-primary)]"></div>
                                             </label>
                                         </div>
                                     ))}
@@ -214,21 +214,21 @@ export default function SettingsPage() {
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
                                         <input
                                             type="password"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                                         <input
                                             type="password"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                                         <input
                                             type="password"
-                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0B4222]"
+                                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-[var(--color-primary)]"
                                         />
                                     </div>
                                     <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -236,7 +236,7 @@ export default function SettingsPage() {
                                             <p className="font-medium text-gray-800">Two-Factor Authentication</p>
                                             <p className="text-sm text-gray-500">Add extra security to your account</p>
                                         </div>
-                                        <button className="px-4 py-2 border border-[#0B4222] text-[#0B4222] rounded-lg font-medium hover:bg-[#0B4222] hover:text-white transition-colors">
+                                        <button className="px-4 py-2 border border-[var(--color-primary)] text-[var(--color-primary)] rounded-lg font-medium hover:bg-[var(--color-primary)] hover:text-white transition-colors">
                                             Enable
                                         </button>
                                     </div>
@@ -246,7 +246,7 @@ export default function SettingsPage() {
 
                         {/* Save Button */}
                         <div className="mt-8 pt-6 border-t flex justify-end">
-                            <button className="flex items-center gap-2 px-6 py-2 bg-[#0B4222] text-white rounded-lg font-medium hover:opacity-90">
+                            <button className="flex items-center gap-2 px-6 py-2 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:opacity-90">
                                 <FiSave size={18} />
                                 Save Changes
                             </button>

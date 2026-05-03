@@ -7,9 +7,9 @@ const CtaBanner: React.FC = () => {
     return (
         <section className="w-full relative overflow-hidden">
             {/* Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0B4222] via-[#0d5a2e] to-[#0B4222]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)] via-[#0d5a2e] to-[var(--color-primary)]" />
             <div className="absolute inset-0 bg-[url('/images/hero.jpg')] bg-cover bg-center opacity-15" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0B4222]/90 via-[#0B4222]/80 to-[#0B4222]/90" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)]/90 via-[var(--color-primary)]/80 to-[var(--color-primary)]/90" />
 
             {/* Content */}
             <div className="relative container mx-auto px-2 py-16 text-center">
@@ -21,7 +21,7 @@ const CtaBanner: React.FC = () => {
                 </p>
                 <Link
                     href="/register"
-                    className="inline-block bg-white text-[#0B4222] font-semibold text-sm px-8 py-3 rounded-md hover:bg-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    className="inline-block bg-white text-[var(--color-primary)] font-semibold text-sm px-8 py-3 rounded-md hover:bg-gray-100 hover:shadow-lg transition-all duration-300 hover:scale-105"
                 >
                     Let's Sinotri
                 </Link>

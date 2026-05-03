@@ -30,10 +30,10 @@ const AssociatedProducts: React.FC = () => {
     const displayPartners = [...partners, ...partners, ...partners];
 
     return (
-        <section className="w-full bg-[#f0faf4] border-t border-[#0B4222]/10">
+        <section className="w-full bg-[var(--color-primary-lightest)] border-t border-[var(--color-primary)]/10">
             <div className="container mx-auto px-2 py-10">
                 <h3 className="text-xl font-bold text-gray-900 text-center mb-8">
-                    Sinotri <span className="text-[#0B4222]">Associated</span> Products
+                    Sinotri <span className="text-[var(--color-primary)]">Associated</span> Products
                 </h3>
                 <div className="associated-carousel-wrapper">
                     <div className="associated-carousel-track">

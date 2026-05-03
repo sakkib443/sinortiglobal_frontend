@@ -23,7 +23,7 @@ const LegalPageLayout = ({ slug, fallbackTitle, icon, accentColor, ctaTitle, cta
         return (
             <div className="min-h-screen bg-[#fafbfc] flex items-center justify-center">
                 <div className="text-center">
-                    <div className="w-8 h-8 border-[3px] border-gray-100 border-t-[#0B4222] rounded-full animate-spin mx-auto mb-3" />
+                    <div className="w-8 h-8 border-[3px] border-gray-100 border-t-[var(--color-primary)] rounded-full animate-spin mx-auto mb-3" />
                     <p className="text-xs text-gray-400 font-medium">Loading...</p>
                 </div>
             </div>
@@ -87,7 +87,7 @@ const LegalPageLayout = ({ slug, fallbackTitle, icon, accentColor, ctaTitle, cta
                         href="/contact"
                         style={{
                             display: 'inline-flex', alignItems: 'center', gap: '6px',
-                            padding: '10px 28px', background: '#0B4222', color: '#fff',
+                            padding: '10px 28px', background: 'var(--color-primary)', color: '#fff',
                             borderRadius: '8px', fontSize: '12px', fontWeight: 700,
                             textDecoration: 'none', letterSpacing: '0.3px',
                             transition: 'all 0.2s',
@@ -106,10 +106,10 @@ const LegalPageLayout = ({ slug, fallbackTitle, icon, accentColor, ctaTitle, cta
                 .legal-content p { font-size: 14px; line-height: 1.9; color: #555; margin-bottom: 14px; }
                 .legal-content ul, .legal-content ol { padding-left: 20px; margin-bottom: 14px; }
                 .legal-content li { font-size: 14px; line-height: 1.9; color: #555; margin-bottom: 6px; }
-                .legal-content li::marker { color: #0B4222; }
-                .legal-content blockquote { border-left: 3px solid #0B4222; padding: 12px 18px; background: #f8faf9; margin: 18px 0; border-radius: 0 8px 8px 0; font-style: italic; color: #444; }
-                .legal-content a { color: #0B4222; font-weight: 600; text-decoration: underline; text-decoration-color: #0B422240; text-underline-offset: 2px; }
-                .legal-content a:hover { text-decoration-color: #0B4222; }
+                .legal-content li::marker { color: var(--color-primary); }
+                .legal-content blockquote { border-left: 3px solid var(--color-primary); padding: 12px 18px; background: var(--color-primary-surface); margin: 18px 0; border-radius: 0 8px 8px 0; font-style: italic; color: #444; }
+                .legal-content a { color: var(--color-primary); font-weight: 600; text-decoration: underline; text-decoration-color: var(--color-primary)40; text-underline-offset: 2px; }
+                .legal-content a:hover { text-decoration-color: var(--color-primary); }
                 .legal-content strong { color: #222; font-weight: 700; }
                 .legal-content hr { border: none; border-top: 1px solid #eee; margin: 28px 0; }
                 .legal-content table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }

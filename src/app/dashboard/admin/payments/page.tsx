@@ -53,9 +53,9 @@ export default function PaymentsPage() {
             {/* Revenue Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
-                    { label: 'Total Revenue', value: formatCurrency(stats.totalRevenue || 0), icon: FiDollarSign, color: '#0B4222', bg: 'bg-green-50' },
+                    { label: 'Total Revenue', value: formatCurrency(stats.totalRevenue || 0), icon: FiDollarSign, color: 'var(--color-primary)', bg: 'bg-green-50' },
                     { label: "Today's Revenue", value: formatCurrency(stats.todayRevenue || 0), icon: FiTrendingUp, color: '#3B82F6', bg: 'bg-blue-50' },
-                    { label: 'Paid Orders', value: (stats.deliveredOrders || 0).toLocaleString(), icon: FiCheckCircle, color: '#059669', bg: 'bg-emerald-50' },
+                    { label: 'Paid Orders', value: (stats.deliveredOrders || 0).toLocaleString(), icon: FiCheckCircle, color: 'var(--color-primary)', bg: 'bg-emerald-50' },
                     { label: 'Pending Payments', value: (stats.pendingOrders || 0).toLocaleString(), icon: FiClock, color: '#D97706', bg: 'bg-amber-50' },
                 ].map((item, i) => (
                     <div key={i} className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
@@ -77,7 +77,7 @@ export default function PaymentsPage() {
                     <input
                         type="text"
                         placeholder="Search by order number, customer name..."
-                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[#0B4222] outline-none text-sm"
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-[var(--color-primary)] outline-none text-sm"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />
@@ -89,7 +89,7 @@ export default function PaymentsPage() {
                             onClick={() => { setPaymentFilter(status); setPage(1); }}
                             className={`px-3 py-2 rounded-md text-xs font-bold uppercase transition-all border ${
                                 paymentFilter === status
-                                    ? 'bg-[#0B4222] text-white border-[#0B4222] shadow-md'
+                                    ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md'
                                     : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
@@ -151,7 +151,7 @@ export default function PaymentsPage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="text-sm font-bold text-[#0B4222]">{formatCurrency(order.total)}</p>
+                                                <p className="text-sm font-bold text-[var(--color-primary)]">{formatCurrency(order.total)}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold capitalize ${ps.bg} ${ps.text}`}>

@@ -100,7 +100,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 <Link href="/dashboard/admin" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div style={{
                         width: '30px', height: '30px', borderRadius: '8px',
-                        background: 'linear-gradient(135deg, #0B4222 0%, #1a6b3c 100%)',
+                        background: 'linear-gradient(135deg, var(--color-primary) 0%, #1a6b3c 100%)',
                         display: 'flex', alignItems: 'center',
                         justifyContent: 'center', color: '#fff', fontSize: '14px', fontWeight: 800,
                         boxShadow: '0 2px 8px rgba(11,66,34,0.3)',
@@ -147,7 +147,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                         style={{
                                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                             padding: '8px 12px', borderRadius: '8px', textDecoration: 'none',
-                                            background: highlighted ? '#0B4222' : 'transparent',
+                                            background: highlighted ? 'var(--color-primary)' : 'transparent',
                                             color: highlighted ? '#fff' : '#555',
                                             fontSize: '13px', fontWeight: highlighted ? 600 : 500,
                                             transition: 'all 0.2s ease',
@@ -178,8 +178,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                                                     style={{
                                                         display: 'block', padding: '6px 10px', borderRadius: '6px',
                                                         fontSize: '12px', textDecoration: 'none', marginBottom: '1px',
-                                                        background: isActive(sub.href) ? '#f0faf4' : 'transparent',
-                                                        color: isActive(sub.href) ? '#0B4222' : '#888',
+                                                        background: isActive(sub.href) ? 'var(--color-primary-lightest)' : 'transparent',
+                                                        color: isActive(sub.href) ? 'var(--color-primary)' : '#888',
                                                         fontWeight: isActive(sub.href) ? 600 : 400,
                                                     }}
                                                 >
@@ -324,7 +324,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <div style={{
                                 width: '30px', height: '30px', borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #0B4222, #1a6b3c)',
+                                background: 'linear-gradient(135deg, var(--color-primary), #1a6b3c)',
                                 display: 'flex', alignItems: 'center',
                                 justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#fff',
                             }}>A</div>
