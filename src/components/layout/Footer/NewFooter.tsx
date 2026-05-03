@@ -162,6 +162,8 @@ const NewFooter: React.FC = () => {
                             <Link href="/terms" className="text-xs text-gray-400 hover:text-[#0B4222] transition-colors">Terms & Conditions</Link>
                             <span className="text-gray-300">•</span>
                             <Link href="/privacy" className="text-xs text-gray-400 hover:text-[#0B4222] transition-colors">Privacy Policy</Link>
+                            <span className="text-gray-300">•</span>
+                            <Link href="/refund" className="text-xs text-gray-400 hover:text-[#0B4222] transition-colors">Refund Policy</Link>
                         </div>
                     </div>
                 </div>
