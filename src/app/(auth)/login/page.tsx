@@ -32,18 +32,42 @@ const LoginPageInner = () => {
 
         try {
             const res = await login(credentials).unwrap();
-            dispatch(loginSuccess({ user: res.data.user, token: res.data.tokens.accessToken }));
-            localStorage.setItem('token', res.data.tokens.accessToken);
+            const user = res.data.user;
+            const token = res.data.tokens.accessToken;
+
+            dispatch(loginSuccess({ user, token }));
+            localStorage.setItem('token', token);
             toast.success('Welcome back! Login successful.', {
                 style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
                 icon: '✅',
             });
+
+            // ── Smart Redirect Logic ──
             if (redirectPath) {
+                // If user came from a specific page, go back there
                 router.push(redirectPath);
-            } else if (res.data.user.role === 'admin') {
+            } else if (user.role === 'admin') {
+                // Admin always goes to admin dashboard
                 router.push('/dashboard/admin');
             } else {
-                router.push('/dashboard/user');
+                // Regular user: check if they have previous orders
+                try {
+                    const ordersRes = await fetch(
+                        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/orders/my?limit=1`,
+                        { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    const ordersData = await ordersRes.json();
+                    const hasOrders = ordersData?.data?.orders?.length > 0 || ordersData?.data?.length > 0;
+
+                    if (hasOrders) {
+                        router.push('/dashboard/user');
+                    } else {
+                        router.push('/');
+                    }
+                } catch {
+                    // If order check fails, go to home
+                    router.push('/');
+                }
             }
         } catch (err: any) {
             toast.error(err?.data?.message || 'Invalid email/phone or password.', { duration: 4000 });

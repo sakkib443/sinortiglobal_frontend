@@ -38,18 +38,26 @@ const RegisterPageInner = () => {
         };
         try {
             const res = await register(payload).unwrap();
-            dispatch(loginSuccess({ user: res.data.user, token: res.data.tokens.accessToken }));
-            localStorage.setItem('token', res.data.tokens.accessToken);
+            const user = res.data.user;
+            const token = res.data.tokens.accessToken;
+
+            dispatch(loginSuccess({ user, token }));
+            localStorage.setItem('token', token);
             toast.success('Account created! Welcome 🎉', {
                 duration: 4000,
                 style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
             });
+
+            // ── Smart Redirect Logic ──
             if (redirectPath) {
+                // If user came from a specific page, go back there
                 router.push(redirectPath);
-            } else if (res.data.user.role === 'admin') {
+            } else if (user.role === 'admin') {
+                // Admin goes to admin dashboard
                 router.push('/dashboard/admin');
             } else {
-                router.push('/dashboard/user');
+                // New user — no orders yet, go to home page
+                router.push('/');
             }
         } catch (err: any) {
             toast.error(err?.data?.message || 'Registration failed. Please try again.', { duration: 4000 });
