@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
-import { useGuestCheckoutMutation } from '@/redux/api/orderApi';
-import { useAppDispatch } from '@/redux';
+import { useGuestCheckoutMutation, useCreateOrderMutation } from '@/redux/api/orderApi';
+import { useAppDispatch, useAppSelector } from '@/redux';
 import { clearCart } from '@/redux/slices/cartSlice';
+import { loginSuccess } from '@/redux/slices/authSlice';
 import { toast } from 'react-hot-toast';
 
 interface OrderItem {
@@ -28,7 +29,8 @@ interface OrderModalProps {
 
 type FieldErrors = {
     name?: string;
-    contact?: string;
+    email?: string;
+    phone?: string;
     location?: string;
 };
 
@@ -54,13 +56,13 @@ const validateField = (field: keyof FieldErrors, value: string): string | undefi
         if (/\d/.test(v)) return 'Name cannot contain numbers — letters only';
         if (!NAME_RE.test(v)) return 'Please enter a valid name (letters only, min 2 characters)';
     }
-    if (field === 'contact') {
-        if (!v) return 'Phone or Email is required';
-        if (v.includes('@')) {
-            if (!EMAIL_RE.test(v)) return 'Please enter a valid email (e.g. name@mail.com)';
-        } else {
-            if (!PHONE_RE.test(v)) return 'Please enter a valid phone number (10-15 digits)';
-        }
+    if (field === 'email') {
+        if (!v) return 'Email address is required';
+        if (!EMAIL_RE.test(v)) return 'Please enter a valid email (e.g. name@mail.com)';
+    }
+    if (field === 'phone') {
+        if (!v) return 'Phone number is required';
+        if (!PHONE_RE.test(v)) return 'Please enter a valid phone number (10-15 digits)';
     }
     if (field === 'location') {
         if (!v) return 'Delivery location is required';
@@ -73,16 +75,33 @@ const OrderModal: React.FC<OrderModalProps> = ({
     isOpen, onClose, items, totalPrice, onSuccess, clearCartOnSuccess = false,
 }) => {
     const dispatch = useAppDispatch();
-    const [guestCheckout, { isLoading }] = useGuestCheckoutMutation();
-    const [formData, setFormData] = useState({ name: '', contact: '', location: '', query: '' });
+    const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+    const [guestCheckout, { isLoading: isGuestLoading }] = useGuestCheckoutMutation();
+    const [createOrder, { isLoading: isOrderLoading }] = useCreateOrderMutation();
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', location: '', query: '' });
     const [errors, setErrors] = useState<FieldErrors>({});
-    const [touched, setTouched] = useState<Record<keyof FieldErrors, boolean>>({ name: false, contact: false, location: false });
+    const [touched, setTouched] = useState<Record<keyof FieldErrors, boolean>>({ name: false, email: false, phone: false, location: false });
+
+    // Auto-fill for logged-in users
+    useEffect(() => {
+        if (isOpen && isAuthenticated && user) {
+            setFormData(prev => ({
+                ...prev,
+                name: user.name || prev.name,
+                email: user.email || prev.email,
+                phone: user.phone || prev.phone,
+                location: user.address?.street || prev.location,
+            }));
+        }
+    }, [isOpen, isAuthenticated, user]);
 
     if (!isOpen) return null;
 
+    const isLoading = isGuestLoading || isOrderLoading;
+
     const setField = (field: keyof typeof formData, value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        if (field in errors || field === 'name' || field === 'contact' || field === 'location') {
+        if (field in errors || field === 'name' || field === 'email' || field === 'phone' || field === 'location') {
             const f = field as keyof FieldErrors;
             if (touched[f]) {
                 setErrors(prev => ({ ...prev, [f]: validateField(f, value) }));
@@ -98,12 +117,13 @@ const OrderModal: React.FC<OrderModalProps> = ({
     const validateAll = (): boolean => {
         const next: FieldErrors = {
             name: validateField('name', formData.name),
-            contact: validateField('contact', formData.contact),
+            email: validateField('email', formData.email),
+            phone: validateField('phone', formData.phone),
             location: validateField('location', formData.location),
         };
         setErrors(next);
-        setTouched({ name: true, contact: true, location: true });
-        return !next.name && !next.contact && !next.location;
+        setTouched({ name: true, email: true, phone: true, location: true });
+        return !next.name && !next.email && !next.phone && !next.location;
     };
 
     const inputStyle = (field: keyof FieldErrors): React.CSSProperties => ({
@@ -117,41 +137,67 @@ const OrderModal: React.FC<OrderModalProps> = ({
             return;
         }
 
-        const isEmail = formData.contact.includes('@');
-        const phone = isEmail ? '' : formData.contact.trim();
-        const email = isEmail
-            ? formData.contact.trim()
-            : `${formData.contact.trim().replace(/\s+/g, '')}@guest.sinotriglobal.com`;
+        const orderPayload = {
+            shippingAddress: {
+                fullName: formData.name.trim(),
+                phone: formData.phone.trim(),
+                email: formData.email.trim(),
+                address: formData.location.trim(),
+                city: '',
+                area: '',
+            },
+            items: items.map(item => ({ product: item.product, quantity: item.quantity, color: item.color || '', size: item.size || '' })),
+            paymentMethod: 'cod',
+            note: formData.query || '',
+        };
 
         try {
-            const orderData = {
-                shippingAddress: {
-                    fullName: formData.name,
-                    phone: phone || formData.contact.trim(),
-                    email,
-                    address: formData.location,
-                    city: '',
-                    area: '',
-                },
-                items: items.map(item => ({ product: item.product, quantity: item.quantity, color: item.color || '', size: item.size || '' })),
-                paymentMethod: 'cod',
-                note: formData.query || '',
-                password: formData.contact.trim(),
-            };
+            if (isAuthenticated) {
+                // Logged-in user: use normal createOrder
+                await createOrder(orderPayload).unwrap();
+            } else {
+                // Guest user: use guestCheckout (auto-creates account)
+                const result = await guestCheckout({
+                    ...orderPayload,
+                    password: formData.email.trim(), // email = password
+                }).unwrap();
 
-            await guestCheckout(orderData).unwrap();
+                // Auto-login the guest user
+                if (result.data?.accessToken && result.data?.user) {
+                    const userData = result.data.user;
+                    dispatch(loginSuccess({
+                        user: {
+                            id: userData._id,
+                            name: `${userData.firstName} ${userData.lastName}`.trim(),
+                            email: userData.email,
+                            phone: userData.phone || '',
+                            role: userData.role || 'user',
+                        },
+                        token: result.data.accessToken,
+                    }));
+                    localStorage.setItem('token', result.data.accessToken);
+                }
+            }
 
             if (clearCartOnSuccess) dispatch(clearCart());
 
-            setFormData({ name: '', contact: '', location: '', query: '' });
+            setFormData({ name: '', email: '', phone: '', location: '', query: '' });
             setErrors({});
-            setTouched({ name: false, contact: false, location: false });
+            setTouched({ name: false, email: false, phone: false, location: false });
             onClose();
             onSuccess?.();
-            toast.success('Order placed successfully! 🎉', {
-                style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
-                duration: 4000,
-            });
+
+            if (!isAuthenticated) {
+                toast.success('Order placed! Account created — your email is your login ID & password.', {
+                    style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
+                    duration: 6000, icon: '🎉',
+                });
+            } else {
+                toast.success('Order placed successfully! 🎉', {
+                    style: { borderRadius: '10px', background: '#0B4222', color: '#fff' },
+                    duration: 4000,
+                });
+            }
         } catch (err: any) {
             const data = err?.data;
             if (data?.errors) {
@@ -200,21 +246,29 @@ const OrderModal: React.FC<OrderModalProps> = ({
                         {errors.name && <p style={errorTextStyle}>⚠ {errors.name}</p>}
                     </div>
 
-                    {/* Phone or Email */}
+                    {/* Email Address */}
                     <div>
-                        <label style={{ fontSize: '12px', fontWeight: 700, color: '#555', display: 'block', marginBottom: '4px' }}>Phone or Email *</label>
-                        <input type="text" value={formData.contact}
-                            onChange={e => setField('contact', e.target.value)}
-                            onBlur={() => onBlur('contact')}
-                            placeholder="01XXXXXXXXX or name@email.com" style={inputStyle('contact')}
-                            onFocus={e => { if (!errors.contact) e.target.style.borderColor = '#0B4222'; }} />
-                        {errors.contact ? (
-                            <p style={errorTextStyle}>⚠ {errors.contact}</p>
-                        ) : (
-                            <p style={{ fontSize: '11px', color: '#999', margin: '4px 0 0', lineHeight: 1.4 }}>
-                                This will be your login username &amp; password for future orders.
-                            </p>
-                        )}
+                        <label style={{ fontSize: '12px', fontWeight: 700, color: '#555', display: 'block', marginBottom: '4px' }}>
+                            Email Address *
+                            {!isAuthenticated && <span style={{ color: '#3b82f6', fontWeight: 500, marginLeft: '6px', fontSize: '10px' }}>(login ID & password)</span>}
+                        </label>
+                        <input type="email" value={formData.email}
+                            onChange={e => setField('email', e.target.value)}
+                            onBlur={() => onBlur('email')}
+                            placeholder="name@example.com" style={inputStyle('email')}
+                            onFocus={e => { if (!errors.email) e.target.style.borderColor = '#0B4222'; }} />
+                        {errors.email && <p style={errorTextStyle}>⚠ {errors.email}</p>}
+                    </div>
+
+                    {/* Phone Number */}
+                    <div>
+                        <label style={{ fontSize: '12px', fontWeight: 700, color: '#555', display: 'block', marginBottom: '4px' }}>Phone Number *</label>
+                        <input type="tel" value={formData.phone}
+                            onChange={e => setField('phone', e.target.value)}
+                            onBlur={() => onBlur('phone')}
+                            placeholder="01XXXXXXXXX" style={inputStyle('phone')}
+                            onFocus={e => { if (!errors.phone) e.target.style.borderColor = '#0B4222'; }} />
+                        {errors.phone && <p style={errorTextStyle}>⚠ {errors.phone}</p>}
                     </div>
 
                     {/* Location */}
@@ -250,9 +304,16 @@ const OrderModal: React.FC<OrderModalProps> = ({
                     </div>
                 )}
 
+                {/* Guest Info */}
+                {!isAuthenticated && (
+                    <p style={{ fontSize: '10px', color: '#3b82f6', textAlign: 'center', margin: '12px 0 0', fontWeight: 600 }}>
+                        🔐 An account will be auto-created — your email will be your login ID & password
+                    </p>
+                )}
+
                 {/* Submit */}
                 <button onClick={handleSubmit} disabled={isLoading}
-                    style={{ width: '100%', marginTop: '20px', padding: '14px', background: isLoading ? '#999' : '#0B4222', color: '#fff', fontSize: '14px', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', border: 'none', borderRadius: '8px', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    style={{ width: '100%', marginTop: '16px', padding: '14px', background: isLoading ? '#999' : '#0B4222', color: '#fff', fontSize: '14px', fontWeight: 800, letterSpacing: '1px', textTransform: 'uppercase', border: 'none', borderRadius: '8px', cursor: isLoading ? 'not-allowed' : 'pointer', transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     {isLoading ? (
                         <>
                             <div style={{ width: '16px', height: '16px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'omSpin 0.8s linear infinite' }} />

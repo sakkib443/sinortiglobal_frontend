@@ -61,6 +61,7 @@ export default function ProductDetailsPage() {
     const [showInquiryModal, setShowInquiryModal] = useState(false);
     const [inquiryName, setInquiryName] = useState('');
     const [inquiryContact, setInquiryContact] = useState('');
+    const [inquiryPhone, setInquiryPhone] = useState('');
     const [inquiryMessage, setInquiryMessage] = useState('');
     const [inquirySubmitting, setInquirySubmitting] = useState(false);
     const [inquirySuccess, setInquirySuccess] = useState(false);
@@ -1823,18 +1824,20 @@ export default function ProductDetailsPage() {
                                 ) : (
                                     <form onSubmit={async (e) => {
                                         e.preventDefault();
-                                        if (!inquiryName.trim() || !inquiryContact.trim() || !inquiryMessage.trim()) return;
+                                        if (!inquiryName.trim() || !inquiryContact.trim() || !inquiryPhone.trim() || !inquiryMessage.trim()) return;
                                         setInquirySubmitting(true);
                                         try {
                                             await createInquiry({
                                                 product: product._id,
                                                 name: inquiryName.trim(),
-                                                phone: inquiryContact.trim(),
+                                                phone: inquiryPhone.trim(),
+                                                email: inquiryContact.trim(),
                                                 message: inquiryMessage.trim(),
                                             }).unwrap();
                                             setInquirySuccess(true);
                                             setInquiryName('');
                                             setInquiryContact('');
+                                            setInquiryPhone('');
                                             setInquiryMessage('');
                                         } catch (err) {
                                             console.error('Inquiry error:', err);
@@ -1860,14 +1863,34 @@ export default function ProductDetailsPage() {
                                             />
                                         </div>
 
-                                        {/* Phone or Email */}
+                                        {/* Email Address */}
                                         <div style={{ marginBottom: '12px' }}>
-                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Phone or Email *</label>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Email Address *</label>
                                             <input
                                                 value={inquiryContact}
                                                 onChange={(e) => setInquiryContact(e.target.value)}
-                                                placeholder="01XXXXXXXXX or email@example.com"
+                                                placeholder="name@example.com"
                                                 required
+                                                type="email"
+                                                style={{
+                                                    width: '100%', padding: '10px 12px', borderRadius: '8px',
+                                                    border: '1.5px solid #e5e7eb', fontSize: '13px', outline: 'none',
+                                                    transition: 'border 0.2s ease', boxSizing: 'border-box',
+                                                }}
+                                                onFocus={(e) => e.currentTarget.style.borderColor = '#0B4222'}
+                                                onBlur={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}
+                                            />
+                                        </div>
+
+                                        {/* Phone Number */}
+                                        <div style={{ marginBottom: '12px' }}>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Phone Number *</label>
+                                            <input
+                                                value={inquiryPhone || ''}
+                                                onChange={(e) => setInquiryPhone(e.target.value)}
+                                                placeholder="01XXXXXXXXX"
+                                                required
+                                                type="tel"
                                                 style={{
                                                     width: '100%', padding: '10px 12px', borderRadius: '8px',
                                                     border: '1.5px solid #e5e7eb', fontSize: '13px', outline: 'none',
