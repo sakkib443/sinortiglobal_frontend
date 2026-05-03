@@ -59,7 +59,6 @@ const menuSections = [
         label: 'Content & Settings',
         items: [
             { name: 'Site Content', href: '/dashboard/admin/site-content', icon: FiLayout, submenu: null },
-            { name: 'Legal Pages', href: '/dashboard/admin/legal-pages', icon: FiFileText, submenu: null },
             { name: 'Settings', href: '/dashboard/admin/settings', icon: FiSettings, submenu: null },
             { name: 'Profile', href: '/dashboard/admin/profile', icon: FiUser, submenu: null },
         ],
