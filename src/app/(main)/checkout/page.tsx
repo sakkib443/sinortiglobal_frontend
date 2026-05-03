@@ -121,7 +121,7 @@ const CheckoutPage = () => {
 
                 if (result.data?.isNewUser) {
                     toast.success(
-                        'Order placed! Account created — your phone number is your password.',
+                        'Order placed! Account created — your email is both your login ID & password.',
                         { duration: 8000, icon: '🎉' }
                     );
                 } else {
@@ -173,7 +173,7 @@ const CheckoutPage = () => {
                             </h3>
                             <p className="text-sm text-blue-600 leading-relaxed">
                                 Fill in your details below and we'll automatically create an account for you.
-                                Your <strong>phone number</strong> will be your password. You can log in later to track your orders.
+                                Your <strong>email address</strong> will be both your login ID and password. You can log in later to track your orders.
                             </p>
                             <p className="text-xs text-blue-500 mt-2">
                                 Already have an account? <Link href="/login?redirect=/checkout" className="font-bold underline hover:text-blue-700">Log in here</Link>
@@ -216,7 +216,7 @@ const CheckoutPage = () => {
                                 <div>
                                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
                                         Email Address <span className="text-red-400">*</span>
-                                        {!isAuthenticated && <span className="text-blue-400 ml-1">(will be your login ID)</span>}
+                                        {!isAuthenticated && <span className="text-blue-400 ml-1">(login ID & password)</span>}
                                     </label>
                                     <input
                                         type="email"
@@ -231,7 +231,6 @@ const CheckoutPage = () => {
                                 <div>
                                     <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 px-1">
                                         Phone Number <span className="text-red-400">*</span>
-                                        {!isAuthenticated && <span className="text-blue-400 ml-1">(will be your password)</span>}
                                     </label>
                                     <input
                                         type="tel"
@@ -420,7 +419,7 @@ const CheckoutPage = () => {
 
                             {!isAuthenticated && (
                                 <p className="text-[10px] text-blue-500 text-center mt-4 font-bold leading-relaxed">
-                                    🔐 An account will be created automatically with your email &amp; phone number
+                                    🔐 An account will be auto-created — your email will be your login ID & password
                                 </p>
                             )}
 
