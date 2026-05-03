@@ -20,7 +20,7 @@ const menuSections = [
         label: 'Main',
         items: [
             { name: 'Dashboard', href: '/dashboard/admin', icon: FiHome, submenu: null },
-            { name: 'Analytics', href: '/dashboard/admin/analytics', icon: FiBarChart2, submenu: null },
+            { name: 'Report & Analysis', href: '/dashboard/admin/analytics', icon: FiBarChart2, submenu: null },
         ],
     },
     {

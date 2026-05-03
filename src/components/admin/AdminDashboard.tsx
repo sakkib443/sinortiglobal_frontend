@@ -94,7 +94,7 @@ const AdminDashboard: React.FC = () => {
             </div>
 
             {/* Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
                 {[
                     {
                         label: 'Total Orders',
@@ -122,6 +122,15 @@ const AdminDashboard: React.FC = () => {
                         color: '#F59E0B',
                         bg: '#FFFBEB',
                         gradient: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+                    },
+                    {
+                        label: "Today's Orders",
+                        value: (stats?.todayOrders || 0).toLocaleString(),
+                        sub: `${stats?.deliveredOrders || 0} delivered total`,
+                        icon: FiPackage,
+                        color: '#0B4222',
+                        bg: '#F0FAF4',
+                        gradient: 'linear-gradient(135deg, #F0FAF4 0%, #D1FAE5 100%)',
                     },
                 ].map((item, i) => (
                     <div key={i} style={{
@@ -356,7 +365,7 @@ const AdminDashboard: React.FC = () => {
                                 { label: 'Add Product', href: '/dashboard/admin/products/new', icon: FiPlus, color: '#0B4222', bg: '#F0FAF4' },
                                 { label: 'All Orders', href: '/dashboard/admin/orders', icon: FiShoppingCart, color: '#3B82F6', bg: '#EFF6FF' },
                                 { label: 'Shipping', href: '/dashboard/admin/shipping', icon: FiTruck, color: '#F59E0B', bg: '#FFFBEB' },
-                                { label: 'Analytics', href: '/dashboard/admin/analytics', icon: FiTrendingUp, color: '#8B5CF6', bg: '#F5F3FF' },
+                                { label: 'Reports', href: '/dashboard/admin/analytics', icon: FiTrendingUp, color: '#8B5CF6', bg: '#F5F3FF' },
                                 { label: 'Coupons', href: '/dashboard/admin/coupons', icon: FiTag, color: '#EC4899', bg: '#FDF2F8' },
                                 { label: 'Reviews', href: '/dashboard/admin/reviews', icon: FiStar, color: '#06B6D4', bg: '#ECFEFF' },
                             ].map((item, i) => (
