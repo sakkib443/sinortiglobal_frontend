@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-    FiSettings, FiGlobe, FiTruck, FiSave, FiRefreshCw,
-    FiCheckCircle, FiAlertCircle, FiInfo, FiShield,
+    FiSettings, FiGlobe, FiSave, FiRefreshCw,
+    FiCheckCircle, FiInfo, FiShield, FiDroplet,
 } from 'react-icons/fi';
 import { useGetSiteContentQuery, useUpdateSiteContentMutation } from '@/redux/api/siteContentApi';
+import { SingleImageUploader } from '@/components/ui/ImageUploader';
 import toast from 'react-hot-toast';
 
 /* ─── Reusable Components ─── */
@@ -47,6 +48,29 @@ const InputField = ({ label, type = 'text', value, onChange, placeholder, helper
     </div>
 );
 
+const ColorPicker = ({ label, value, onChange, description }: { label: string; value: string; onChange: (v: string) => void; description: string }) => (
+    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg border border-gray-100">
+        <input
+            type="color"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="w-14 h-14 rounded-lg cursor-pointer border-2 border-gray-200 p-0.5"
+        />
+        <div className="flex-1">
+            <p className="text-sm font-bold text-gray-700">{label}</p>
+            <p className="text-[11px] text-gray-400 mt-0.5">{description}</p>
+            <input
+                type="text"
+                value={value}
+                onChange={e => onChange(e.target.value)}
+                className="mt-1.5 w-28 px-3 py-1.5 border border-gray-200 rounded-md text-xs font-mono bg-white"
+            />
+        </div>
+        {/* Live preview dot */}
+        <div className="w-10 h-10 rounded-full shadow-inner" style={{ background: value }} />
+    </div>
+);
+
 export default function SettingsPage() {
     const { data: res, isLoading } = useGetSiteContentQuery({});
     const [updateContent, { isLoading: isSaving }] = useUpdateSiteContentMutation();
@@ -62,16 +86,17 @@ export default function SettingsPage() {
                     tagline: 'Premium International E-Commerce',
                     currency: 'BDT',
                 },
-                shipping: res.data.shipping || {
-                    defaultCost: 60,
-                    freeShippingMin: 2000,
-                    estimatedDelivery: '3-7',
-                },
                 seo: res.data.seo || {
                     title: '',
                     description: '',
                     googleAnalyticsId: '',
                     facebookPixel: '',
+                },
+                theme: res.data.theme || {
+                    primaryColor: '#0B4222',
+                    secondaryColor: '#E4525C',
+                    logoUrl: '',
+                    faviconUrl: '',
                 },
             });
         }
@@ -80,11 +105,11 @@ export default function SettingsPage() {
     const updateGeneral = (field: string, value: any) => {
         setFormData((p: any) => ({ ...p, general: { ...p.general, [field]: value } }));
     };
-    const updateShipping = (field: string, value: any) => {
-        setFormData((p: any) => ({ ...p, shipping: { ...p.shipping, [field]: value } }));
-    };
     const updateSeo = (field: string, value: any) => {
         setFormData((p: any) => ({ ...p, seo: { ...p.seo, [field]: value } }));
+    };
+    const updateTheme = (field: string, value: any) => {
+        setFormData((p: any) => ({ ...p, theme: { ...p.theme, [field]: value } }));
     };
 
     const handleSave = async () => {
@@ -92,7 +117,7 @@ export default function SettingsPage() {
             await updateContent(formData).unwrap();
             setSaveSuccess(true);
             setTimeout(() => setSaveSuccess(false), 2000);
-            toast.success('Settings saved successfully');
+            toast.success('Settings saved! Refresh the site to see changes.');
         } catch (error) {
             toast.error('Failed to save settings');
         }
@@ -107,8 +132,8 @@ export default function SettingsPage() {
     }
 
     const g = formData.general || {};
-    const sh = formData.shipping || {};
     const seo = formData.seo || {};
+    const theme = formData.theme || {};
 
     return (
         <div className="space-y-6 max-w-5xl">
@@ -142,7 +167,94 @@ export default function SettingsPage() {
             {/* All Settings */}
             <div className="space-y-6">
 
-                {/* ── General ── */}
+                {/* ═══════ APPEARANCE ═══════ */}
+                <SettingSection icon={FiDroplet} title="🎨 Appearance — Colors & Logo" description="Change your website's brand colors and logo from here">
+
+                    {/* Colors */}
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wide mb-3">Brand Colors</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <ColorPicker
+                                label="Primary Color"
+                                value={theme.primaryColor || '#0B4222'}
+                                onChange={v => updateTheme('primaryColor', v)}
+                                description="Main brand color — buttons, links, headers"
+                            />
+                            <ColorPicker
+                                label="Secondary Color"
+                                value={theme.secondaryColor || '#E4525C'}
+                                onChange={v => updateTheme('secondaryColor', v)}
+                                description="Sale badges, accent buttons, highlights"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Live Preview */}
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wide mb-3">Live Preview</h4>
+                        <div className="p-5 bg-gray-50 rounded-xl border border-gray-100">
+                            <div className="flex items-center gap-3 mb-4">
+                                {theme.logoUrl ? (
+                                    <img src={theme.logoUrl} alt="Logo" className="h-8 object-contain" />
+                                ) : (
+                                    <div className="h-8 px-4 rounded-md flex items-center text-white font-bold text-sm" style={{ background: theme.primaryColor || '#0B4222' }}>
+                                        {g.storeName || 'Sinotri Global'}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="flex flex-wrap gap-3">
+                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.primaryColor || '#0B4222' }}>
+                                    Buy Now
+                                </button>
+                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.secondaryColor || '#E4525C' }}>
+                                    Sale 50% Off
+                                </button>
+                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.primaryColor || '#0B4222' }}>
+                                    New Arrival
+                                </span>
+                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.secondaryColor || '#E4525C' }}>
+                                    Hot Deal
+                                </span>
+                            </div>
+                            <div className="mt-3 flex gap-3">
+                                <a href="#" className="text-sm font-bold underline" style={{ color: theme.primaryColor || '#0B4222' }}>Sample Link</a>
+                                <span className="text-sm font-bold" style={{ color: theme.secondaryColor || '#E4525C' }}>৳2,499</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Logo Upload */}
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wide mb-3">Logo & Favicon</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <SingleImageUploader
+                                label="Website Logo"
+                                value={theme.logoUrl || ''}
+                                onChange={url => updateTheme('logoUrl', url)}
+                            />
+                            <SingleImageUploader
+                                label="Favicon (Site Icon)"
+                                value={theme.faviconUrl || ''}
+                                onChange={url => updateTheme('faviconUrl', url)}
+                            />
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-2 italic">Logo appears in the header & footer. Favicon appears in the browser tab.</p>
+                    </div>
+
+                    {/* Reset */}
+                    <button
+                        onClick={() => {
+                            updateTheme('primaryColor', '#0B4222');
+                            updateTheme('secondaryColor', '#E4525C');
+                            toast.success('Colors reset to default');
+                        }}
+                        className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-bold hover:bg-gray-200 transition-all"
+                    >
+                        🔄 Reset to Default Colors
+                    </button>
+                </SettingSection>
+
+                {/* ═══════ GENERAL ═══════ */}
                 <SettingSection icon={FiSettings} title="Store Information" description="Basic store identity">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <InputField label="Store Name" value={g.storeName || ''} onChange={(e: any) => updateGeneral('storeName', e.target.value)} placeholder="Your Store Name" />
@@ -163,10 +275,7 @@ export default function SettingsPage() {
                     </div>
                 </SettingSection>
 
-
-
-
-                {/* ── SEO & Marketing ── */}
+                {/* ═══════ SEO ═══════ */}
                 <SettingSection icon={FiGlobe} title="SEO & Marketing" description="Search engine and tracking settings">
                     <InputField label="Meta Title" value={seo.title || ''} onChange={(e: any) => updateSeo('title', e.target.value)} placeholder="Sinotri Global - Premium E-Commerce" helper="Recommended: 50-60 characters" />
                     <InputField label="Meta Description" type="textarea" value={seo.description || ''} onChange={(e: any) => updateSeo('description', e.target.value)} placeholder="Brief description of your store" helper="Recommended: 150-160 characters" />
@@ -176,7 +285,7 @@ export default function SettingsPage() {
                     </div>
                 </SettingSection>
 
-                {/* ── System Info (read-only) ── */}
+                {/* ═══════ SYSTEM INFO ═══════ */}
                 <SettingSection icon={FiShield} title="System Information" description="Current system status">
                     <div className="grid grid-cols-2 gap-4">
                         {[

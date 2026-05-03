@@ -13,6 +13,7 @@ import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
 
 import { setImageSearching, setImageSearchResults, clearImageSearch } from '@/redux/slices/imageSearchSlice';
 import { logout } from '@/redux/slices/authSlice';
+import { useTheme } from '@/components/shared/ThemeProvider';
 
 interface Category {
     _id: string;
@@ -243,7 +244,7 @@ const Header: React.FC = () => {
 
                             {/* Logo */}
                             <Link href="/" className="flex items-center gap-2 shrink-0" onClick={handleGoHome}>
-                                <Image src="/logo.svg" alt="Sinotri Global" width={260} height={50} style={{ width: '200px', height: 'auto' }} priority />
+                                <HeaderLogo />
                             </Link>
 
                             {/* Categories Button (Desktop) */}
@@ -551,5 +552,13 @@ const Header: React.FC = () => {
     );
 };
 
+/* Dynamic Logo Component */
+function HeaderLogo() {
+    const { logoUrl } = useTheme();
+    if (logoUrl) {
+        return <img src={logoUrl} alt="Logo" style={{ width: '200px', height: 'auto', maxHeight: '50px', objectFit: 'contain' }} />;
+    }
+    return <Image src="/logo.svg" alt="Sinotri Global" width={260} height={50} style={{ width: '200px', height: 'auto' }} priority />;
+}
 
 export default Header;

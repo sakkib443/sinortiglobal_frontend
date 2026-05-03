@@ -5,9 +5,10 @@ import { useGetSiteContentQuery, useUpdateSiteContentMutation, useGetAllLegalPag
 import { toast } from 'react-hot-toast';
 import dynamic from 'next/dynamic';
 import {
-    FiPhone, FiMessageCircle, FiLayout, FiFileText,
-    FiSave, FiPlus, FiTrash2, FiCheckCircle,
+    FiPhone, FiMessageCircle, FiLayout, FiFileText, FiImage,
+    FiSave, FiPlus, FiTrash2, FiCheckCircle, FiArrowUp, FiArrowDown,
 } from 'react-icons/fi';
+import { SingleImageUploader } from '@/components/ui/ImageUploader';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false, loading: () => <div style={{ height: '350px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', animation: 'pulse 1.5s ease-in-out infinite' }} /> });
 import 'react-quill-new/dist/quill.snow.css';
@@ -23,6 +24,7 @@ const btnSmall: React.CSSProperties = { ...btn, background: '#f3f4f6', color: '#
 
 /* ─── Tabs Config ─── */
 const TABS = [
+    { key: 'hero', label: '🖼️ Hero Slides', icon: FiImage },
     { key: 'contact', label: 'Contact Page', icon: FiPhone },
     { key: 'floating', label: 'Floating Widget', icon: FiMessageCircle },
     { key: 'footer', label: 'Footer', icon: FiLayout },
@@ -46,7 +48,11 @@ export default function SiteContentPage() {
         if (activeTab === 'legal') return; // Legal pages have their own save
         try {
             const payload: any = {};
-            payload[activeTab] = formData[activeTab];
+            if (activeTab === 'hero') {
+                payload.heroSlides = formData.heroSlides;
+            } else {
+                payload[activeTab] = formData[activeTab];
+            }
             await updateContent(payload).unwrap();
             setSaveSuccess(true);
             setTimeout(() => setSaveSuccess(false), 2000);
@@ -101,6 +107,7 @@ export default function SiteContentPage() {
             </div>
 
             {/* Tab Content */}
+            {activeTab === 'hero' && <HeroSlidesTab data={formData} setData={setFormData} onSave={handleSave} isSaving={isSaving} />}
             {activeTab === 'contact' && <ContactTab data={formData} setData={setFormData} />}
             {activeTab === 'floating' && <FloatingTab data={formData} setData={setFormData} />}
             {activeTab === 'footer' && <FooterTab data={formData} setData={setFormData} />}
@@ -447,6 +454,116 @@ function LegalPagesTab() {
                     </div>
                 );
             })}
+        </div>
+    );
+}
+
+/* ═══════════════════════════════════════════════════════════════════ */
+/* ─── HERO SLIDES TAB ─── */
+function HeroSlidesTab({ data, setData, onSave, isSaving }: { data: any; setData: any; onSave: () => void; isSaving: boolean }) {
+    const slides = data.heroSlides || [];
+
+    const addSlide = (imageUrl: string) => {
+        if (!imageUrl) return;
+        const newSlides = [...slides, { imageUrl, active: true, order: slides.length }];
+        setData((p: any) => ({ ...p, heroSlides: newSlides }));
+    };
+
+    const removeSlide = (idx: number) => {
+        const newSlides = slides.filter((_: any, i: number) => i !== idx);
+        setData((p: any) => ({ ...p, heroSlides: newSlides }));
+    };
+
+    const moveSlide = (idx: number, direction: 'up' | 'down') => {
+        const newSlides = [...slides];
+        const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+        if (swapIdx < 0 || swapIdx >= newSlides.length) return;
+        [newSlides[idx], newSlides[swapIdx]] = [newSlides[swapIdx], newSlides[idx]];
+        setData((p: any) => ({ ...p, heroSlides: newSlides }));
+    };
+
+    const handleSaveHero = async () => {
+        // Update heroSlides in formData then trigger parent save
+        onSave();
+    };
+
+    return (
+        <div>
+            {/* Info */}
+            <div style={{ ...card, background: '#fffbeb', borderColor: '#fde68a' }}>
+                <p style={{ fontSize: '12px', color: '#b45309', fontWeight: 600, margin: 0 }}>
+                    🖼️ Hero slides appear at the top of your homepage as a banner carousel. Add multiple images and they will auto-rotate.
+                </p>
+            </div>
+
+            {/* Current Slides */}
+            {slides.length > 0 && (
+                <div style={{ ...card }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>Current Slides ({slides.length})</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+                        {slides.map((slide: any, idx: number) => (
+                            <div key={idx} style={{
+                                position: 'relative', borderRadius: '10px', overflow: 'hidden',
+                                border: '1px solid #e5e7eb', background: '#f9fafb',
+                            }}>
+                                <img
+                                    src={slide.imageUrl}
+                                    alt={`Slide ${idx + 1}`}
+                                    style={{ width: '100%', height: '120px', objectFit: 'cover' }}
+                                />
+                                <div style={{ padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#555' }}>Slide {idx + 1}</span>
+                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                        <button
+                                            onClick={() => moveSlide(idx, 'up')}
+                                            disabled={idx === 0}
+                                            style={{ ...btnSmall, padding: '4px 6px', opacity: idx === 0 ? 0.3 : 1 }}
+                                            title="Move Up"
+                                        >
+                                            <FiArrowUp size={12} />
+                                        </button>
+                                        <button
+                                            onClick={() => moveSlide(idx, 'down')}
+                                            disabled={idx === slides.length - 1}
+                                            style={{ ...btnSmall, padding: '4px 6px', opacity: idx === slides.length - 1 ? 0.3 : 1 }}
+                                            title="Move Down"
+                                        >
+                                            <FiArrowDown size={12} />
+                                        </button>
+                                        <button
+                                            onClick={() => removeSlide(idx)}
+                                            style={{ ...btnSmall, padding: '4px 6px', background: '#fef2f2', color: '#dc2626' }}
+                                            title="Delete"
+                                        >
+                                            <FiTrash2 size={12} />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Add New Slide */}
+            <div style={card}>
+                <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 6px' }}>Add New Slide</h3>
+                <p style={{ fontSize: '11px', color: '#888', margin: '0 0 12px' }}>
+                    Upload a high-quality banner image (recommended: 1920×540px or 16:4.5 ratio)
+                </p>
+                <SingleImageUploader
+                    label="Slide Image"
+                    value=""
+                    onChange={(url) => { if (url) addSlide(url); }}
+                />
+            </div>
+
+            {/* Save Button */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
+                <button onClick={handleSaveHero} disabled={isSaving} style={{ ...btnPrimary, opacity: isSaving ? 0.6 : 1 }}>
+                    <FiSave size={13} /> {isSaving ? 'Saving...' : 'Save Hero Slides'}
+                </button>
+            </div>
         </div>
     );
 }

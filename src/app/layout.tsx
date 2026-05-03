@@ -3,6 +3,7 @@ import "./globals.css";
 import { ReduxProvider } from "@/redux";
 import FloatingContact from "@/components/shared/FloatingContact";
 import Preloader from "@/components/shared/Preloader";
+import { ThemeProvider } from "@/components/shared/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Sinotri Global - Your Trusted Global Trading Platform",
@@ -26,10 +27,12 @@ export default function RootLayout({
       </head>
       <body>
         <ReduxProvider>
-          <Preloader />
-          <Toaster position="top-center" reverseOrder={false} />
-          {children}
-          <FloatingContact />
+          <ThemeProvider>
+            <Preloader />
+            <Toaster position="top-center" reverseOrder={false} />
+            {children}
+            <FloatingContact />
+          </ThemeProvider>
         </ReduxProvider>
       </body>
     </html>

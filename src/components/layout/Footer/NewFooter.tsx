@@ -8,11 +8,13 @@ import { logout } from '@/redux/slices/authSlice';
 import { FiMapPin, FiMail, FiPhone } from 'react-icons/fi';
 import { FaFacebookF, FaLinkedinIn, FaYoutube, FaInstagram } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
+import { useTheme } from '@/components/shared/ThemeProvider';
 
 const NewFooter: React.FC = () => {
     const { isAuthenticated, user } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const { logoUrl } = useTheme();
 
     const handleLogout = () => {
         dispatch(logout());
@@ -77,7 +79,7 @@ const NewFooter: React.FC = () => {
                         {/* Logo + Address */}
                         <div>
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <img src="/logo.svg" alt="Sinotri Global" className="h-8" />
+                                <img src={logoUrl || '/logo.svg'} alt="Sinotri Global" className="h-8" />
                             </Link>
                             <div className="space-y-2.5">
                                 <div className="flex items-start gap-2.5">
