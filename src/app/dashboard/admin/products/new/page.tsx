@@ -89,8 +89,6 @@ const ProductFormInner = () => {
         // Physical
         weight: 0,
         dimensions: { length: 0, width: 0, height: 0 },
-        // Content Tabs
-        deliveryInfo: '', paymentInfo: '', termsInfo: '',
         // Shipping & Warranty
         shippingConfig: { freeShipping: false, shippingCost: 0, estimatedDays: 3 },
         warranty: { hasWarranty: false, duration: 0, durationUnit: 'months', type: 'manufacturer' },
@@ -705,31 +703,6 @@ const ProductFormInner = () => {
                         </div>
                     </div>
 
-
-                    <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-5">
-                        <SectionHeader icon={<FiFileText size={20} />} title="Content Tabs (Product Page)" color="bg-amber-50 text-amber-600" />
-
-                        <div className="space-y-5">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2"><FiTruck size={14} /> Delivery Information</label>
-                                <div className="product-editor-wrapper">
-                                    <ReactQuill theme="snow" value={formData.deliveryInfo} onChange={(v: string) => setFormData((prev: any) => ({ ...prev, deliveryInfo: v }))} placeholder="Enter delivery info..." modules={{ toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['link'], ['clean']] }} style={{ minHeight: '120px' }} />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2"><FiDollarSign size={14} /> Payment Methods</label>
-                                <div className="product-editor-wrapper">
-                                    <ReactQuill theme="snow" value={formData.paymentInfo} onChange={(v: string) => setFormData((prev: any) => ({ ...prev, paymentInfo: v }))} placeholder="Enter payment methods..." modules={{ toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['link'], ['clean']] }} style={{ minHeight: '120px' }} />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700 flex items-center gap-2"><FiShield size={14} /> Terms & Conditions</label>
-                                <div className="product-editor-wrapper">
-                                    <ReactQuill theme="snow" value={formData.termsInfo} onChange={(v: string) => setFormData((prev: any) => ({ ...prev, termsInfo: v }))} placeholder="Enter terms and conditions..." modules={{ toolbar: [['bold', 'italic', 'underline'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['link'], ['clean']] }} style={{ minHeight: '120px' }} />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     {/* ── 7. SEO ─────────────────────────────────────── */}
                     <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-5">
