@@ -3,17 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import {
-    FiShoppingBag, FiShoppingCart, FiUsers, FiDollarSign,
+    FiShoppingBag, FiShoppingCart, FiUsers,
     FiArrowRight, FiRefreshCw, FiPackage, FiTrendingUp,
     FiPhone, FiClock, FiPlus, FiGrid, FiLayout,
-    FiArrowUp, FiArrowDown, FiCheckCircle, FiTruck,
+    FiCheckCircle, FiTruck,
     FiAlertCircle, FiStar, FiTag,
 } from 'react-icons/fi';
 import {
     useGetDashboardSummaryQuery,
     useGetRecentOrdersQuery,
     useGetTopProductsQuery,
-    useGetMonthlyRevenueQuery,
     useGetSalesByCategoryQuery,
 } from '@/redux/api/dashboardApi';
 import { useGetOrderStatsQuery } from '@/redux/api/orderApi';
@@ -31,7 +30,6 @@ const AdminDashboard: React.FC = () => {
     } = useGetRecentOrdersQuery(8);
 
     const { data: productsData } = useGetTopProductsQuery(5);
-    const { data: monthlyRevData } = useGetMonthlyRevenueQuery(undefined);
     const { data: categoryData } = useGetSalesByCategoryQuery(undefined);
     const { data: orderStatsData } = useGetOrderStatsQuery(undefined);
 
@@ -40,7 +38,6 @@ const AdminDashboard: React.FC = () => {
     const stats = summaryData?.data || null;
     const recentOrders = ordersData?.data || [];
     const topProducts = productsData?.data || [];
-    const monthlyRevenue = monthlyRevData?.data || [];
     const salesByCategory = categoryData?.data || [];
     const orderStats = orderStatsData?.data || {};
 
@@ -69,10 +66,6 @@ const AdminDashboard: React.FC = () => {
         return map[status] || { bg: '#F3F4F6', text: '#6B7280' };
     };
 
-    // Calculate max for chart
-    const maxRevenue = monthlyRevenue.length > 0
-        ? Math.max(...monthlyRevenue.map((m: any) => m.revenue || m.total || 0))
-        : 100;
 
     // Category colors
     const catColors = ['#0B4222', '#3B82F6', '#F59E0B', '#EC4899', '#8B5CF6', '#06B6D4', '#EF4444'];
@@ -100,18 +93,9 @@ const AdminDashboard: React.FC = () => {
                 </button>
             </div>
 
-            {/* Revenue + Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+            {/* Stats Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
                 {[
-                    {
-                        label: 'Total Revenue',
-                        value: formatCurrency(stats?.totalRevenue || 0),
-                        sub: 'Lifetime earnings',
-                        icon: FiDollarSign,
-                        color: '#0B4222',
-                        bg: '#F0FAF4',
-                        gradient: 'linear-gradient(135deg, #F0FAF4 0%, #D1FAE5 100%)',
-                    },
                     {
                         label: 'Total Orders',
                         value: (stats?.totalOrders || 0).toLocaleString(),
@@ -202,98 +186,52 @@ const AdminDashboard: React.FC = () => {
                 ))}
             </div>
 
-            {/* Revenue Chart + Category Distribution */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '14px' }}>
-                {/* Revenue Chart */}
-                <div style={{
-                    background: '#fff', border: '1px solid #eee', borderRadius: '14px',
-                    padding: '20px', overflow: 'hidden',
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                        <div>
-                            <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#111', margin: 0 }}>Monthly Revenue</h3>
-                            <p style={{ fontSize: '11px', color: '#888', margin: '2px 0 0' }}>Revenue trend over past months</p>
-                        </div>
-                        <Link href="/dashboard/admin/analytics" style={{
-                            fontSize: '11px', fontWeight: 600, color: '#0B4222',
-                            textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px',
-                        }}>
-                            View Full Analytics <FiArrowRight size={11} />
-                        </Link>
-                    </div>
-
-                    <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '6px' }}>
-                        {(monthlyRevenue.length > 0 ? monthlyRevenue : Array(12).fill(null)).map((item: any, i: number) => (
-                            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                                <div
-                                    style={{
-                                        width: '100%',
-                                        height: item ? `${Math.max((((item.revenue || item.total || 0) / maxRevenue) * 170), 4)}px` : '30px',
-                                        background: item
-                                            ? 'linear-gradient(to top, #0B4222, #2D8B5E)'
-                                            : '#f0f0f0',
-                                        borderRadius: '6px 6px 0 0',
-                                        transition: 'all 0.3s ease',
-                                        cursor: 'pointer',
-                                        position: 'relative',
-                                    }}
-                                    title={item ? `${item.month || item._id}: ৳${(item.revenue || item.total || 0).toLocaleString()}` : ''}
-                                />
-                                <span style={{ fontSize: '10px', color: '#999', fontWeight: 500 }}>
-                                    {item?.month || item?._id || ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'][i]}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Sales by Category */}
-                <div style={{
-                    background: '#fff', border: '1px solid #eee', borderRadius: '14px',
-                    padding: '20px',
-                }}>
-                    <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#111', margin: '0 0 16px' }}>Sales by Category</h3>
-                    {salesByCategory.length > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {salesByCategory.slice(0, 6).map((cat: any, i: number) => {
-                                const totalSales = salesByCategory.reduce((sum: number, c: any) => sum + (c.count || c.totalSales || 0), 0);
-                                const percentage = totalSales > 0 ? Math.round(((cat.count || cat.totalSales || 0) / totalSales) * 100) : 0;
-                                return (
-                                    <div key={i}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                            <span style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <span style={{
-                                                    width: '8px', height: '8px', borderRadius: '50%',
-                                                    background: catColors[i % catColors.length],
-                                                    display: 'inline-block',
-                                                }} />
-                                                {cat._id || cat.category || 'Other'}
-                                            </span>
-                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#333' }}>
-                                                {percentage}% ({cat.count || cat.totalSales || 0})
-                                            </span>
-                                        </div>
-                                        <div style={{
-                                            height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden',
-                                        }}>
-                                            <div style={{
-                                                height: '100%', borderRadius: '3px',
+            {/* Sales by Category */}
+            <div style={{
+                background: '#fff', border: '1px solid #eee', borderRadius: '14px',
+                padding: '20px',
+            }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#111', margin: '0 0 16px' }}>Sales by Category</h3>
+                {salesByCategory.length > 0 ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        {salesByCategory.slice(0, 8).map((cat: any, i: number) => {
+                            const totalSales = salesByCategory.reduce((sum: number, c: any) => sum + (c.count || c.totalSales || 0), 0);
+                            const percentage = totalSales > 0 ? Math.round(((cat.count || cat.totalSales || 0) / totalSales) * 100) : 0;
+                            return (
+                                <div key={i}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                                        <span style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <span style={{
+                                                width: '8px', height: '8px', borderRadius: '50%',
                                                 background: catColors[i % catColors.length],
-                                                width: `${percentage}%`,
-                                                transition: 'width 0.5s ease',
+                                                display: 'inline-block',
                                             }} />
-                                        </div>
+                                            {cat._id || cat.category || 'Other'}
+                                        </span>
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#333' }}>
+                                            {percentage}% ({cat.count || cat.totalSales || 0})
+                                        </span>
                                     </div>
-                                );
-                            })}
-                        </div>
-                    ) : (
-                        <div style={{ textAlign: 'center', padding: '30px 0' }}>
-                            <FiShoppingBag size={24} color="#ddd" style={{ margin: '0 auto 8px' }} />
-                            <p style={{ fontSize: '12px', color: '#bbb' }}>No category data yet</p>
-                        </div>
-                    )}
-                </div>
+                                    <div style={{
+                                        height: '6px', background: '#f0f0f0', borderRadius: '3px', overflow: 'hidden',
+                                    }}>
+                                        <div style={{
+                                            height: '100%', borderRadius: '3px',
+                                            background: catColors[i % catColors.length],
+                                            width: `${percentage}%`,
+                                            transition: 'width 0.5s ease',
+                                        }} />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                        <FiShoppingBag size={24} color="#ddd" style={{ margin: '0 auto 8px' }} />
+                        <p style={{ fontSize: '12px', color: '#bbb' }}>No category data yet</p>
+                    </div>
+                )}
             </div>
 
             {/* Orders Table + Sidebar */}
