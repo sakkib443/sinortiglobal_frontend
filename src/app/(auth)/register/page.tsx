@@ -7,12 +7,12 @@ import { useAppDispatch } from '@/redux/hooks';
 import { loginSuccess } from '@/redux/slices/authSlice';
 import { useRegisterMutation } from '@/redux/api/authApi';
 import { toast } from 'react-hot-toast';
-import { FiUser, FiLock, FiEye, FiEyeOff, FiArrowRight, FiMapPin } from 'react-icons/fi';
+import { FiUser, FiLock, FiEye, FiEyeOff, FiArrowRight, FiMapPin, FiMail, FiPhone } from 'react-icons/fi';
 
 const RegisterPageInner = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [focused, setFocused] = useState<string | null>(null);
-    const [formData, setFormData] = useState({ name: '', emailOrPhone: '', location: '', password: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', location: '', password: '' });
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -25,14 +25,12 @@ const RegisterPageInner = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const isPhone = /^[0-9+\-\s()]{7,}$/.test(formData.emailOrPhone.trim());
         const payload = {
             name: formData.name.trim(),
             firstName: formData.name.trim().split(' ')[0] || formData.name.trim(),
             lastName: formData.name.trim().split(' ').slice(1).join(' ') || '',
-            ...(isPhone
-                ? { phone: formData.emailOrPhone.trim() }
-                : { email: formData.emailOrPhone.trim() }),
+            email: formData.email.trim(),
+            phone: formData.phone.trim(),
             location: formData.location.trim(),
             password: formData.password,
         };
@@ -97,14 +95,25 @@ const RegisterPageInner = () => {
                     </div>
                 </div>
 
-                {/* Email or Phone */}
+                {/* Email Address */}
                 <div>
-                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Email or Phone Number</label>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Email Address</label>
                     <div style={{ position: 'relative' }}>
-                        <div style={{ ...iconStyle, color: focused === 'ep' ? '#0B4222' : '#9ca3af' }}><FiUser size={17} /></div>
-                        <input type="text" name="emailOrPhone" required value={formData.emailOrPhone}
-                            onChange={handleChange} onFocus={() => setFocused('ep')} onBlur={() => setFocused(null)}
-                            style={inputStyle('ep')} placeholder="name@example.com or 01XXXXXXXXX" autoComplete="email" />
+                        <div style={{ ...iconStyle, color: focused === 'email' ? '#0B4222' : '#9ca3af' }}><FiMail size={17} /></div>
+                        <input type="email" name="email" required value={formData.email}
+                            onChange={handleChange} onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
+                            style={inputStyle('email')} placeholder="name@example.com" autoComplete="email" />
+                    </div>
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#374151', marginBottom: '7px' }}>Phone Number</label>
+                    <div style={{ position: 'relative' }}>
+                        <div style={{ ...iconStyle, color: focused === 'phone' ? '#0B4222' : '#9ca3af' }}><FiPhone size={17} /></div>
+                        <input type="tel" name="phone" required value={formData.phone}
+                            onChange={handleChange} onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)}
+                            style={inputStyle('phone')} placeholder="01XXXXXXXXX" autoComplete="tel" />
                     </div>
                 </div>
 
