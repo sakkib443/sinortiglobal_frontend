@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useGetSiteContentQuery, useUpdateSiteContentMutation, useGetAllLegalPagesQuery, useUpdateLegalPageMutation } from '@/redux/api/siteContentApi';
 import { toast } from 'react-hot-toast';
+import dynamic from 'next/dynamic';
 import {
     FiPhone, FiMessageCircle, FiLayout, FiFileText,
     FiSave, FiPlus, FiTrash2, FiCheckCircle,
 } from 'react-icons/fi';
+
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false, loading: () => <div style={{ height: '350px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', animation: 'pulse 1.5s ease-in-out infinite' }} /> });
+import 'react-quill-new/dist/quill.snow.css';
 
 /* ─── Styles ─── */
 const card: React.CSSProperties = { background: '#fff', border: '1px solid #eee', borderRadius: '10px', padding: '20px', marginBottom: '16px' };
@@ -364,14 +368,41 @@ function LegalPagesTab() {
                     </div>
 
                     <div>
-                        <label style={label}>Page Content (HTML)</label>
-                        <textarea
-                            value={editContent}
-                            onChange={e => setEditContent(e.target.value)}
-                            style={{ ...input, height: '400px', resize: 'vertical', fontFamily: 'monospace', fontSize: '12px', lineHeight: '1.6' }}
-                            placeholder="<h2>Section Title</h2><p>Your content here...</p>"
-                        />
-                        <p style={{ fontSize: '10px', color: '#aaa', marginTop: '4px' }}>Use HTML tags: &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;a&gt;</p>
+                        <label style={label}>Page Content</label>
+                        <div className="legal-editor-wrapper" style={{ background: '#fff', borderRadius: '8px', border: '1.5px solid #e5e7eb', overflow: 'hidden' }}>
+                            <ReactQuill
+                                theme="snow"
+                                value={editContent}
+                                onChange={(value: string) => setEditContent(value)}
+                                placeholder="Write your page content here..."
+                                modules={{
+                                    toolbar: [
+                                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                                        [{ 'font': [] }],
+                                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                                        ['bold', 'italic', 'underline', 'strike'],
+                                        [{ 'color': [] }, { 'background': [] }],
+                                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                        [{ 'indent': '-1' }, { 'indent': '+1' }],
+                                        [{ 'align': [] }],
+                                        ['link', 'image', 'video'],
+                                        ['blockquote', 'code-block'],
+                                        ['clean'],
+                                    ],
+                                }}
+                                style={{ minHeight: '400px' }}
+                            />
+                        </div>
+                        <style>{`
+                            .legal-editor-wrapper .ql-toolbar { border: none !important; border-bottom: 1px solid #e5e7eb !important; background: #f9fafb; padding: 10px 12px !important; }
+                            .legal-editor-wrapper .ql-container { border: none !important; font-size: 14px; font-family: inherit; }
+                            .legal-editor-wrapper .ql-editor { min-height: 400px; padding: 20px 24px; line-height: 1.8; }
+                            .legal-editor-wrapper .ql-editor h1 { font-size: 22px; font-weight: 800; margin: 20px 0 10px; }
+                            .legal-editor-wrapper .ql-editor h2 { font-size: 18px; font-weight: 700; margin: 18px 0 8px; }
+                            .legal-editor-wrapper .ql-editor h3 { font-size: 15px; font-weight: 600; margin: 14px 0 6px; }
+                            .legal-editor-wrapper .ql-editor p { margin-bottom: 10px; }
+                            .legal-editor-wrapper .ql-editor img { max-width: 100%; border-radius: 8px; margin: 12px 0; }
+                        `}</style>
                     </div>
                 </div>
             </div>
