@@ -10,7 +10,7 @@ import {
     FiEye, FiChevronRight, FiChevronLeft, FiSend
 } from 'react-icons/fi';
 import { useGetProductBySlugQuery, useGetRelatedProductsQuery, useIncrementProductStatMutation } from '@/redux/api/productApi';
-import { useGetProductReviewsQuery, usePublicCreateReviewMutation } from '@/redux/api/reviewApi';
+import { useGetProductReviewsQuery, usePublicCreateReviewMutation, useCreateReviewMutation } from '@/redux/api/reviewApi';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import { addToCart } from '@/redux/slices/cartSlice';
 import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
@@ -103,6 +103,7 @@ export default function ProductDetailsPage() {
     const { data: reviewsData } = useGetProductReviewsQuery({ productId: product?._id }, { skip: !product?._id });
     const reviews = reviewsData?.data || [];
     const [publicCreateReview] = usePublicCreateReviewMutation();
+    const [createReviewMutation] = useCreateReviewMutation();
 
     const handleCommentSubmit = async () => {
         if (!cmtText.trim() || !product?._id) return;
@@ -1145,7 +1146,43 @@ export default function ProductDetailsPage() {
                             )}
                             {activeInfoPanel === 'reviews' && (
                                 <div>
-                                    {/* Average Rating Summary */}
+                                    {/* ── Write Review Form ── */}
+                                    <div style={{ marginBottom: '24px', padding: '20px', background: '#f8faf9', borderRadius: '12px', border: '1px solid #e8f0eb' }}>
+                                        <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#0B4222', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            ✍️ Write a Review
+                                        </h4>
+                                        {isAuthenticated ? (
+                                            <div>
+                                                <div style={{ marginBottom: '12px' }}>
+                                                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#666', display: 'block', marginBottom: '6px' }}>Your Rating</label>
+                                                    <div style={{ display: 'flex', gap: '4px' }}>
+                                                        {[1,2,3,4,5].map(star => (
+                                                            <button key={star} type="button" onClick={() => setCmtRating(star)} onMouseEnter={() => setCmtHoverRating(star)} onMouseLeave={() => setCmtHoverRating(0)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}>
+                                                                <FiStar size={24} style={{ color: star <= (cmtHoverRating || cmtRating) ? '#F59E0B' : '#ddd', fill: star <= (cmtHoverRating || cmtRating) ? '#F59E0B' : 'none', transition: 'all 0.15s' }} />
+                                                            </button>
+                                                        ))}
+                                                        <span style={{ fontSize: '13px', fontWeight: 700, color: '#F59E0B', marginLeft: '8px', alignSelf: 'center' }}>{cmtRating}/5</span>
+                                                    </div>
+                                                </div>
+                                                <textarea value={cmtText} onChange={(e) => setCmtText(e.target.value)} placeholder="Share your experience with this product..." rows={3} style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '13px', outline: 'none', resize: 'vertical', background: '#fff', transition: 'border-color 0.2s' }} onFocus={(e) => e.target.style.borderColor = '#0B4222'} onBlur={(e) => e.target.style.borderColor = '#ddd'} />
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
+                                                    <span style={{ fontSize: '11px', color: '#999' }}>{cmtSuccess ? '✅ Review submitted successfully!' : 'Your review will be visible immediately'}</span>
+                                                    <button onClick={async () => { if (!cmtText.trim()) return; setCmtSubmitting(true); try { await createReviewMutation({ product: product._id, rating: cmtRating, comment: cmtText.trim() }).unwrap(); setCmtText(''); setCmtRating(5); setCmtSuccess(true); setTimeout(() => setCmtSuccess(false), 3000); } catch (err: any) { alert(err?.data?.message || 'Failed to submit review'); } setCmtSubmitting(false); }} disabled={cmtSubmitting || !cmtText.trim()} style={{ padding: '8px 24px', borderRadius: '8px', border: 'none', background: cmtSubmitting || !cmtText.trim() ? '#ccc' : '#0B4222', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: cmtSubmitting ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+                                                        <FiSend size={14} />
+                                                        {cmtSubmitting ? 'Submitting...' : 'Submit Review'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                                                <p style={{ fontSize: '13px', color: '#666', marginBottom: '10px' }}>Please login to write a review</p>
+                                                <button onClick={() => router.push('/login')} style={{ padding: '8px 28px', borderRadius: '8px', border: '2px solid #0B4222', background: 'transparent', color: '#0B4222', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = '#0B4222'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#0B4222'; }}>
+                                                    Login to Review
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
                                     {reviews.length > 0 && (() => {
                                         const avg = reviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviews.length;
                                         return (
