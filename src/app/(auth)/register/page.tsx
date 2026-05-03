@@ -36,8 +36,16 @@ const RegisterPageInner = () => {
         };
         try {
             const res = await register(payload).unwrap();
-            const user = res.data.user;
+            const apiUser = res.data.user;
             const token = res.data.tokens.accessToken;
+            const user = {
+                id: apiUser._id || apiUser.id,
+                name: apiUser.name || `${apiUser.firstName || ''} ${apiUser.lastName || ''}`.trim() || apiUser.email,
+                email: apiUser.email,
+                phone: apiUser.phone || '',
+                role: apiUser.role || 'user',
+                avatar: apiUser.avatar || '',
+            };
 
             dispatch(loginSuccess({ user, token }));
             localStorage.setItem('token', token);
