@@ -2,10 +2,19 @@
 
 import React from 'react';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
 
 const FloatingContact: React.FC = () => {
-    const demoNumber = '8801XXXXXXXXX';
-    const whatsappLink = `https://wa.me/${demoNumber}`;
+    const { data: res } = useGetSiteContentQuery({});
+    const f = res?.data?.floating;
+
+    // If floating widget data not loaded yet or WhatsApp is hidden, use fallback
+    const whatsappNumber = f?.whatsapp || '8801XXXXXXXXX';
+    const showWhatsapp = f?.showWhatsapp !== false; // default true
+
+    if (!showWhatsapp) return null;
+
+    const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
     return (
         <div className="fixed bottom-6 right-4 z-[9999] flex flex-col items-center gap-2">
