@@ -163,20 +163,8 @@ export default function SettingsPage() {
                     </div>
                 </SettingSection>
 
-                {/* ── Shipping Defaults ── */}
-                <SettingSection icon={FiTruck} title="Shipping Defaults" description="Default shipping configuration for orders">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <InputField label="Default Shipping Cost (৳)" type="number" value={sh.defaultCost || ''} onChange={(e: any) => updateShipping('defaultCost', e.target.value)} helper="Applied when no shipping zone matches" />
-                        <InputField label="Free Shipping Minimum (৳)" type="number" value={sh.freeShippingMin || ''} onChange={(e: any) => updateShipping('freeShippingMin', e.target.value)} helper="Orders above this amount get free shipping" />
-                    </div>
-                    <InputField label="Estimated Delivery (days)" value={sh.estimatedDelivery || ''} onChange={(e: any) => updateShipping('estimatedDelivery', e.target.value)} placeholder="3-7" helper="Displayed to customers during checkout" />
-                    <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 mt-2">
-                        <p className="text-xs text-amber-700 flex items-center gap-2">
-                            <FiAlertCircle size={14} className="flex-shrink-0" />
-                            For advanced shipping zones, use the <a href="/dashboard/admin/shipping" className="font-bold underline">Shipping Management</a> page
-                        </p>
-                    </div>
-                </SettingSection>
+
+
 
                 {/* ── SEO & Marketing ── */}
                 <SettingSection icon={FiGlobe} title="SEO & Marketing" description="Search engine and tracking settings">
