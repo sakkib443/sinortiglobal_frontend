@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useGetSiteContentQuery, useUpdateSiteContentMutation } from '@/redux/api/siteContentApi';
+import { useGetSiteContentQuery, useUpdateSiteContentMutation, useGetAllLegalPagesQuery, useUpdateLegalPageMutation } from '@/redux/api/siteContentApi';
 import { toast } from 'react-hot-toast';
 import {
-    FiPhone, FiMessageCircle, FiLayout,
+    FiPhone, FiMessageCircle, FiLayout, FiFileText,
     FiSave, FiPlus, FiTrash2, FiCheckCircle,
 } from 'react-icons/fi';
 
@@ -22,6 +22,7 @@ const TABS = [
     { key: 'contact', label: 'Contact Page', icon: FiPhone },
     { key: 'floating', label: 'Floating Widget', icon: FiMessageCircle },
     { key: 'footer', label: 'Footer', icon: FiLayout },
+    { key: 'legal', label: 'Legal Pages', icon: FiFileText },
 ];
 
 export default function SiteContentPage() {
@@ -38,6 +39,7 @@ export default function SiteContentPage() {
     }, [res]);
 
     const handleSave = async () => {
+        if (activeTab === 'legal') return; // Legal pages have their own save
         try {
             const payload: any = {};
             payload[activeTab] = formData[activeTab];
@@ -98,6 +100,7 @@ export default function SiteContentPage() {
             {activeTab === 'contact' && <ContactTab data={formData} setData={setFormData} />}
             {activeTab === 'floating' && <FloatingTab data={formData} setData={setFormData} />}
             {activeTab === 'footer' && <FooterTab data={formData} setData={setFormData} />}
+            {activeTab === 'legal' && <LegalPagesTab />}
         </div>
     );
 }
@@ -290,6 +293,129 @@ function FooterTab({ data, setData }: { data: any; setData: any }) {
                 <div><label style={label}>Company Name</label><input value={f.companyName || ''} onChange={e => update('companyName', e.target.value)} style={input} /></div>
                 <div><label style={label}>Copyright Text (optional)</label><input value={f.copyright || ''} onChange={e => update('copyright', e.target.value)} placeholder="Leave empty for auto year" style={input} /></div>
             </div>
+        </div>
+    );
+}
+
+/* ─── LEGAL PAGES TAB ─── */
+function LegalPagesTab() {
+    const { data: legalRes, isLoading } = useGetAllLegalPagesQuery({});
+    const [updateLegalPage, { isLoading: isSavingLegal }] = useUpdateLegalPageMutation();
+    const [editingSlug, setEditingSlug] = useState<string | null>(null);
+    const [editTitle, setEditTitle] = useState('');
+    const [editContent, setEditContent] = useState('');
+
+    const pages = legalRes?.data || [];
+
+    const LEGAL_PAGES = [
+        { slug: 'terms', label: 'Terms & Conditions', icon: '📜', color: '#0B4222' },
+        { slug: 'privacy', label: 'Privacy Policy', icon: '🛡️', color: '#2563eb' },
+        { slug: 'refund', label: 'Refund Policy', icon: '🔄', color: '#d97706' },
+    ];
+
+    const startEdit = (slug: string) => {
+        const page = pages.find((p: any) => p.slug === slug);
+        setEditingSlug(slug);
+        setEditTitle(page?.title || LEGAL_PAGES.find(l => l.slug === slug)?.label || '');
+        setEditContent(page?.content || '');
+    };
+
+    const handleSaveLegal = async () => {
+        if (!editingSlug) return;
+        try {
+            await updateLegalPage({ slug: editingSlug, data: { title: editTitle, content: editContent } }).unwrap();
+            toast.success(`${editTitle} saved!`);
+            setEditingSlug(null);
+        } catch {
+            toast.error('Failed to save');
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+                <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: '#0B4222', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
+            </div>
+        );
+    }
+
+    // Editing Mode
+    if (editingSlug) {
+        const meta = LEGAL_PAGES.find(l => l.slug === editingSlug);
+        return (
+            <div>
+                <div style={{ ...card, borderColor: meta?.color + '40' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '20px' }}>{meta?.icon}</span>
+                            <h3 style={{ fontSize: '15px', fontWeight: 700, margin: 0 }}>Editing: {meta?.label}</h3>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <button onClick={() => setEditingSlug(null)} style={{ ...btn, background: '#f3f4f6', color: '#555' }}>Cancel</button>
+                            <button onClick={handleSaveLegal} disabled={isSavingLegal} style={{ ...btnPrimary, opacity: isSavingLegal ? 0.6 : 1 }}>
+                                <FiSave size={13} /> {isSavingLegal ? 'Saving...' : 'Save Page'}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div style={{ marginBottom: '12px' }}>
+                        <label style={label}>Page Title</label>
+                        <input value={editTitle} onChange={e => setEditTitle(e.target.value)} style={input} placeholder="Page title..." />
+                    </div>
+
+                    <div>
+                        <label style={label}>Page Content (HTML)</label>
+                        <textarea
+                            value={editContent}
+                            onChange={e => setEditContent(e.target.value)}
+                            style={{ ...input, height: '400px', resize: 'vertical', fontFamily: 'monospace', fontSize: '12px', lineHeight: '1.6' }}
+                            placeholder="<h2>Section Title</h2><p>Your content here...</p>"
+                        />
+                        <p style={{ fontSize: '10px', color: '#aaa', marginTop: '4px' }}>Use HTML tags: &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;a&gt;</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // List Mode
+    return (
+        <div>
+            <div style={{ ...card, background: '#f8faf9', borderColor: '#bbf7d0' }}>
+                <p style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600, margin: 0 }}>
+                    ✅ These pages are live at: <strong>/terms</strong>, <strong>/privacy</strong>, <strong>/refund</strong>
+                </p>
+            </div>
+            {LEGAL_PAGES.map(lp => {
+                const page = pages.find((p: any) => p.slug === lp.slug);
+                const hasContent = page?.content && page.content.length > 10;
+                return (
+                    <div key={lp.slug} style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span style={{ fontSize: '24px' }}>{lp.icon}</span>
+                            <div>
+                                <h4 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 2px', color: '#111' }}>{lp.label}</h4>
+                                <p style={{ fontSize: '11px', color: '#999', margin: 0 }}>
+                                    {hasContent ? `${page.content.replace(/<[^>]+>/g, '').substring(0, 80)}...` : 'No content yet'}
+                                </p>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{
+                                fontSize: '10px', fontWeight: 700, padding: '3px 8px', borderRadius: '20px',
+                                background: hasContent ? '#f0faf4' : '#fef2f2',
+                                color: hasContent ? '#16a34a' : '#dc2626',
+                                textTransform: 'uppercase',
+                            }}>
+                                {hasContent ? 'Published' : 'Empty'}
+                            </span>
+                            <button onClick={() => startEdit(lp.slug)} style={{ ...btnSmall, fontWeight: 700 }}>
+                                ✏️ Edit
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 }
