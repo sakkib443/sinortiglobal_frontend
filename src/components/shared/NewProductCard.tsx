@@ -184,7 +184,7 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                             className='absolute top-2 right-2 z-10 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all hover:scale-110'
                             title={isInCart ? 'Already in Cart' : 'Add to Cart'}
                         >
-                            <img src="/ICON/cart.png" alt="Cart" className="w-4 h-4 opacity-60" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                             {isInCart && <span className='absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white' />}
                         </button>
                         {showAlreadyAdded && (
