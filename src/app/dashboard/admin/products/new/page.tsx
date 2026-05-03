@@ -35,10 +35,11 @@ const Toggle = ({ label, name, checked, onChange, color = 'bg-emerald-500' }: an
 );
 
 // ── Input Component ──────────────────────────────────────────
-const Input = ({ label, required, ...props }: any) => (
-    <div className="space-y-2">
+const Input = ({ label, required, error, ...props }: any) => (
+    <div className="space-y-1.5">
         <label className="text-sm font-semibold text-gray-700">{label} {required && <span className="text-red-400">*</span>}</label>
-        <input className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[#0B4222] focus:ring-1 focus:ring-[#0B4222]/10 transition-all text-sm" {...props} />
+        <input className={`w-full px-4 py-2.5 bg-white border rounded-md outline-none focus:ring-1 transition-all text-sm ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-200 bg-red-50/30' : 'border-gray-200 focus:border-[#0B4222] focus:ring-[#0B4222]/10'}`} {...props} />
+        {error && <p className="text-xs text-red-500 font-medium flex items-center gap-1">⚠ {error}</p>}
     </div>
 );
 
@@ -96,6 +97,16 @@ const ProductFormInner = () => {
         metaTitle: '', metaDescription: '', metaKeywords: [],
     });
 
+    // ── Validation Errors State ──
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    // Clear specific field error when user types
+    const clearError = (field: string) => {
+        if (errors[field]) {
+            setErrors(prev => { const n = { ...prev }; delete n[field]; return n; });
+        }
+    };
+
     // Populate form if editing
     useEffect(() => {
         if (isEditing && productToEdit?.data) {
@@ -145,6 +156,7 @@ const ProductFormInner = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         const checked = (e.target as HTMLInputElement).checked;
+        clearError(name);
 
         if (name.includes('.')) {
             const [parent, child] = name.split('.');
@@ -195,24 +207,95 @@ const ProductFormInner = () => {
         setFormData((prev: any) => ({ ...prev, highlights: hl }));
     };
 
+    // ── Validation ──
+    const validateForm = (): boolean => {
+        const newErrors: Record<string, string> = {};
+
+        // Required fields
+        if (!formData.name || formData.name.trim().length === 0) {
+            newErrors.name = 'Product name is required';
+        } else if (formData.name.trim().length < 3) {
+            newErrors.name = 'Product name must be at least 3 characters';
+        } else if (formData.name.length > 200) {
+            newErrors.name = 'Product name cannot exceed 200 characters';
+        }
+
+        if (!formData.description || formData.description.replace(/<[^>]*>/g, '').trim().length === 0) {
+            newErrors.description = 'Product description is required';
+        }
+
+        if (!formData.category) {
+            newErrors.category = 'Please select a category';
+        }
+
+        if (!formData.price || formData.price <= 0) {
+            newErrors.price = 'Selling price must be greater than 0';
+        }
+
+        if (formData.originalPrice && formData.originalPrice > 0 && formData.originalPrice < formData.price) {
+            newErrors.originalPrice = 'Original price should be higher than selling price';
+        }
+
+        if (!formData.thumbnail || formData.thumbnail.trim().length === 0) {
+            newErrors.thumbnail = 'Product thumbnail image is required';
+        }
+
+        if (formData.tagline && formData.tagline.length > 200) {
+            newErrors.tagline = 'Tagline cannot exceed 200 characters';
+        }
+
+        if (formData.stock < 0) {
+            newErrors.stock = 'Stock cannot be negative';
+        }
+
+        // Variant validation
+        if (formData.productType !== 'simple' && formData.variants?.length > 0) {
+            formData.variants.forEach((v: any, i: number) => {
+                if (!v.price || v.price <= 0) {
+                    newErrors[`variant_${i}_price`] = `Variant #${i + 1} (${v.color || ''} ${v.size || ''}) price is required`;
+                }
+                if (v.stock < 0) {
+                    newErrors[`variant_${i}_stock`] = `Variant #${i + 1} stock cannot be negative`;
+                }
+            });
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
+            // Scroll to first error
+            const firstErrorField = Object.keys(newErrors)[0];
+            const el = document.querySelector(`[name="${firstErrorField}"], [data-field="${firstErrorField}"]`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.category) return toast.error('Please select a category');
-        if (!formData.name) return toast.error('Product name is required');
-        if (!formData.price) return toast.error('Price is required');
+
+        if (!validateForm()) {
+            toast.error('Please fix the errors below', {
+                icon: '⚠️',
+                style: { borderRadius: '8px', background: '#FEF2F2', color: '#DC2626', border: '1px solid #FCA5A5' },
+            });
+            return;
+        }
 
         try {
             const payload = { ...formData };
-            // Clean empty optional fields
             if (!payload.subcategory) delete payload.subcategory;
-            if (!payload.thumbnail) return toast.error('Thumbnail is required');
 
             if (isEditing) {
                 await updateProduct({ id: productId, data: payload }).unwrap();
-                toast.success('Product updated successfully');
+                toast.success('Product updated successfully! ✅');
             } else {
                 await createProduct(payload).unwrap();
-                toast.success('Product created successfully');
+                toast.success('Product created successfully! ✅');
             }
             router.push('/dashboard/admin/products');
         } catch (error: any) {
@@ -256,11 +339,23 @@ const ProductFormInner = () => {
                 {/* ══ LEFT COLUMN (8 cols) ════════════════════════════ */}
                 <div className="lg:col-span-8 space-y-6">
 
+                    {/* ── Error Summary Banner ── */}
+                    {Object.keys(errors).length > 0 && (
+                        <div className="bg-red-50 border border-red-200 rounded-md p-4 space-y-2">
+                            <p className="text-sm font-bold text-red-700 flex items-center gap-2">⚠ Please fix the following {Object.keys(errors).length} error(s):</p>
+                            <ul className="list-disc list-inside space-y-1">
+                                {Object.entries(errors).map(([key, msg]) => (
+                                    <li key={key} className="text-xs text-red-600">{msg}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     {/* ── 1. Basic Information ──────────────────────── */}
                     <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-5">
                         <SectionHeader icon={<FiInfo size={20} />} title="Basic Information" color="bg-blue-50 text-blue-600" />
 
-                        <Input label="Product Name" name="name" required type="text" placeholder="e.g. 250L Piston Type Industrial Air Compressor" value={formData.name} onChange={handleChange} />
+                        <Input label="Product Name" name="name" required type="text" placeholder="e.g. 250L Piston Type Industrial Air Compressor" value={formData.name} onChange={handleChange} error={errors.name} />
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Input label="Slug" name="slug" type="text" placeholder="auto-generated" value={formData.slug} onChange={handleChange} />
@@ -282,13 +377,13 @@ const ProductFormInner = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">Product Description</label>
-                            <div className="product-editor-wrapper">
+                        <div className="space-y-1.5" data-field="description">
+                            <label className="text-sm font-semibold text-gray-700">Product Description <span className="text-red-400">*</span></label>
+                            <div className={`product-editor-wrapper ${errors.description ? 'ring-1 ring-red-400 rounded-md' : ''}`}>
                                 <ReactQuill
                                     theme="snow"
                                     value={formData.description}
-                                    onChange={(value: string) => setFormData((prev: any) => ({ ...prev, description: value }))}
+                                    onChange={(value: string) => { setFormData((prev: any) => ({ ...prev, description: value })); clearError('description'); }}
                                     placeholder="Write detailed product description..."
                                     modules={{
                                         toolbar: [
@@ -308,6 +403,7 @@ const ProductFormInner = () => {
                                     style={{ minHeight: '300px' }}
                                 />
                             </div>
+                            {errors.description && <p className="text-xs text-red-500 font-medium">⚠ {errors.description}</p>}
                         </div>
                     </div>
 
@@ -316,12 +412,13 @@ const ProductFormInner = () => {
                         <SectionHeader icon={<FiDollarSign size={20} />} title="Pricing & Inventory" color="bg-green-50 text-green-600" />
 
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Selling Price *</label>
+                            <div className="space-y-1.5" data-field="price">
+                                <label className="text-sm font-semibold text-gray-700">Selling Price <span className="text-red-400">*</span></label>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">৳</span>
-                                    <input type="number" name="price" placeholder="0" className="w-full pl-8 pr-3 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[#0B4222] text-base font-bold" value={formData.price} onChange={handleChange} />
+                                    <input type="number" name="price" placeholder="0" className={`w-full pl-8 pr-3 py-2.5 bg-white border rounded-md outline-none text-base font-bold ${errors.price ? 'border-red-400 bg-red-50/30' : 'border-gray-200 focus:border-[#0B4222]'}`} value={formData.price} onChange={handleChange} />
                                 </div>
+                                {errors.price && <p className="text-xs text-red-500 font-medium">⚠ {errors.price}</p>}
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Original Price</label>
@@ -723,14 +820,15 @@ const ProductFormInner = () => {
                 <div className="lg:col-span-4 space-y-6">
 
                     {/* ── Media Assets ──────────────────────────────── */}
-                    <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-4">
+                    <div className={`bg-white p-6 rounded-md border shadow-sm space-y-4 ${errors.thumbnail ? 'border-red-300 ring-1 ring-red-200' : 'border-gray-200'}`} data-field="thumbnail">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiImage className="text-blue-500" /> Media Assets</h3>
                         <SingleImageUploader
                             label="Product Thumbnail"
                             value={formData.thumbnail}
-                            onChange={(url: string) => setFormData((prev: any) => ({ ...prev, thumbnail: url }))}
+                            onChange={(url: string) => { setFormData((prev: any) => ({ ...prev, thumbnail: url })); clearError('thumbnail'); }}
                             required
                         />
+                        {errors.thumbnail && <p className="text-xs text-red-500 font-medium">⚠ {errors.thumbnail}</p>}
                         <MultipleImageUploader
                             label="Gallery Images"
                             values={formData.images}
@@ -742,12 +840,13 @@ const ProductFormInner = () => {
                     {/* ── Category & Tags ───────────────────────────── */}
                     <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-4">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiTag className="text-indigo-500" /> Organization</h3>
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Category *</label>
-                            <select name="category" required className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none focus:border-indigo-400 cursor-pointer" value={formData.category} onChange={handleChange}>
+                        <div className="space-y-1.5" data-field="category">
+                            <label className="text-xs font-bold text-gray-400 uppercase">Category <span className="text-red-400">*</span></label>
+                            <select name="category" required className={`w-full px-4 py-2.5 bg-white border rounded-md text-sm font-semibold outline-none cursor-pointer ${errors.category ? 'border-red-400 bg-red-50/30' : 'border-gray-200 focus:border-indigo-400'}`} value={formData.category} onChange={handleChange}>
                                 <option value="">Select Category</option>
                                 {categories.map((cat: any) => (<option key={cat._id} value={cat._id}>{cat.name}</option>))}
                             </select>
+                            {errors.category && <p className="text-xs text-red-500 font-medium">⚠ {errors.category}</p>}
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-400 uppercase">Tags <span className="text-gray-300">(comma-separated)</span></label>
