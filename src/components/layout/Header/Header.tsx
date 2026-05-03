@@ -12,6 +12,7 @@ import { useAppSelector, useAppDispatch } from '@/redux';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
 
 import { setImageSearching, setImageSearchResults, clearImageSearch } from '@/redux/slices/imageSearchSlice';
+import { logout } from '@/redux/slices/authSlice';
 
 interface Category {
     _id: string;
@@ -34,6 +35,9 @@ const Header: React.FC = () => {
     const servicesTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const cartItems = useAppSelector((state) => state.cart.items);
+    const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const profileRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -47,6 +51,24 @@ const Header: React.FC = () => {
         window.addEventListener('scroll', onScroll, { passive: true });
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
+
+    // Close profile dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = (e: MouseEvent) => {
+            if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+                setIsProfileOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        localStorage.removeItem('token');
+        setIsProfileOpen(false);
+        router.push('/');
+    };
 
     // Category hover
     const handleCategoryMouseEnter = () => {
@@ -339,11 +361,83 @@ const Header: React.FC = () => {
                                 {/* Divider */}
                                 <div className="hidden lg:block w-px h-6 bg-gray-200 mx-1"></div>
 
-                                {/* Sign In / Register */}
-                                <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0B4222] transition-colors">
-                                    <FiUser size={18} />
-                                    <span className="hidden lg:inline">Sign In/ Register</span>
-                                </Link>
+                                {/* Auth Section */}
+                                {isAuthenticated && user ? (
+                                    <div className="relative" ref={profileRef}>
+                                        <button
+                                            onClick={() => setIsProfileOpen(!isProfileOpen)}
+                                            className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+                                        >
+                                            {user.avatar ? (
+                                                <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border-2 border-[#0B4222]" />
+                                            ) : (
+                                                <div className="w-8 h-8 rounded-full bg-[#0B4222] text-white flex items-center justify-center text-sm font-bold">
+                                                    {(user.name || user.email || 'U').charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                            <span className="hidden lg:inline text-sm font-medium text-gray-700 max-w-[100px] truncate">
+                                                {user.name || 'Account'}
+                                            </span>
+                                            <FiChevronDown
+                                                className={`hidden lg:block text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`}
+                                                size={13}
+                                            />
+                                        </button>
+
+                                        {/* Profile Dropdown */}
+                                        {isProfileOpen && (
+                                            <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50" style={{ animation: 'fadeIn 0.15s ease-out' }}>
+                                                {/* User Info */}
+                                                <div className="px-4 py-3 bg-gray-50 border-b border-gray-100">
+                                                    <p className="text-sm font-bold text-gray-800 truncate">{user.name || 'User'}</p>
+                                                    <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                                                </div>
+                                                {/* Menu Items */}
+                                                <div className="py-1">
+                                                    <Link
+                                                        href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'}
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                                                        Dashboard
+                                                    </Link>
+                                                    <Link
+                                                        href="/dashboard/user/orders"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                                                        My Orders
+                                                    </Link>
+                                                    <Link
+                                                        href="/wishlist"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#0B4222] hover:text-white transition-colors"
+                                                        onClick={() => setIsProfileOpen(false)}
+                                                    >
+                                                        <FiHeart size={15} />
+                                                        Wishlist
+                                                    </Link>
+                                                </div>
+                                                {/* Logout */}
+                                                <div className="border-t border-gray-100 py-1">
+                                                    <button
+                                                        onClick={handleLogout}
+                                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                                        Logout
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#0B4222] transition-colors">
+                                        <FiUser size={18} />
+                                        <span className="hidden lg:inline">Sign In/ Register</span>
+                                    </Link>
+                                )}
                             </div>
                         </div>
 
