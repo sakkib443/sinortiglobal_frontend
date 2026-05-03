@@ -21,6 +21,7 @@ import {
 import {
     useGetAdminOrdersQuery,
     useUpdateOrderStatusMutation,
+    useUpdatePaymentStatusMutation,
     useGetOrderStatsQuery
 } from '@/redux/api/orderApi';
 import { toast } from 'react-hot-toast';
@@ -79,6 +80,31 @@ export default function OrdersPage() {
 
     const { data: statsData } = useGetOrderStatsQuery({});
     const [updateStatus] = useUpdateOrderStatusMutation();
+    const [updatePayment] = useUpdatePaymentStatusMutation();
+
+    const handleStatusChange = async (orderId: string, newStatus: string) => {
+        try {
+            await updateStatus({ id: orderId, status: newStatus }).unwrap();
+            toast.success(`Order status updated to ${newStatus}`, {
+                style: { borderRadius: '8px', background: '#0B4222', color: '#fff' },
+            });
+            refetch();
+        } catch (err: any) {
+            toast.error(err?.data?.message || 'Failed to update status');
+        }
+    };
+
+    const handlePaymentChange = async (orderId: string, newStatus: string) => {
+        try {
+            await updatePayment({ id: orderId, paymentStatus: newStatus }).unwrap();
+            toast.success(`Payment status updated to ${newStatus}`, {
+                style: { borderRadius: '8px', background: '#0B4222', color: '#fff' },
+            });
+            refetch();
+        } catch (err: any) {
+            toast.error(err?.data?.message || 'Failed to update payment');
+        }
+    };
 
     const orders = ordersData?.data || [];
     const totalPages = ordersData?.meta?.totalPages || 1;
@@ -244,10 +270,44 @@ export default function OrdersPage() {
                                             <p className="font-bold text-gray-800">৳{order.total?.toLocaleString()}</p>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <PaymentBadge status={order.paymentStatus} />
+                                            <select
+                                                value={order.paymentStatus || 'pending'}
+                                                onChange={(e) => handlePaymentChange(order._id, e.target.value)}
+                                                className={`text-xs font-semibold px-2 py-1 rounded-md border-0 outline-none cursor-pointer transition-all ${
+                                                    order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700' :
+                                                    order.paymentStatus === 'failed' ? 'bg-red-100 text-red-700' :
+                                                    order.paymentStatus === 'refunded' ? 'bg-purple-100 text-purple-700' :
+                                                    'bg-yellow-100 text-yellow-700'
+                                                }`}
+                                            >
+                                                <option value="pending">Pending</option>
+                                                <option value="paid">Paid</option>
+                                                <option value="failed">Failed</option>
+                                                <option value="refunded">Refunded</option>
+                                            </select>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <StatusBadge status={order.status} />
+                                            <select
+                                                value={order.status || 'pending'}
+                                                onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                                                className={`text-xs font-semibold px-2 py-1 rounded-md border-0 outline-none cursor-pointer transition-all ${
+                                                    order.status === 'delivered' ? 'bg-green-50 text-green-700' :
+                                                    order.status === 'shipped' ? 'bg-indigo-50 text-indigo-700' :
+                                                    order.status === 'processing' ? 'bg-purple-50 text-purple-700' :
+                                                    order.status === 'confirmed' ? 'bg-blue-50 text-blue-700' :
+                                                    order.status === 'cancelled' ? 'bg-red-50 text-red-700' :
+                                                    order.status === 'returned' ? 'bg-gray-50 text-gray-700' :
+                                                    'bg-yellow-50 text-yellow-700'
+                                                }`}
+                                            >
+                                                <option value="pending">Pending</option>
+                                                <option value="confirmed">Confirmed</option>
+                                                <option value="processing">Processing</option>
+                                                <option value="shipped">Shipped</option>
+                                                <option value="delivered">Delivered</option>
+                                                <option value="cancelled">Cancelled</option>
+                                                <option value="returned">Returned</option>
+                                            </select>
                                         </td>
                                         <td className="px-6 py-4">
                                             <p className="text-sm text-gray-600">{formatDate(order.createdAt)}</p>
