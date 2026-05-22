@@ -35,6 +35,9 @@ const StatusBadge = ({ status }: { status: string }) => {
     );
 };
 
+const paymentLabel = (method: string) =>
+    ({ bkash: 'bKash', rocket: 'Rocket', nagad: 'Nagad', cod: 'COD' }[method] || (method || 'COD').toUpperCase());
+
 export default function MyOrdersPage() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [search, setSearch] = useState('');
@@ -143,7 +146,7 @@ export default function MyOrdersPage() {
                                 <div className="flex items-start justify-between mb-3">
                                     <div>
                                         <p className="text-sm font-bold text-gray-800">
-                                            {order.orderNumber || `Order #${order._id?.slice(-8).toUpperCase()}`}
+                                            {order.orderId || order.orderNumber || `Order #${order._id?.slice(-8).toUpperCase()}`}
                                         </p>
                                         <p className="text-xs text-gray-400 mt-0.5">
                                             Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
@@ -159,8 +162,8 @@ export default function MyOrdersPage() {
                                     <div className="flex -space-x-2">
                                         {order.items?.slice(0, 3).map((item: any, idx: number) => (
                                             <div key={idx} className="w-10 h-10 rounded-lg bg-gray-50 border-2 border-white overflow-hidden shadow-sm">
-                                                {item.image ? (
-                                                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                {item.thumbnail || item.image ? (
+                                                    <img src={item.thumbnail || item.image} alt={item.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-300">
                                                         <FiPackage size={14} />
@@ -182,10 +185,10 @@ export default function MyOrdersPage() {
                                 {/* Bottom Row */}
                                 <div className="flex items-center justify-between pt-3 border-t border-gray-50">
                                     <div className="flex items-center gap-4">
-                                        <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">
-                                            {order.paymentMethod || 'COD'}
+                                        <span className="text-xs text-gray-500 font-bold tracking-wide">
+                                            {paymentLabel(order.paymentMethod)}
                                         </span>
-                                        <span className={`text-xs font-bold ${order.paymentStatus === 'paid' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                                        <span className={`text-xs font-bold capitalize ${order.paymentStatus === 'paid' ? 'text-emerald-500' : 'text-amber-500'}`}>
                                             {order.paymentStatus || 'Pending'}
                                         </span>
                                     </div>

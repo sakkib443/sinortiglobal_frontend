@@ -64,6 +64,22 @@ const PaymentBadge = ({ status }: { status: string }) => {
     );
 };
 
+// Payment Method Badge
+const PaymentMethodBadge = ({ method }: { method: string }) => {
+    const config: Record<string, { label: string; bg: string; color: string }> = {
+        bkash:  { label: 'bKash',  bg: '#fdf0f6', color: '#E2136E' },
+        rocket: { label: 'Rocket', bg: '#f7f0fd', color: '#8332AC' },
+        nagad:  { label: 'Nagad',  bg: '#fff6ee', color: '#F47920' },
+        cod:    { label: 'COD',    bg: '#f0fdf4', color: '#16a34a' },
+    };
+    const c = config[method] || { label: method?.toUpperCase() || '—', bg: '#f3f4f6', color: '#6b7280' };
+    return (
+        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold" style={{ background: c.bg, color: c.color }}>
+            {c.label}
+        </span>
+    );
+};
+
 export default function OrdersPage() {
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
@@ -252,8 +268,15 @@ export default function OrdersPage() {
                                 orders.map((order: any) => (
                                     <tr key={order._id} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="px-6 py-4">
-                                            <p className="font-semibold text-[var(--color-primary)]">{order.orderNumber}</p>
-                                            <p className="text-[10px] text-gray-400 font-medium">VIA {order.paymentMethod.toUpperCase()}</p>
+                                            <p className="font-semibold text-[var(--color-primary)]">{order.orderId || order.orderNumber}</p>
+                                            <div className="mt-1">
+                                                <PaymentMethodBadge method={order.paymentMethod} />
+                                            </div>
+                                            {order.transactionId && (
+                                                <p className="text-[10px] text-gray-400 font-mono mt-1 truncate max-w-[100px]" title={order.transactionId}>
+                                                    TxID: {order.transactionId}
+                                                </p>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4">
                                             <p className="font-medium text-gray-800">

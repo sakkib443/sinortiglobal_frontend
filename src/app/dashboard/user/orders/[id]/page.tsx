@@ -29,6 +29,9 @@ const statusIcons: Record<string, React.ElementType> = {
     cancelled: FiXCircle,
 };
 
+const paymentLabel = (method: string) =>
+    ({ bkash: 'bKash', rocket: 'Rocket', nagad: 'Nagad', cod: 'Cash on Delivery' }[method] || (method || 'COD').toUpperCase());
+
 export default function OrderDetailPage() {
     const params = useParams();
     const router = useRouter();
@@ -41,7 +44,7 @@ export default function OrderDetailPage() {
     const currentStepIndex = statusSteps.indexOf(order?.status || 'pending');
 
     const copyOrderId = () => {
-        navigator.clipboard.writeText(order?.orderNumber || orderId);
+        navigator.clipboard.writeText(order?.orderId || order?.orderNumber || orderId);
     };
 
     if (isLoading) {
@@ -86,7 +89,7 @@ export default function OrderDetailPage() {
                     <div>
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl font-bold text-gray-900">
-                                {order.orderNumber || `Order #${orderId.slice(-8).toUpperCase()}`}
+                                {order.orderId || order.orderNumber || `Order #${orderId.slice(-8).toUpperCase()}`}
                             </h1>
                             <button onClick={copyOrderId} className="p-1.5 hover:bg-gray-100 rounded-lg text-gray-300 hover:text-gray-600 transition-all">
                                 <FiCopy size={14} />
@@ -158,8 +161,8 @@ export default function OrderDetailPage() {
                             {order.items?.map((item: any, idx: number) => (
                                 <div key={idx} className="flex items-center gap-4 px-6 py-4">
                                     <div className="w-16 h-16 rounded-xl bg-gray-50 overflow-hidden border border-gray-100 flex-shrink-0">
-                                        {item.image ? (
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                        {item.thumbnail || item.image ? (
+                                            <img src={item.thumbnail || item.image} alt={item.name} className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-gray-300">
                                                 <FiPackage size={20} />
@@ -168,8 +171,10 @@ export default function OrderDetailPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-bold text-gray-800 truncate">{item.name}</p>
-                                        {item.variant && (
-                                            <p className="text-xs text-gray-400 mt-0.5">{item.variant}</p>
+                                        {(item.color || item.size) && (
+                                            <p className="text-xs text-gray-400 mt-0.5">
+                                                {item.color && `Color: ${item.color}`}{item.color && item.size && ' · '}{item.size && `Size: ${item.size}`}
+                                            </p>
                                         )}
                                         <p className="text-xs text-gray-400 mt-1">Qty: {item.quantity}</p>
                                     </div>
@@ -218,8 +223,8 @@ export default function OrderDetailPage() {
                             <div className="text-sm text-gray-500 space-y-1.5">
                                 <p className="font-semibold text-gray-700">{order.shippingAddress.fullName}</p>
                                 <p>{order.shippingAddress.address}</p>
-                                <p>{order.shippingAddress.city}, {order.shippingAddress.area}</p>
-                                <p>{order.shippingAddress.zipCode}</p>
+                                <p>{[order.shippingAddress.city, order.shippingAddress.area].filter(Boolean).join(', ')}</p>
+                                {order.shippingAddress.postalCode && <p>{order.shippingAddress.postalCode}</p>}
                                 <div className="flex items-center gap-2 mt-2 pt-2 border-t border-gray-50 text-xs text-gray-400">
                                     <FiPhone size={12} />
                                     {order.shippingAddress.phone}
@@ -239,11 +244,11 @@ export default function OrderDetailPage() {
                         <div className="space-y-3">
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-400">Method</span>
-                                <span className="font-semibold text-gray-700 uppercase">{order.paymentMethod || 'COD'}</span>
+                                <span className="font-semibold text-gray-700">{paymentLabel(order.paymentMethod)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-gray-400">Status</span>
-                                <span className={`font-bold text-xs px-2 py-0.5 rounded-md ${
+                                <span className={`font-bold text-xs px-2 py-0.5 rounded-md capitalize ${
                                     order.paymentStatus === 'paid'
                                         ? 'bg-emerald-50 text-emerald-700'
                                         : 'bg-amber-50 text-amber-700'
@@ -251,10 +256,22 @@ export default function OrderDetailPage() {
                                     {order.paymentStatus || 'pending'}
                                 </span>
                             </div>
-                            {order.transactionId && (
+                            {order.paymentDetails?.senderNumber && (
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Sender No.</span>
+                                    <span className="font-mono text-xs text-gray-600">{order.paymentDetails.senderNumber}</span>
+                                </div>
+                            )}
+                            {(order.paymentDetails?.transactionId || order.transactionId) && (
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-400">TXN ID</span>
-                                    <span className="font-mono text-xs text-gray-600">{order.transactionId}</span>
+                                    <span className="font-mono text-xs text-gray-600">{order.paymentDetails?.transactionId || order.transactionId}</span>
+                                </div>
+                            )}
+                            {order.paymentDetails?.paymentTime && (
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Paid At</span>
+                                    <span className="text-xs text-gray-600">{new Date(order.paymentDetails.paymentTime).toLocaleString('en-US')}</span>
                                 </div>
                             )}
                         </div>
@@ -269,9 +286,10 @@ export default function OrderDetailPage() {
                                     <div key={idx} className="flex gap-3">
                                         <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] mt-1.5 flex-shrink-0"></div>
                                         <div>
-                                            <p className="text-xs font-semibold text-gray-700">{event.status || event.action}</p>
+                                            <p className="text-xs font-semibold text-gray-700 capitalize">{event.status || event.action}</p>
+                                            {event.note && <p className="text-[11px] text-gray-500 mt-0.5">{event.note}</p>}
                                             <p className="text-[11px] text-gray-400 mt-0.5">
-                                                {new Date(event.timestamp || event.date).toLocaleString()}
+                                                {new Date(event.createdAt || event.timestamp || event.date).toLocaleString('en-US')}
                                             </p>
                                         </div>
                                     </div>

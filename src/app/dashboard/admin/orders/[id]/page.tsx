@@ -117,7 +117,7 @@ export default function OrderDetailsPage() {
                     </button>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-2xl font-bold text-gray-800">{order.orderNumber}</h1>
+                            <h1 className="text-2xl font-bold text-gray-800">{order.orderId || order.orderNumber}</h1>
                             <StatusBadge status={order.status} />
                         </div>
                         <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
@@ -304,43 +304,94 @@ export default function OrderDetailsPage() {
                         </div>
                     </div>
 
-                    {/* Payment Status */}
-                    <div className="bg-white rounded-md border border-gray-200 shadow-sm p-6">
-                        <div className="flex items-center gap-2 mb-4 text-gray-800">
+                    {/* Payment Information */}
+                    <div className="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden">
+                        <div className="flex items-center gap-2 px-6 py-4 border-b border-gray-100 text-gray-800">
                             <FiDollarSign className="text-[var(--color-primary)]" size={20} />
                             <h2 className="font-bold">Payment Information</h2>
                         </div>
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-gray-500">Method:</span>
-                                <span className="font-bold uppercase text-gray-800 font-mono">{order.paymentMethod}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-gray-500">Status:</span>
+
+                        {/* Method Badge */}
+                        {(() => {
+                            const methodConfig: Record<string, { label: string; bg: string; color: string }> = {
+                                bkash:  { label: 'bKash',  bg: '#fdf0f6', color: '#E2136E' },
+                                rocket: { label: 'Rocket', bg: '#f7f0fd', color: '#8332AC' },
+                                nagad:  { label: 'Nagad',  bg: '#fff6ee', color: '#F47920' },
+                                cod:    { label: 'COD',    bg: '#f0fdf4', color: '#16a34a' },
+                            };
+                            const m = methodConfig[order.paymentMethod] || { label: order.paymentMethod?.toUpperCase() || '—', bg: '#f3f4f6', color: '#6b7280' };
+                            return (
+                                <div className="px-6 py-4 flex items-center gap-3" style={{ background: m.bg }}>
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm" style={{ background: m.color, color: 'white' }}>
+                                        {m.label.slice(0, 2)}
+                                    </div>
+                                    <div>
+                                        <p className="font-black text-base" style={{ color: m.color }}>{m.label}</p>
+                                        <p className="text-xs text-gray-500 font-medium">Payment Method</p>
+                                    </div>
+                                    <div className="ml-auto">
+                                        <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${
+                                            order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700' :
+                                            order.paymentStatus === 'failed' ? 'bg-red-100 text-red-700' :
+                                            'bg-yellow-100 text-yellow-700'
+                                        }`}>
+                                            {order.paymentStatus?.toUpperCase()}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+
+                        <div className="px-6 py-4 space-y-3">
+                            {/* Payment Details from Customer */}
+                            {order.paymentDetails?.senderNumber && (
+                                <div className="flex justify-between items-center text-sm border-b border-gray-50 pb-3">
+                                    <span className="text-gray-500 flex items-center gap-1.5">
+                                        <FiPhone size={13} /> Sender Number:
+                                    </span>
+                                    <span className="font-medium font-mono text-gray-800">{order.paymentDetails.senderNumber}</span>
+                                </div>
+                            )}
+                            {(order.paymentDetails?.transactionId || order.transactionId) && (
+                                <div className="flex justify-between items-center text-sm border-b border-gray-50 pb-3">
+                                    <span className="text-gray-500">Transaction ID:</span>
+                                    <span className="font-mono font-medium text-gray-800 text-xs bg-gray-50 px-2 py-1 rounded">
+                                        {order.paymentDetails?.transactionId || order.transactionId}
+                                    </span>
+                                </div>
+                            )}
+                            {order.paymentDetails?.paymentTime && (
+                                <div className="flex justify-between items-center text-sm border-b border-gray-50 pb-3">
+                                    <span className="text-gray-500 flex items-center gap-1.5">
+                                        <FiClock size={13} /> Payment Time:
+                                    </span>
+                                    <span className="text-gray-700 text-xs font-medium">
+                                        {new Date(order.paymentDetails.paymentTime).toLocaleString('en-US')}
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* Change Payment Status */}
+                            <div className="flex justify-between items-center text-sm pt-1">
+                                <span className="text-gray-500">Change Status:</span>
                                 <div className="flex items-center gap-2">
                                     <select
                                         value={selectedPaymentStatus || order.paymentStatus}
                                         onChange={(e) => setSelectedPaymentStatus(e.target.value)}
-                                        className="text-xs border border-gray-200 rounded-md p-1 outline-none bg-gray-50/50"
+                                        className="text-xs border border-gray-200 rounded-md p-1.5 outline-none bg-gray-50"
                                     >
                                         <option value="pending">Pending</option>
                                         <option value="paid">Paid</option>
                                         <option value="failed">Failed</option>
                                         <option value="refunded">Refunded</option>
                                     </select>
-                                    {selectedPaymentStatus && (
-                                        <button onClick={handleUpdatePayment} className="p-1 bg-[var(--color-primary)] text-white rounded-md shadow-sm">
-                                            <FiCheckCircle size={12} />
+                                    {selectedPaymentStatus && selectedPaymentStatus !== order.paymentStatus && (
+                                        <button onClick={handleUpdatePayment} disabled={isUpdatingPayment} className="p-1.5 bg-[var(--color-primary)] text-white rounded-md shadow-sm">
+                                            <FiCheckCircle size={14} />
                                         </button>
                                     )}
                                 </div>
                             </div>
-                            {order.transactionId && (
-                                <div className="flex justify-between items-center text-xs">
-                                    <span className="text-gray-400">TXID:</span>
-                                    <span className="font-mono text-gray-600 overflow-hidden text-ellipsis max-w-[120px]">{order.transactionId}</span>
-                                </div>
-                            )}
                         </div>
                     </div>
 
