@@ -15,7 +15,6 @@ import { useAppDispatch, useAppSelector } from '@/redux';
 import { addToCart } from '@/redux/slices/cartSlice';
 import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
 import NewProductCard, { CommentsPopup } from '@/components/shared/NewProductCard';
-import OrderModal from '@/components/shared/OrderModal';
 import {
     FaFacebookF, FaFacebookMessenger, FaWhatsapp, FaTelegramPlane,
     FaLinkedinIn, FaPinterestP, FaEnvelope, FaInstagram
@@ -30,7 +29,6 @@ export default function ProductDetailsPage() {
     const [createInquiry] = useCreateInquiryMutation();
     const [incrementStat] = useIncrementProductStatMutation();
     const [quantity, setQuantity] = useState(1);
-    const [buyNowQty, setBuyNowQty] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
@@ -42,7 +40,6 @@ export default function ProductDetailsPage() {
     const [activeInfoPanel, setActiveInfoPanel] = useState<'description' | 'reviews' | 'others' | null>('description');
     const [showRatingModal, setShowRatingModal] = useState(false);
     const [showSharePopup, setShowSharePopup] = useState(false);
-    const [showBuyNowModal, setShowBuyNowModal] = useState(false);
     const [shareLinkCopied, setShareLinkCopied] = useState(false);
     const [showCommentsModal, setShowCommentsModal] = useState(false);
     const [cmtText, setCmtText] = useState('');
@@ -76,7 +73,7 @@ export default function ProductDetailsPage() {
     }, [slug]);
 
     // Lock body scroll when any modal is open
-    const anyModalOpen = showSharePopup || showCommentsModal || showRatingModal || showBuyNowModal || isFullscreen || showDownloadModal || showInquiryModal;
+    const anyModalOpen = showSharePopup || showCommentsModal || showRatingModal || isFullscreen || showDownloadModal || showInquiryModal;
     useEffect(() => {
         if (anyModalOpen) {
             document.body.style.overflow = 'hidden';
@@ -166,6 +163,29 @@ export default function ProductDetailsPage() {
         }));
         setAddedToCart(true);
         setTimeout(() => setAddedToCart(false), 2000);
+    };
+
+    // Buy Now → add to cart (if not already) then go straight to checkout
+    const handleBuyNow = () => {
+        if (!product || displayStock === 0) return;
+        const cartId = getCartId();
+        if (!isInCart) {
+            const variantImage = activeVariant?.images?.[0] || allImages[selectedImage] || product.thumbnail;
+            dispatch(addToCart({
+                id: cartId,
+                productId: product._id,
+                name: product.name,
+                price: discountedPrice,
+                mrp: activeVariant?.originalPrice || product.originalPrice || product.price,
+                image: variantImage,
+                category: product.category?.name || 'General',
+                quantity: quantity,
+                color: selectedColor || undefined,
+                colorHex: activeVariant?.colorHex || undefined,
+                size: selectedSize || undefined,
+            }));
+        }
+        router.push('/checkout');
     };
 
     const scrollColors = (direction: 'up' | 'down') => {
@@ -1089,7 +1109,7 @@ export default function ProductDetailsPage() {
                                         </button>
                                         {/* Buy Now */}
                                         <button
-                                            onClick={() => { if (product.stock === 0) return; setShowBuyNowModal(true); }}
+                                            onClick={handleBuyNow}
                                             disabled={product.stock === 0}
                                             style={{
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
@@ -1981,23 +2001,6 @@ export default function ProductDetailsPage() {
                 </div>
             </div>
 
-            {/* ═══ BUY NOW ORDER MODAL ═══ */}
-            {product && (
-                <OrderModal
-                    isOpen={showBuyNowModal}
-                    onClose={() => setShowBuyNowModal(false)}
-                    items={[{
-                        product: product._id,
-                        quantity: buyNowQty,
-                        name: product.name,
-                        color: selectedColor || undefined,
-                        size: selectedSize || undefined,
-                        price: discountedPrice,
-                    }]}
-                    totalPrice={discountedPrice * buyNowQty}
-                    clearCartOnSuccess={false}
-                />
-            )}
         </>
     );
 }

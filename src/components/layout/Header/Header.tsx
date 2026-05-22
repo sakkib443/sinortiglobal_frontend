@@ -299,34 +299,17 @@ const Header: React.FC = () => {
 
                             {/* Search Bar (Desktop) */}
                             <div className="flex-1 max-w-2xl hidden md:flex items-center gap-0">
-                                <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="image/*" className="hidden" />
 
                                 {/* Search Input */}
                                 <div className="relative flex-1 h-[42px]">
-                                    {selectedImage && (
-                                        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
-                                            <div className="relative group">
-                                                <img src={selectedImage} alt="Search" className="w-7 h-7 rounded object-cover border border-gray-200" />
-                                                <button onClick={clearImage} className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
-                                            </div>
-                                        </div>
-                                    )}
                                     <input
                                         type="text"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                        placeholder={isSearching ? 'Searching by image...' : 'Search products...'}
-                                        className={`w-full h-full bg-white border border-gray-300 border-r-0 rounded-l-md ${selectedImage ? 'pl-12' : 'pl-4'} pr-10 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[var(--color-primary)] transition-all text-sm`}
+                                        placeholder="Search products..."
+                                        className="w-full h-full bg-white border border-gray-300 border-r-0 rounded-l-md pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[var(--color-primary)] transition-all text-sm"
                                     />
-                                    {/* Image Search icon inside search bar */}
-                                    <button
-                                        onClick={() => setIsImageSearchOpen(true)}
-                                        title="Search by Image"
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[var(--color-primary)] transition-colors"
-                                    >
-                                        <FiCamera size={18} />
-                                    </button>
                                 </div>
 
                                 {/* Search Button */}
@@ -344,9 +327,9 @@ const Header: React.FC = () => {
                             {/* Right Actions */}
                             <div className="flex items-center gap-1 lg:gap-2 shrink-0">
 
-                                {/* Services Link */}
-                                <Link href="/services" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-primary)] transition-colors">
-                                    Services
+                                {/* Products Link */}
+                                <Link href="/products" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-primary)] transition-colors">
+                                    Products
                                 </Link>
 
                                 {/* Cart */}
@@ -446,28 +429,17 @@ const Header: React.FC = () => {
                         <div className="md:hidden pb-3">
                             <div className="flex items-center gap-0">
                                 <div className="relative flex-1">
-                                    {selectedImage && (
-                                        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10">
-                                            <div className="relative group">
-                                                <img src={selectedImage} alt="Search" className="w-7 h-7 rounded object-cover border border-gray-200" />
-                                                <button onClick={clearImage} className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center">×</button>
-                                            </div>
-                                        </div>
-                                    )}
                                     <input
                                         type="text"
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                         placeholder="Search products..."
-                                        className={`w-full bg-white border border-gray-300 rounded-l-md py-2.5 ${selectedImage ? 'pl-11' : 'pl-4'} pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm`}
+                                        className="w-full bg-white border border-gray-300 rounded-l-md py-2.5 pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm"
                                     />
                                 </div>
-                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[var(--color-primary)] text-white flex items-center">
+                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[var(--color-primary)] text-white flex items-center rounded-r-md">
                                     <FiSearch size={16} />
-                                </button>
-                                <button onClick={() => setIsImageSearchOpen(true)} className="h-[42px] px-3 bg-gray-100 border border-l-0 border-gray-300 rounded-r-md text-gray-500">
-                                    <FiCamera size={15} />
                                 </button>
                             </div>
                         </div>
@@ -496,7 +468,7 @@ const Header: React.FC = () => {
                                             ))}
                                         </div>
                                     )}
-                                    <Link href="/services" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Services</Link>
+                                    <Link href="/products" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Products</Link>
                                     <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Support</Link>
                                     <Link href="/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Wishlist</Link>
                                 </div>
@@ -507,47 +479,6 @@ const Header: React.FC = () => {
 
 
             </header>
-
-            {/* Image Search Modal */}
-            {isImageSearchOpen && (
-                <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-24">
-                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsImageSearchOpen(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 animate-fadeIn overflow-hidden">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                            <h3 className="text-base font-semibold text-gray-800">Search products by Image</h3>
-                            <button onClick={() => setIsImageSearchOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors">
-                                <FiX size={18} />
-                            </button>
-                        </div>
-                        <div className="p-6">
-                            <div
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                                onDrop={handleDrop}
-                                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 scale-[1.02]' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50'}`}
-                            >
-                                <div className="flex flex-col items-center gap-4">
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]' : 'bg-gray-100 text-gray-400'}`}>
-                                        <FiUpload size={24} />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-500 mb-1">
-                                            Paste with <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs font-mono">Ctrl</kbd> <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs font-mono">V</kbd>
-                                        </p>
-                                        <p className="text-sm text-gray-400">Drag and drop an image here, or click to browse</p>
-                                    </div>
-                                    <button
-                                        onClick={() => fileInputRef.current?.click()}
-                                        className="px-8 py-2.5 bg-[var(--color-primary)] text-white rounded-full text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-colors shadow-md hover:shadow-lg"
-                                    >
-                                        Browse File
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </>
     );
 };
