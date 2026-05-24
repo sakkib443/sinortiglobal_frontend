@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ReduxProvider } from "@/redux";
 import FloatingContact from "@/components/shared/FloatingContact";
-import Preloader from "@/components/shared/Preloader";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 
 export const metadata: Metadata = {
@@ -28,7 +27,6 @@ export default function RootLayout({
       <body>
         <ReduxProvider>
           <ThemeProvider>
-            <Preloader />
             <Toaster position="top-center" reverseOrder={false} />
             {children}
             <FloatingContact />

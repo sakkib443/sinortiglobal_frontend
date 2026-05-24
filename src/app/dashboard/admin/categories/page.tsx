@@ -16,6 +16,30 @@ import { toast } from 'react-hot-toast';
 const inp: React.CSSProperties = { width: '100%', padding: '9px 12px', border: '1.5px solid #e5e7eb', borderRadius: '7px', fontSize: '13px', outline: 'none', boxSizing: 'border-box' };
 const lbl: React.CSSProperties = { fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '5px' };
 
+/* ─── 20 Default Icons ─── */
+const ICON_OPTIONS = [
+    { emoji: '👗', label: 'Fashion' },
+    { emoji: '👔', label: 'Men Clothing' },
+    { emoji: '📱', label: 'Mobile' },
+    { emoji: '💻', label: 'Electronics' },
+    { emoji: '🏠', label: 'Home' },
+    { emoji: '🌾', label: 'Agriculture' },
+    { emoji: '🚗', label: 'Automotive' },
+    { emoji: '🔧', label: 'Industrial' },
+    { emoji: '🏗️', label: 'Construction' },
+    { emoji: '⚡', label: 'Electrical' },
+    { emoji: '👶', label: 'Kids & Baby' },
+    { emoji: '💊', label: 'Healthcare' },
+    { emoji: '🎁', label: 'Gifts' },
+    { emoji: '👜', label: 'Bags' },
+    { emoji: '💄', label: 'Beauty' },
+    { emoji: '⚽', label: 'Sports' },
+    { emoji: '🌍', label: 'Global' },
+    { emoji: '📦', label: 'Wholesale' },
+    { emoji: '🍎', label: 'Food' },
+    { emoji: '💎', label: 'Jewelry' },
+];
+
 const CategoriesPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const { data: categoriesData, isLoading, refetch } = useGetCategoriesQuery({});
@@ -26,14 +50,14 @@ const CategoriesPage = () => {
     /* ─── Modal State ─── */
     const [modalOpen, setModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [form, setForm] = useState({ name: '', description: '', isActive: true, showInMenu: true, showInHome: true });
+    const [form, setForm] = useState({ name: '', icon: '', description: '', isActive: true, showInMenu: true, showInHome: true });
 
     const categories = categoriesData?.data || [];
     const isSaving = isCreating || isUpdating;
 
     const openCreate = () => {
         setEditingId(null);
-        setForm({ name: '', description: '', isActive: true, showInMenu: true, showInHome: true });
+        setForm({ name: '', icon: '', description: '', isActive: true, showInMenu: true, showInHome: true });
         setModalOpen(true);
     };
 
@@ -41,6 +65,7 @@ const CategoriesPage = () => {
         setEditingId(cat._id);
         setForm({
             name: cat.name || '',
+            icon: cat.icon || '',
             description: cat.description || '',
             isActive: cat.isActive !== false,
             showInMenu: cat.showInMenu !== false,
@@ -53,6 +78,7 @@ const CategoriesPage = () => {
 
     const handleSave = async () => {
         if (!form.name.trim()) { toast.error('Category name is required'); return; }
+        if (!form.icon) { toast.error('Please select an icon for this category'); return; }
         try {
             if (editingId) {
                 await updateCategory({ id: editingId, data: form }).unwrap();
@@ -134,9 +160,9 @@ const CategoriesPage = () => {
                                     <div style={{
                                         width: '36px', height: '36px', borderRadius: '8px',
                                         background: '#f5f5f5', display: 'flex', alignItems: 'center',
-                                        justifyContent: 'center', flexShrink: 0,
+                                        justifyContent: 'center', flexShrink: 0, fontSize: '18px',
                                     }}>
-                                        <FiGrid size={16} color="#bbb" />
+                                        {cat.icon || <FiGrid size={16} color="#bbb" />}
                                     </div>
                                     <div>
                                         <p style={{ fontSize: '13px', fontWeight: 700, color: '#111', margin: 0 }}>{cat.name}</p>
@@ -208,7 +234,7 @@ const CategoriesPage = () => {
                     {/* Modal */}
                     <div style={{
                         position: 'relative', background: '#fff',
-                        borderRadius: '12px', width: '420px', maxWidth: '90vw',
+                        borderRadius: '12px', width: '500px', maxWidth: '95vw',
                         boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
                         animation: 'fadeIn 0.2s ease-out',
                     }}>
@@ -229,10 +255,10 @@ const CategoriesPage = () => {
                         </div>
 
                         {/* Modal Body */}
-                        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '70vh', overflowY: 'auto' }}>
                             {/* Name */}
                             <div>
-                                <label style={lbl}>Category Name <span style={{ color: 'var(--color-secondary)' }}>*</span></label>
+                                <label style={lbl}>Category Name <span style={{ color: '#ef4444' }}>*</span></label>
                                 <input
                                     type="text"
                                     placeholder="e.g. Electronics, Fashion"
@@ -241,6 +267,97 @@ const CategoriesPage = () => {
                                     style={inp}
                                     autoFocus
                                 />
+                            </div>
+
+                            {/* Icon Picker */}
+                            <div>
+                                <label style={lbl}>
+                                    Category Icon <span style={{ color: '#ef4444' }}>*</span>
+                                    {form.icon && (
+                                        <span style={{
+                                            marginLeft: '10px', fontSize: '11px', fontWeight: 500,
+                                            color: '#16a34a', background: '#f0fdf4',
+                                            padding: '2px 8px', borderRadius: '999px',
+                                        }}>
+                                            Selected: {form.icon}
+                                        </span>
+                                    )}
+                                </label>
+
+                                {/* Preview Box */}
+                                {form.icon && (
+                                    <div style={{
+                                        display: 'flex', alignItems: 'center', gap: '10px',
+                                        padding: '10px 14px', background: '#f8fffe',
+                                        border: '1.5px solid var(--color-primary)',
+                                        borderRadius: '8px', marginBottom: '10px',
+                                    }}>
+                                        <span style={{ fontSize: '32px', lineHeight: 1 }}>{form.icon}</span>
+                                        <div>
+                                            <p style={{ margin: 0, fontSize: '12px', fontWeight: 700, color: '#111' }}>
+                                                {ICON_OPTIONS.find(i => i.emoji === form.icon)?.label || 'Custom'}
+                                            </p>
+                                            <p style={{ margin: 0, fontSize: '11px', color: '#888' }}>Selected icon preview</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setForm(p => ({ ...p, icon: '' }))}
+                                            style={{
+                                                marginLeft: 'auto', background: 'none', border: 'none',
+                                                cursor: 'pointer', color: '#aaa', fontSize: '16px', lineHeight: 1,
+                                            }}
+                                            title="Clear selection"
+                                        >×</button>
+                                    </div>
+                                )}
+
+                                {/* Icon Grid */}
+                                <div style={{
+                                    display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px',
+                                    padding: '12px', background: '#fafafa',
+                                    border: `1.5px solid ${!form.icon ? '#fca5a5' : '#e5e7eb'}`,
+                                    borderRadius: '8px',
+                                }}>
+                                    {ICON_OPTIONS.map((opt) => (
+                                        <button
+                                            key={opt.emoji}
+                                            title={opt.label}
+                                            onClick={() => setForm(p => ({ ...p, icon: opt.emoji }))}
+                                            style={{
+                                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                                justifyContent: 'center', gap: '3px',
+                                                padding: '8px 4px', borderRadius: '8px', cursor: 'pointer',
+                                                border: form.icon === opt.emoji
+                                                    ? '2px solid var(--color-primary)'
+                                                    : '2px solid transparent',
+                                                background: form.icon === opt.emoji
+                                                    ? 'var(--color-primary-lightest, #f0fdf4)'
+                                                    : '#fff',
+                                                transition: 'all 0.15s',
+                                                boxShadow: form.icon === opt.emoji
+                                                    ? '0 0 0 1px var(--color-primary)'
+                                                    : '0 1px 3px rgba(0,0,0,0.06)',
+                                            }}
+                                            onMouseEnter={e => {
+                                                if (form.icon !== opt.emoji)
+                                                    (e.currentTarget as HTMLElement).style.background = '#f3f4f6';
+                                            }}
+                                            onMouseLeave={e => {
+                                                if (form.icon !== opt.emoji)
+                                                    (e.currentTarget as HTMLElement).style.background = '#fff';
+                                            }}
+                                        >
+                                            <span style={{ fontSize: '22px', lineHeight: 1 }}>{opt.emoji}</span>
+                                            <span style={{ fontSize: '9px', color: '#888', fontWeight: 500, textAlign: 'center', lineHeight: 1.2 }}>
+                                                {opt.label}
+                                            </span>
+                                        </button>
+                                    ))}
+                                </div>
+                                {!form.icon && (
+                                    <p style={{ fontSize: '11px', color: '#ef4444', marginTop: '4px', margin: '4px 0 0' }}>
+                                        ⚠ Please select an icon to continue
+                                    </p>
+                                )}
                             </div>
 
                             {/* Description */}

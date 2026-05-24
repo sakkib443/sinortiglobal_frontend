@@ -33,12 +33,7 @@ const menuSections = [
                     { name: 'Add Product', href: '/dashboard/admin/products/new' },
                 ]
             },
-            {
-                name: 'Categories', href: '/dashboard/admin/categories', icon: FiGrid, submenu: [
-                    { name: 'All Categories', href: '/dashboard/admin/categories' },
-                    { name: 'Create Category', href: '/dashboard/admin/categories/new' },
-                ]
-            },
+            { name: 'Categories', href: '/dashboard/admin/categories', icon: FiGrid, submenu: null },
             { name: 'Coupons', href: '/dashboard/admin/coupons', icon: FiTag, submenu: null },
         ],
     },
