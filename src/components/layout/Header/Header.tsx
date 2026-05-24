@@ -486,10 +486,7 @@ const Header: React.FC = () => {
 /* Dynamic Logo Component */
 function HeaderLogo() {
     const { logoUrl } = useTheme();
-    if (logoUrl) {
-        return <img src={logoUrl} alt="Logo" style={{ width: '240px', height: 'auto', maxHeight: '62px', objectFit: 'contain' }} />;
-    }
-    return <Image src="/logo.svg" alt="Sinotri Global" width={300} height={62} style={{ width: '240px', height: 'auto' }} priority />;
+    return <img src={logoUrl} alt="Sinotri Global" style={{ width: '240px', height: 'auto', maxHeight: '62px', objectFit: 'contain' }} />;
 }
 
 export default Header;

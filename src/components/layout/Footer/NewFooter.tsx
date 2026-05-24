@@ -79,7 +79,7 @@ const NewFooter: React.FC = () => {
                         {/* Logo + Address */}
                         <div>
                             <Link href="/" className="flex items-center gap-2 mb-4">
-                                <img src={logoUrl || '/logo.svg'} alt="Sinotri Global" className="h-8" />
+                                <img src={logoUrl} alt="Sinotri Global" className="h-8" />
                             </Link>
                             <div className="space-y-2.5">
                                 <div className="flex items-start gap-2.5">

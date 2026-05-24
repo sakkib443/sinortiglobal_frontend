@@ -11,10 +11,12 @@ interface ThemeContextType {
     isLoaded: boolean;
 }
 
+const DEFAULT_LOGO = 'https://res.cloudinary.com/dkdp9sjty/image/upload/v1779572322/sinotri/products/product_1779572322226_x8mu1h.png';
+
 const defaultTheme: ThemeContextType = {
     primaryColor: '#003B88',
     secondaryColor: '#E4525C',
-    logoUrl: '',
+    logoUrl: DEFAULT_LOGO,
     faviconUrl: '',
     isLoaded: false,
 };
@@ -85,7 +87,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             setThemeData({
                 primaryColor: primary,
                 secondaryColor: secondary,
-                logoUrl: t.logoUrl || '',
+                logoUrl: t.logoUrl || DEFAULT_LOGO,
                 faviconUrl: t.faviconUrl || '',
                 isLoaded: true,
             });
