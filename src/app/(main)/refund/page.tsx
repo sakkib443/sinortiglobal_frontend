@@ -1,6 +1,12 @@
-"use client";
+import type { Metadata } from 'next';
 import { FiRefreshCw } from 'react-icons/fi';
 import LegalPageLayout from '@/components/shared/LegalPageLayout';
+
+export const metadata: Metadata = {
+    title: "Refund & Return Policy",
+    description: "Understand Sinotri Global's refund and return policy — how to request a refund, eligibility, and timelines for orders shipped to Bangladesh.",
+    alternates: { canonical: "/refund" },
+};
 
 export default function RefundPage() {
     return (

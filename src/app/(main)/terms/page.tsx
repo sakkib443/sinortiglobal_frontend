@@ -1,6 +1,12 @@
-"use client";
+import type { Metadata } from 'next';
 import { FiFileText } from 'react-icons/fi';
 import LegalPageLayout from '@/components/shared/LegalPageLayout';
+
+export const metadata: Metadata = {
+    title: "Terms & Conditions",
+    description: "Read the Terms & Conditions for using Sinotri Global's trading, sourcing, and shipping services in Bangladesh.",
+    alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
     return (

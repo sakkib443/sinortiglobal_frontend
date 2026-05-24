@@ -5,9 +5,28 @@ import FloatingContact from "@/components/shared/FloatingContact";
 import { ThemeProvider } from "@/components/shared/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "Sinotri Global - Your Trusted Global Trading Platform",
-  description: "Source quality products from China with Sinotri Global. Sourcing, shipping, and customs solutions for Bangladesh.",
-  keywords: "sinotri global, trading, sourcing, china products, import, ecommerce, bangladesh",
+  metadataBase: new URL("https://www.sinotriglobal.com"),
+  title: {
+    default: "Sinotri Global — Your Trusted Global Trading Platform",
+    template: "%s | Sinotri Global",
+  },
+  description: "Source quality products from China with Sinotri Global. Sourcing, shipping, freight forwarding, and customs solutions for Bangladesh.",
+  keywords: ["sinotri global", "trading", "sourcing", "china products", "import", "ecommerce", "bangladesh", "shipping", "freight forwarding"],
+  applicationName: "Sinotri Global",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: "Sinotri Global",
+    title: "Sinotri Global — Your Trusted Global Trading Platform",
+    description: "Source quality products from China with Sinotri Global. Sourcing, shipping, and customs solutions for Bangladesh.",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sinotri Global — Your Trusted Global Trading Platform",
+    description: "Source quality products from China with Sinotri Global. Sourcing, shipping, and customs solutions for Bangladesh.",
+  },
+  robots: { index: true, follow: true },
 };
 
 import { Toaster } from 'react-hot-toast';

@@ -1,6 +1,12 @@
-"use client";
+import type { Metadata } from 'next';
 import { FiShield } from 'react-icons/fi';
 import LegalPageLayout from '@/components/shared/LegalPageLayout';
+
+export const metadata: Metadata = {
+    title: "Privacy Policy",
+    description: "Learn how Sinotri Global collects, uses, and protects your personal data when you use our trading and shipping services.",
+    alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
     return (

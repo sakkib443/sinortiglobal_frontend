@@ -1,8 +1,13 @@
-"use client";
-
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { FiPackage, FiTruck, FiGlobe, FiShield, FiBox, FiHeadphones } from 'react-icons/fi';
+
+export const metadata: Metadata = {
+    title: "Our Services — Sourcing, Shipping & Customs Clearance",
+    description: "End-to-end global trading services: product sourcing from China, shipping & logistics, freight forwarding, customs clearance, and warehousing — all the way to your door in Bangladesh.",
+    alternates: { canonical: "/services" },
+};
 
 const services = [
     {
