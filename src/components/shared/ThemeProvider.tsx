@@ -12,7 +12,7 @@ interface ThemeContextType {
 }
 
 const defaultTheme: ThemeContextType = {
-    primaryColor: '#0B4222',
+    primaryColor: '#003B88',
     secondaryColor: '#E4525C',
     logoUrl: '',
     faviconUrl: '',
@@ -62,7 +62,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (res?.data?.theme) {
             const t = res.data.theme;
-            const primary = t.primaryColor || '#0B4222';
+            const primary = t.primaryColor || '#003B88';
             const secondary = t.secondaryColor || '#E4525C';
 
             // Calculate derivative colors from primary

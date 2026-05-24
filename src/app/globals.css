@@ -8,12 +8,12 @@
 /* ===== CSS Variables System for Theme Customization ===== */
 :root {
   /* Colors - Can be customized from admin */
-  --color-primary: #0B4222;
-  --color-primary-dark: #093519;
-  --color-primary-light: #e8f5e9;
-  --color-primary-lightest: #f0faf4;
-  --color-primary-border: #a7f3d0;
-  --color-primary-surface: #f8faf9;
+  --color-primary: #003B88;
+  --color-primary-dark: #002774;
+  --color-primary-light: #d9e1ed;
+  --color-primary-lightest: #edf1f7;
+  --color-primary-border: #b3c4db;
+  --color-primary-surface: #f5f7fa;
   --color-secondary: #E4525C;
   --color-accent: #FF6B6B;
   --color-background: #FFFFFF;
@@ -144,7 +144,7 @@ h6 {
 }
 
 .input:focus-within {
-  border-color: #0B4222;
+  border-color: #003B88;
   box-shadow: 0 0 0 2px rgba(11, 66, 34, 0.1);
 }
 
@@ -169,7 +169,7 @@ h6 {
 
 /* ===== Selection ===== */
 ::selection {
-  background-color: #0B4222;
+  background-color: #003B88;
   color: white;
 }
 
@@ -694,12 +694,12 @@ h6 {
 .product-editor-wrapper .ql-snow .ql-toolbar button:hover,
 .product-editor-wrapper .ql-snow.ql-toolbar button.ql-active,
 .product-editor-wrapper .ql-snow .ql-toolbar button.ql-active {
-  color: #0B4222;
+  color: #003B88;
 }
 
 .product-editor-wrapper .ql-snow.ql-toolbar .ql-picker-label:hover,
 .product-editor-wrapper .ql-snow .ql-toolbar .ql-picker-label:hover {
-  color: #0B4222;
+  color: #003B88;
 }
 
 .product-editor-wrapper .ql-editor h1 {
@@ -731,7 +731,7 @@ h6 {
 }
 
 .product-editor-wrapper .ql-editor blockquote {
-  border-left: 4px solid #0B4222;
+  border-left: 4px solid #003B88;
   padding-left: 16px;
   color: #555;
   margin: 12px 0;
