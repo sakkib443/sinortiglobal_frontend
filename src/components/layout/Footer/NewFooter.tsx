@@ -40,6 +40,11 @@ const NewFooter: React.FC = () => {
     const socials: { label: string; url: string }[] = (siteRes?.data?.contact?.socials || [])
         .filter((s: any) => s?.url && s.url !== '#');
 
+    // WhatsApp link for "Live Chat" — normalized to wa.me format (88 + local digits)
+    const waDigits = (siteRes?.data?.contact?.whatsapp || siteRes?.data?.floating?.whatsapp || '8801961864327').replace(/\D/g, '');
+    const waNumber = waDigits.startsWith('880') ? waDigits : waDigits.startsWith('0') ? '88' + waDigits : '880' + waDigits;
+    const whatsappLink = `https://wa.me/${waNumber}`;
+
     const handleLogout = () => {
         dispatch(logout());
         localStorage.removeItem('token');
@@ -59,7 +64,7 @@ const NewFooter: React.FC = () => {
                         <ul className="space-y-2.5">
                             <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Contact Us</Link></li>
                             <li><Link href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Email Us</Link></li>
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Live Chat</Link></li>
+                            <li><a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Live Chat (WhatsApp)</a></li>
                             {isAuthenticated ? (
                                 <>
                                     <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Account</Link></li>
@@ -75,10 +80,11 @@ const NewFooter: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Our Expertise</h4>
                         <ul className="space-y-2.5">
-                            <li><Link href="/services/shipping" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Buy and Ship for Me</Link></li>
-                            <li><Link href="/services/shipping" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Ship for Me</Link></li>
-                            <li><Link href="/services/quotation" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Request for Quotation (RFQ)</Link></li>
-                            <li><Link href="/services/calculator" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Cost Calculator</Link></li>
+                            <li><Link href="/services#sourcing" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Product Sourcing</Link></li>
+                            <li><Link href="/services#shipping" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Shipping & Logistics</Link></li>
+                            <li><Link href="/services#freight" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Freight Forwarding</Link></li>
+                            <li><Link href="/services#customs" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Customs Clearance</Link></li>
+                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Request a Quote (RFQ)</Link></li>
                         </ul>
                     </div>
 
@@ -86,9 +92,10 @@ const NewFooter: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Important Links</h4>
                         <ul className="space-y-2.5">
-                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Sinotri Live</Link></li>
+                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Home</Link></li>
+                            <li><Link href="/products" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">All Products</Link></li>
+                            <li><Link href="/services" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Our Services</Link></li>
                             <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Talk to the Expert</Link></li>
-                            <li><Link href="/blogs" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Blog</Link></li>
                             <li><Link href="/cart" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Cart</Link></li>
                         </ul>
                     </div>

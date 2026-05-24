@@ -6,36 +6,42 @@ import { FiPackage, FiTruck, FiGlobe, FiShield, FiBox, FiHeadphones } from 'reac
 
 const services = [
     {
+        id: 'sourcing',
         icon: <FiPackage size={28} />,
         title: 'Product Sourcing',
         desc: 'We source high-quality products directly from verified manufacturers in China, ensuring the best prices and authentic items for your business.',
         color: 'var(--color-primary)',
     },
     {
+        id: 'shipping',
         icon: <FiTruck size={28} />,
         title: 'Shipping & Logistics',
         desc: 'End-to-end shipping solutions from China to Bangladesh via air, sea, and express delivery with real-time tracking.',
         color: '#1565C0',
     },
     {
+        id: 'freight',
         icon: <FiGlobe size={28} />,
         title: 'Freight Forwarding',
         desc: 'Professional freight forwarding services handling all documentation, customs, and transit logistics for smooth delivery.',
         color: '#E65100',
     },
     {
+        id: 'customs',
         icon: <FiShield size={28} />,
         title: 'Customs Clearance',
         desc: 'Complete customs clearance support ensuring your goods pass through smoothly with all required documentation and compliance.',
         color: '#7B1FA2',
     },
     {
+        id: 'warehousing',
         icon: <FiBox size={28} />,
         title: 'Warehousing',
         desc: 'Secure warehousing facilities in China and Bangladesh for storage, consolidation, and quality inspection before shipping.',
         color: '#00838F',
     },
     {
+        id: 'support',
         icon: <FiHeadphones size={28} />,
         title: '24/7 Support',
         desc: 'Dedicated customer support team available around the clock to assist with orders, tracking, and any queries.',
@@ -67,7 +73,8 @@ export default function ServicesPage() {
                     {services.map((s, i) => (
                         <div
                             key={i}
-                            className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
+                            id={s.id}
+                            className="bg-white rounded-xl border border-gray-100 p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group scroll-mt-28"
                         >
                             <div
                                 className="w-14 h-14 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform"
