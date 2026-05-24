@@ -8,11 +8,19 @@ const FloatingContact: React.FC = () => {
     const { data: res } = useGetSiteContentQuery({});
     const f = res?.data?.floating;
 
-    // If floating widget data not loaded yet or WhatsApp is hidden, use fallback
-    const whatsappNumber = f?.whatsapp || '8801XXXXXXXXX';
     const showWhatsapp = f?.showWhatsapp !== false; // default true
 
-    if (!showWhatsapp) return null;
+    // Normalize to wa.me format: digits only, with BD country code (880)
+    const digits = (f?.whatsapp || '').replace(/\D/g, '');
+    const whatsappNumber = digits.startsWith('880')
+        ? digits
+        : digits.startsWith('0')
+            ? '88' + digits
+            : digits
+                ? '880' + digits
+                : '';
+
+    if (!showWhatsapp || !whatsappNumber) return null;
 
     const whatsappLink = `https://wa.me/${whatsappNumber}`;
 

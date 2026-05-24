@@ -72,6 +72,16 @@ export default function ContactPage() {
         );
     }
 
+    /* ─── Normalize WhatsApp number to wa.me format (88 + local, digits only) ─── */
+    const waDigits = (c.whatsapp || '').replace(/\D/g, '');
+    const waNumber = waDigits.startsWith('880')
+        ? waDigits
+        : waDigits.startsWith('0')
+            ? '88' + waDigits
+            : waDigits
+                ? '880' + waDigits
+                : '';
+
     /* ─── Dynamic Data ─── */
     const CONTACT_CARDS = [
         {
@@ -87,7 +97,7 @@ export default function ContactPage() {
             label: 'WhatsApp',
             primary: c.whatsapp || '01XXXXXXXXX',
             secondary: 'Quick reply within minutes',
-            href: `https://wa.me/88${c.whatsapp || ''}`,
+            href: `https://wa.me/${waNumber}`,
             accent: '#25D366',
         },
         {
