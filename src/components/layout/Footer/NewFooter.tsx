@@ -6,15 +6,39 @@ import { useRouter } from 'next/navigation';
 import { useAppSelector, useAppDispatch } from '@/redux';
 import { logout } from '@/redux/slices/authSlice';
 import { FiMapPin, FiMail, FiPhone } from 'react-icons/fi';
-import { FaFacebookF, FaLinkedinIn, FaYoutube, FaInstagram } from 'react-icons/fa';
+import { FaFacebookF, FaLinkedinIn, FaYoutube, FaInstagram, FaWhatsapp } from 'react-icons/fa';
+import { FaXTwitter, FaTiktok } from 'react-icons/fa6';
 import { toast } from 'react-hot-toast';
 import { useTheme } from '@/components/shared/ThemeProvider';
+import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
+import type { IconType } from 'react-icons';
+
+/* ─── Map a social label to its icon (case-insensitive) ─── */
+const SOCIAL_ICONS: { match: string; icon: IconType }[] = [
+    { match: 'facebook', icon: FaFacebookF },
+    { match: 'instagram', icon: FaInstagram },
+    { match: 'youtube', icon: FaYoutube },
+    { match: 'linkedin', icon: FaLinkedinIn },
+    { match: 'twitter', icon: FaXTwitter },
+    { match: 'tiktok', icon: FaTiktok },
+    { match: 'whatsapp', icon: FaWhatsapp },
+];
+
+const getSocialIcon = (label: string): IconType => {
+    const found = SOCIAL_ICONS.find((s) => label.toLowerCase().includes(s.match));
+    return found?.icon || FaFacebookF;
+};
 
 const NewFooter: React.FC = () => {
     const { isAuthenticated, user } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const { logoUrl } = useTheme();
+    const { data: siteRes } = useGetSiteContentQuery({});
+
+    // Social links from DB (admin → site-content). Only show ones with a real URL.
+    const socials: { label: string; url: string }[] = (siteRes?.data?.contact?.socials || [])
+        .filter((s: any) => s?.url && s.url !== '#');
 
     const handleLogout = () => {
         dispatch(logout());
@@ -91,19 +115,26 @@ const NewFooter: React.FC = () => {
                                     <a href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">support@sinotriglobal.com</a>
                                 </div>
                             </div>
-                            {/* Social Icons */}
-                            <div className="flex items-center gap-3 mt-4">
-                                {[
-                                    { icon: FaFacebookF, url: '#', label: 'Facebook' },
-                                    { icon: FaLinkedinIn, url: '#', label: 'LinkedIn' },
-                                    { icon: FaYoutube, url: '#', label: 'YouTube' },
-                                    { icon: FaInstagram, url: '#', label: 'Instagram' },
-                                ].map((s) => (
-                                    <a key={s.label} href={s.url} aria-label={s.label} className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] transition-colors">
-                                        <s.icon size={14} />
-                                    </a>
-                                ))}
-                            </div>
+                            {/* Social Icons — dynamic from admin / site-content */}
+                            {socials.length > 0 && (
+                                <div className="flex items-center gap-3 mt-4">
+                                    {socials.map((s) => {
+                                        const Icon = getSocialIcon(s.label);
+                                        return (
+                                            <a
+                                                key={s.label}
+                                                href={s.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label={s.label}
+                                                className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] transition-colors"
+                                            >
+                                                <Icon size={14} />
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
 
                         {/* 24/7 Support */}
