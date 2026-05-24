@@ -54,137 +54,100 @@ const NewFooter: React.FC = () => {
 
     return (
         <footer className="bg-white border-t border-gray-200">
-            {/* ── Top Footer ── */}
+            {/* ── Main Footer (single section) ── */}
             <div className="container mx-auto px-4 py-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 
-                    {/* Column 1 - Customer Services */}
+                    {/* Brand + Address + Social */}
+                    <div className="sm:col-span-2 lg:col-span-1">
+                        <Link href="/" className="inline-flex items-center mb-4">
+                            <img src={logoUrl} alt="Sinotri Global" className="h-9" />
+                        </Link>
+                        <div className="space-y-2.5">
+                            <div className="flex items-start gap-2.5">
+                                <FiMapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
+                                <p className="text-sm text-gray-500">Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216</p>
+                            </div>
+                            <div className="flex items-center gap-2.5">
+                                <FiMail size={14} className="text-gray-400 shrink-0" />
+                                <a href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">support@sinotriglobal.com</a>
+                            </div>
+                        </div>
+                        {/* Social Icons — dynamic from admin / site-content */}
+                        {socials.length > 0 && (
+                            <div className="flex items-center gap-3 mt-4">
+                                {socials.map((s) => {
+                                    const Icon = getSocialIcon(s.label);
+                                    return (
+                                        <a
+                                            key={s.label}
+                                            href={s.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            aria-label={s.label}
+                                            className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] transition-colors"
+                                        >
+                                            <Icon size={14} />
+                                        </a>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Menu 1 - Quick Links */}
                     <div>
-                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Customer Services</h4>
+                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Quick Links</h4>
                         <ul className="space-y-2.5">
+                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Home</Link></li>
+                            <li><Link href="/products" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">All Products</Link></li>
+                            <li><Link href="/services" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Our Services</Link></li>
                             <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Contact Us</Link></li>
-                            <li><Link href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Email Us</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Menu 2 - Support */}
+                    <div>
+                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Support</h4>
+                        <ul className="space-y-2.5">
+                            <li>
+                                <a href="tel:+8809666786000" className="flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline">
+                                    <FiPhone size={14} /> +8809666786000
+                                </a>
+                            </li>
                             <li><a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Live Chat (WhatsApp)</a></li>
                             {isAuthenticated ? (
-                                <>
-                                    <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Account</Link></li>
-                                    <li><button onClick={handleLogout} className="text-sm text-gray-500 hover:text-red-500 transition-colors">Logout</button></li>
-                                </>
+                                <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Account</Link></li>
                             ) : (
                                 <li><Link href="/login" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Sign In / Register</Link></li>
                             )}
                         </ul>
                     </div>
 
-                    {/* Column 2 - Our Expertise */}
+                    {/* Payment Methods */}
                     <div>
-                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Our Expertise</h4>
-                        <ul className="space-y-2.5">
-                            <li><Link href="/services#sourcing" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Product Sourcing</Link></li>
-                            <li><Link href="/services#shipping" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Shipping & Logistics</Link></li>
-                            <li><Link href="/services#freight" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Freight Forwarding</Link></li>
-                            <li><Link href="/services#customs" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Customs Clearance</Link></li>
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Request a Quote (RFQ)</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Column 3 - Important Links */}
-                    <div>
-                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Important Links</h4>
-                        <ul className="space-y-2.5">
-                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Home</Link></li>
-                            <li><Link href="/products" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">All Products</Link></li>
-                            <li><Link href="/services" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Our Services</Link></li>
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Talk to the Expert</Link></li>
-                            <li><Link href="/cart" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Cart</Link></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            {/* ── Middle Footer ── */}
-            <div className="border-t border-gray-100">
-                <div className="container mx-auto px-4 py-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-                        {/* Logo + Address */}
-                        <div>
-                            <Link href="/" className="flex items-center gap-2 mb-4">
-                                <img src={logoUrl} alt="Sinotri Global" className="h-8" />
-                            </Link>
-                            <div className="space-y-2.5">
-                                <div className="flex items-start gap-2.5">
-                                    <FiMapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
-                                    <p className="text-sm text-gray-500">Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216</p>
-                                </div>
-                                <div className="flex items-center gap-2.5">
-                                    <FiMail size={14} className="text-gray-400 shrink-0" />
-                                    <a href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">support@sinotriglobal.com</a>
+                        <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">We Accept</h4>
+                        <div className="grid grid-cols-4 gap-2">
+                            <div className="bg-white border border-gray-200 rounded-md px-2 py-2 flex items-center justify-center h-9">
+                                <span className="text-xs font-bold tracking-tight" style={{ color: '#1A1F71' }}>VISA</span>
+                            </div>
+                            <div className="bg-white border border-gray-200 rounded-md px-2 py-2 flex items-center justify-center h-9">
+                                <div className="flex items-center gap-0.5">
+                                    <div className="w-3.5 h-3.5 rounded-full bg-[#EB001B] opacity-80" />
+                                    <div className="w-3.5 h-3.5 rounded-full bg-[#F79E1B] opacity-80 -ml-2" />
                                 </div>
                             </div>
-                            {/* Social Icons — dynamic from admin / site-content */}
-                            {socials.length > 0 && (
-                                <div className="flex items-center gap-3 mt-4">
-                                    {socials.map((s) => {
-                                        const Icon = getSocialIcon(s.label);
-                                        return (
-                                            <a
-                                                key={s.label}
-                                                href={s.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                aria-label={s.label}
-                                                className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] transition-colors"
-                                            >
-                                                <Icon size={14} />
-                                            </a>
-                                        );
-                                    })}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* 24/7 Support */}
-                        <div>
-                            <h4 className="text-sm font-bold text-gray-900 mb-4">24/7 Support</h4>
-                            <p className="text-sm text-gray-500 mb-3">We're here for you 24/7, around the clock.</p>
-                            <div className="flex items-center gap-2.5">
-                                <FiPhone size={16} className="text-[var(--color-primary)]" />
-                                <a href="tel:+8809666786000" className="text-base font-semibold text-[var(--color-primary)] hover:underline">+8809666786000</a>
+                            <div className="bg-white border border-gray-200 rounded-md px-2 py-2 flex items-center justify-center h-9">
+                                <span className="text-[10px] font-bold" style={{ color: '#D12053' }}>bKash</span>
                             </div>
-                        </div>
-
-                        {/* Payment Methods */}
-                        <div>
-                            <h4 className="text-sm font-bold text-gray-900 mb-4">Payment Method We Accept</h4>
-                            <div className="grid grid-cols-4 gap-2">
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-sm font-bold tracking-tight" style={{ color: '#1A1F71' }}>VISA</span>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <div className="flex items-center gap-0.5">
-                                        <div className="w-4 h-4 rounded-full bg-[#EB001B] opacity-80" />
-                                        <div className="w-4 h-4 rounded-full bg-[#F79E1B] opacity-80 -ml-2" />
-                                    </div>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-[10px] font-bold text-[#006FCF]">AMEX</span>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-[11px] font-bold" style={{ color: '#D12053' }}>bKash</span>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-[11px] font-bold" style={{ color: '#F6921E' }}>Nagad</span>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-[11px] font-bold" style={{ color: '#8B2F8B' }}>Rocket</span>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-[10px] font-bold" style={{ color: '#00529B' }}>DBBL</span>
-                                </div>
-                                <div className="bg-white border border-gray-200 rounded-md px-3 py-2 flex items-center justify-center h-10">
-                                    <span className="text-[9px] font-bold" style={{ color: '#003087' }}>City Bank</span>
-                                </div>
+                            <div className="bg-white border border-gray-200 rounded-md px-2 py-2 flex items-center justify-center h-9">
+                                <span className="text-[10px] font-bold" style={{ color: '#F6921E' }}>Nagad</span>
+                            </div>
+                            <div className="bg-white border border-gray-200 rounded-md px-2 py-2 flex items-center justify-center h-9">
+                                <span className="text-[10px] font-bold" style={{ color: '#8B2F8B' }}>Rocket</span>
+                            </div>
+                            <div className="bg-white border border-gray-200 rounded-md px-2 py-2 flex items-center justify-center h-9">
+                                <span className="text-[9px] font-bold" style={{ color: '#00529B' }}>DBBL</span>
                             </div>
                         </div>
                     </div>
