@@ -11,6 +11,7 @@ import { clearImageSearch, loadSearchHistoryFromStorage } from '@/redux/slices/i
 import { FiX, FiCamera } from 'react-icons/fi';
 import { FiSearch } from 'react-icons/fi';
 import HeroSection from './HeroSection';
+import QuickServices from './QuickServices';
 import CategoryExpertise from './CategoryExpertise';
 import QualityFeatures from './QualityFeatures';
 import AssociatedProducts from './AssociatedProducts';
@@ -219,6 +220,9 @@ const NewHomePage: React.FC = () => {
         <div className="min-h-screen bg-gray-50">
             {/* Hero Banner */}
             <HeroSection />
+
+            {/* Quick Services Grid */}
+            <QuickServices />
 
             {/* Categories + Expertise */}
             <CategoryExpertise />
