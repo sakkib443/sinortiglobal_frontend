@@ -97,36 +97,6 @@ const services = [
         emoji: (
             <span className="text-4xl leading-none select-none">
                 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="6" y="10" width="36" height="28" rx="5" fill="#1E293B" />
-                    <circle cx="24" cy="24" r="10" fill="#374151" />
-                    <circle cx="24" cy="24" r="7" fill="#111827" />
-                    <circle cx="24" cy="24" r="4" fill="#374151" />
-                    <circle cx="26" cy="22" r="1.5" fill="white" opacity="0.6" />
-                    <rect x="8" y="12" width="5" height="4" rx="1" fill="#FBBF24" />
-                    <circle cx="40" cy="12" r="2" fill="#EF4444" />
-                </svg>
-            </span>
-        ),
-        label: 'MoveOn Lens',
-        href: '/lens',
-    },
-    {
-        emoji: (
-            <span className="text-4xl leading-none select-none">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="24" cy="24" r="20" fill="#FEE2E2" />
-                    <circle cx="24" cy="24" r="16" fill="#EF4444" />
-                    <polygon points="20,16 36,24 20,32" fill="white" />
-                </svg>
-            </span>
-        ),
-        label: 'MoveOn Live',
-        href: '/live',
-    },
-    {
-        emoji: (
-            <span className="text-4xl leading-none select-none">
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M24 40 C24 40 6 28 6 17 C6 11 10.5 7 16 7 C19.5 7 22.5 8.8 24 11.5 C25.5 8.8 28.5 7 32 7 C37.5 7 42 11 42 17 C42 28 24 40 24 40 Z" fill="#FB7185" />
                     <path d="M24 36 C24 36 10 26 10 17.5 C10 13 13 10 16.5 10 C19 10 21 11.5 22.5 13.5" fill="#F43F5E" opacity="0.5" />
                     <circle cx="34" cy="10" r="5" fill="#FCD34D" />
@@ -141,22 +111,25 @@ const services = [
 
 const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
     return (
-        <section className="w-full bg-white py-6 px-4">
-            <div className="max-w-5xl mx-auto">
-                {/* 4x2 Grid */}
-                <div className="grid grid-cols-4 gap-3">
+        <section className="w-full bg-white py-7 px-6">
+            <div className="max-w-6xl mx-auto">
+                {/* 6-column grid: 3 cols mobile → 6 cols desktop */}
+                <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
                     {services.map((service) => {
+                        const cardClass =
+                            'flex flex-col items-center justify-center gap-3 bg-white border border-gray-100 rounded-2xl py-6 px-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-[var(--color-primary-border)] transition-all duration-200 group cursor-pointer';
+
                         if (service.label === 'Category') {
                             return (
                                 <button
                                     key={service.label}
                                     onClick={onCategoryClick}
-                                    className="flex flex-col items-center justify-center gap-2 bg-white border border-gray-100 rounded-xl py-5 px-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+                                    className={cardClass}
                                 >
-                                    <div className="w-14 h-14 flex items-center justify-center">
+                                    <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-amber-50 group-hover:scale-105 transition-transform duration-200">
                                         {service.emoji}
                                     </div>
-                                    <span className="text-[13px] font-medium text-gray-700 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+                                    <span className="text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
                                         {service.label}
                                     </span>
                                 </button>
@@ -166,12 +139,12 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                             <Link
                                 key={service.label}
                                 href={service.href}
-                                className="flex flex-col items-center justify-center gap-2 bg-white border border-gray-100 rounded-xl py-5 px-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+                                className={cardClass}
                             >
-                                <div className="w-14 h-14 flex items-center justify-center">
+                                <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:scale-105 transition-transform duration-200">
                                     {service.emoji}
                                 </div>
-                                <span className="text-[13px] font-medium text-gray-700 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+                                <span className="text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
                                     {service.label}
                                 </span>
                             </Link>
@@ -180,8 +153,8 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                 </div>
 
                 {/* Global Shipping Services heading */}
-                <div className="mt-6 text-center">
-                    <h2 className="text-lg font-bold text-gray-800 tracking-wide">
+                <div className="mt-5 text-center">
+                    <h2 className="text-base font-bold text-gray-700 tracking-wide">
                         Global Shipping Services
                     </h2>
                 </div>
