@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { FiX } from 'react-icons/fi';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
 
 interface Category {
@@ -12,7 +13,11 @@ interface Category {
     image?: string;
 }
 
-const CategoryExpertise: React.FC = () => {
+interface CategoryExpertiseProps {
+    onClose?: () => void;
+}
+
+const CategoryExpertise: React.FC<CategoryExpertiseProps> = ({ onClose }) => {
     const { data: categoriesData } = useGetCategoriesQuery({});
     const categories: Category[] = categoriesData?.data || [];
 
@@ -29,9 +34,19 @@ const CategoryExpertise: React.FC = () => {
                             <div className="w-1 h-6 bg-[var(--color-primary)] rounded-full"></div>
                             <h3 className="text-lg font-bold text-gray-800">Top Categories</h3>
                         </div>
-                        <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium">
-                            View All →
-                        </Link>
+                        <div className="flex items-center gap-3">
+                            <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium">
+                                View All →
+                            </Link>
+                            {onClose && (
+                                <button
+                                    onClick={onClose}
+                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-500 transition-colors"
+                                >
+                                    <FiX size={16} />
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     {/* Carousel */}

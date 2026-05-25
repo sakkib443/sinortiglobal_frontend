@@ -23,6 +23,7 @@ const NewHomePage: React.FC = () => {
     const searchParams = useSearchParams();
     const dispatch = useAppDispatch();
 
+    const [showCategories, setShowCategories] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
     const [searchTerm, setSearchTerm] = useState(searchParams.get('searchTerm') || '');
     const [page, setPage] = useState(1);
@@ -221,11 +222,15 @@ const NewHomePage: React.FC = () => {
             {/* Hero Banner */}
             <HeroSection />
 
-            {/* Quick Services Grid */}
-            <QuickServices />
+            {/* Quick Services Grid — hidden when categories are open */}
+            {!showCategories && (
+                <QuickServices onCategoryClick={() => setShowCategories(true)} />
+            )}
 
-            {/* Categories + Expertise */}
-            <CategoryExpertise />
+            {/* Top Categories — shown only when Category tile is clicked */}
+            {showCategories && (
+                <CategoryExpertise onClose={() => setShowCategories(false)} />
+            )}
 
             <div className="container mx-auto px-2 py-6">
 

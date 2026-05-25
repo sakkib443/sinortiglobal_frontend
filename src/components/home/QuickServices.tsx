@@ -3,6 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 
+interface QuickServicesProps {
+    onCategoryClick: () => void;
+}
+
 const services = [
     {
         icon: '🟧',
@@ -135,26 +139,44 @@ const services = [
     },
 ];
 
-const QuickServices: React.FC = () => {
+const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
     return (
         <section className="w-full bg-white py-6 px-4">
             <div className="max-w-5xl mx-auto">
                 {/* 4x2 Grid */}
                 <div className="grid grid-cols-4 gap-3">
-                    {services.map((service) => (
-                        <Link
-                            key={service.label}
-                            href={service.href}
-                            className="flex flex-col items-center justify-center gap-2 bg-white border border-gray-100 rounded-xl py-5 px-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
-                        >
-                            <div className="w-14 h-14 flex items-center justify-center">
-                                {service.emoji}
-                            </div>
-                            <span className="text-[13px] font-medium text-gray-700 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
-                                {service.label}
-                            </span>
-                        </Link>
-                    ))}
+                    {services.map((service) => {
+                        if (service.label === 'Category') {
+                            return (
+                                <button
+                                    key={service.label}
+                                    onClick={onCategoryClick}
+                                    className="flex flex-col items-center justify-center gap-2 bg-white border border-gray-100 rounded-xl py-5 px-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+                                >
+                                    <div className="w-14 h-14 flex items-center justify-center">
+                                        {service.emoji}
+                                    </div>
+                                    <span className="text-[13px] font-medium text-gray-700 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+                                        {service.label}
+                                    </span>
+                                </button>
+                            );
+                        }
+                        return (
+                            <Link
+                                key={service.label}
+                                href={service.href}
+                                className="flex flex-col items-center justify-center gap-2 bg-white border border-gray-100 rounded-xl py-5 px-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+                            >
+                                <div className="w-14 h-14 flex items-center justify-center">
+                                    {service.emoji}
+                                </div>
+                                <span className="text-[13px] font-medium text-gray-700 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+                                    {service.label}
+                                </span>
+                            </Link>
+                        );
+                    })}
                 </div>
 
                 {/* Global Shipping Services heading */}
