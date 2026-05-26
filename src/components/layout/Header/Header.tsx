@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
     FiShoppingCart, FiCamera, FiChevronDown, FiSearch, FiMenu, FiX,
-    FiUpload, FiUser, FiHeart, FiSmartphone, FiHeadphones, FiGlobe
+    FiUpload, FiUser, FiHeart, FiPhone, FiMail, FiMapPin
 } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '@/redux';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
@@ -192,38 +192,31 @@ const Header: React.FC = () => {
                 }}
             >
                 {/* ═══ TOP BAR ═══ */}
-                <div className="bg-[#f5f5f5] border-b border-gray-200 hidden md:block">
+                <div className="bg-[var(--color-primary)] hidden md:block">
                     <div className="container mx-auto px-2">
-                        <div className="flex items-center justify-between h-[34px] text-[12.5px] text-gray-600">
-                            {/* Left */}
+                        <div className="flex items-center justify-between h-[34px] text-[12px] text-white/90">
+                            {/* Left — contact info */}
                             <div className="flex items-center gap-5">
-                                <Link href="/" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                                    <FiSmartphone size={13} />
-                                    <span>Sinotri App</span>
-                                </Link>
-                                <span className="text-gray-300">|</span>
-                                <Link href="/contact" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                                    <FiHeadphones size={13} />
-                                    <span>Support</span>
-                                </Link>
+                                <a
+                                    href="tel:+8809666786000"
+                                    className="flex items-center gap-1.5 hover:text-white transition-colors"
+                                >
+                                    <FiPhone size={12} />
+                                    <span>+8809666786000</span>
+                                </a>
+                                <span className="text-white/30">|</span>
+                                <a
+                                    href="mailto:support@sinotriglobal.com"
+                                    className="flex items-center gap-1.5 hover:text-white transition-colors"
+                                >
+                                    <FiMail size={12} />
+                                    <span>support@sinotriglobal.com</span>
+                                </a>
                             </div>
-                            {/* Right */}
-                            <div className="flex items-center gap-5">
-                                <Link href="/wishlist" className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                                    <FiHeart size={13} />
-                                    <span>Wishlist</span>
-                                </Link>
-                                <span className="text-gray-300">|</span>
-                                <button className="flex items-center gap-1.5 hover:text-[var(--color-primary)] transition-colors">
-                                    <span>Ship to</span>
-                                    <span className="text-base leading-none">🇧🇩</span>
-                                </button>
-                                <span className="text-gray-300">|</span>
-                                <button className="flex items-center gap-1 hover:text-[var(--color-primary)] transition-colors">
-                                    <FiGlobe size={13} />
-                                    <span>EN/BDT</span>
-                                    <FiChevronDown size={11} />
-                                </button>
+                            {/* Right — address */}
+                            <div className="flex items-center gap-1.5 text-white/80">
+                                <FiMapPin size={12} className="shrink-0" />
+                                <span>Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216</span>
                             </div>
                         </div>
                     </div>
