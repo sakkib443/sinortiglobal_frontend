@@ -210,10 +210,18 @@ export default function OrderDetailsPage() {
                                     <span className="font-bold text-gray-800">৳{(order.shippingCost || 0).toLocaleString()}</span>
                                 </div>
                                 {order.discount > 0 && (
-                                    <div className="flex justify-between text-sm text-red-500">
-                                        <span>Discount:</span>
-                                        <span className="font-bold">-৳{(order.discount || 0).toLocaleString()}</span>
-                                    </div>
+                                    <>
+                                        {order.couponCode && (
+                                            <div className="flex justify-between text-sm text-gray-500">
+                                                <span>Coupon Code:</span>
+                                                <span className="font-bold text-gray-700 uppercase tracking-wide">{order.couponCode}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between text-sm text-red-500">
+                                            <span>Discount:</span>
+                                            <span className="font-bold">-৳{(order.discount || 0).toLocaleString()}</span>
+                                        </div>
+                                    </>
                                 )}
                                 <div className="h-px bg-gray-200 my-2"></div>
                                 <div className="flex justify-between text-lg font-bold text-gray-900">

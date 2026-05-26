@@ -198,10 +198,18 @@ export default function OrderDetailPage() {
                                 </div>
                             )}
                             {order.discount > 0 && (
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-400">Discount</span>
-                                    <span className="font-semibold text-emerald-600">-৳{order.discount?.toLocaleString()}</span>
-                                </div>
+                                <>
+                                    {order.couponCode && (
+                                        <div className="flex justify-between text-sm">
+                                            <span className="text-gray-400">Coupon</span>
+                                            <span className="font-semibold text-gray-600 uppercase tracking-wide">{order.couponCode}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-400">Discount</span>
+                                        <span className="font-semibold text-emerald-600">-৳{order.discount?.toLocaleString()}</span>
+                                    </div>
+                                </>
                             )}
                             <div className="flex justify-between text-base pt-2 border-t border-gray-200 mt-2">
                                 <span className="font-bold text-gray-700">Total</span>
