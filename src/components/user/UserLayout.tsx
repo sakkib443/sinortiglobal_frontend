@@ -17,6 +17,7 @@ import {
     FiChevronLeft,
     FiHome,
     FiPackage,
+    FiHeart,
 } from 'react-icons/fi';
 
 interface NavItem {
@@ -28,6 +29,7 @@ interface NavItem {
 const navItems: NavItem[] = [
     { label: 'Dashboard', href: '/dashboard/user', icon: FiGrid },
     { label: 'My Orders', href: '/dashboard/user/orders', icon: FiShoppingBag },
+    { label: 'Wishlist', href: '/dashboard/user/wishlist', icon: FiHeart },
     { label: 'Profile', href: '/dashboard/user/profile', icon: FiUser },
     { label: 'Settings', href: '/dashboard/user/settings', icon: FiSettings },
 ];
@@ -38,6 +40,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.auth);
+    const wishlistCount = useAppSelector((state: any) => state.wishlist.totalItems);
 
     const handleLogout = () => {
         dispatch(logout());
@@ -146,9 +149,14 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                                                     : 'text-gray-500 hover:bg-[#f5f5f5] hover:text-gray-800'
                                             }`}
                                         >
-                                            <item.icon size={18} className={isActive(item.href) ? '' : 'group-hover:text-[var(--color-primary)]'} />
-                                            <span>{item.label}</span>
-                                            {isActive(item.href) && (
+                                            <item.icon size={18} />
+                                            <span className="flex-1">{item.label}</span>
+                                            {item.label === 'Wishlist' && wishlistCount > 0 && (
+                                                <span className="ml-auto min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                                    {wishlistCount}
+                                                </span>
+                                            )}
+                                            {isActive(item.href) && item.label !== 'Wishlist' && (
                                                 <FiChevronRight size={14} className="ml-auto" />
                                             )}
                                         </Link>
@@ -206,7 +214,12 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                                             }`}
                                         >
                                             <item.icon size={18} />
-                                            <span>{item.label}</span>
+                                            <span className="flex-1">{item.label}</span>
+                                            {item.label === 'Wishlist' && wishlistCount > 0 && (
+                                                <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                                    {wishlistCount}
+                                                </span>
+                                            )}
                                         </Link>
                                     ))}
                                     <div className="h-px bg-gray-100 my-2"></div>

@@ -11,9 +11,11 @@ import {
     useLikeReplyMutation,
 } from '@/redux/api/reviewApi';
 import { useIncrementProductStatMutation } from '@/redux/api/productApi';
+import { useToggleWishlistMutation, useGetWishlistQuery } from '@/redux/api/userApi';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import { addToCart } from '@/redux/slices/cartSlice';
-import { FiStar, FiX, FiCopy, FiCheck, FiSend, FiThumbsUp, FiCornerDownRight } from 'react-icons/fi';
+import { toggleWishlist } from '@/redux/slices/wishlistSlice';
+import { FiStar, FiX, FiCopy, FiCheck, FiSend, FiThumbsUp, FiCornerDownRight, FiHeart, FiMessageCircle, FiShare2, FiBookmark } from 'react-icons/fi';
 import {
     FaFacebookF, FaFacebookMessenger, FaWhatsapp, FaTelegramPlane,
     FaLinkedinIn, FaPinterestP, FaEnvelope, FaInstagram
@@ -72,10 +74,23 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
         return () => { document.body.style.overflow = ''; };
     }, [showComments, showShare]);
     const [incrementStat] = useIncrementProductStatMutation();
+    const [toggleWishlistApi] = useToggleWishlistMutation();
     const dispatch = useAppDispatch();
     const productId = String(product._id || product.id);
+
+    // Auth + cart state
+    const { isAuthenticated } = useAppSelector((state: any) => state.auth);
     const cartItems = useAppSelector((state: any) => state.cart.items);
     const isInCart = cartItems.some((item: any) => item.id === productId);
+
+    // Wishlist state — server for logged-in users, Redux for guests
+    const localWishlist = useAppSelector((state: any) => state.wishlist.items);
+    const { data: serverWishlist } = useGetWishlistQuery({}, { skip: !isAuthenticated });
+    const serverItems: any[] = serverWishlist?.data || [];
+    const isInWishlist = isAuthenticated
+        ? serverItems.some((item: any) => String(item._id || item.id) === productId)
+        : localWishlist.some((item: any) => item.id === productId);
+    const [wishlistAnim, setWishlistAnim] = useState(false);
     const [cartAnim, setCartAnim] = useState(false);
     const [showAlreadyAdded, setShowAlreadyAdded] = useState(false);
 
@@ -94,6 +109,26 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
             setIsLiked(true);
             setLikeAnim(true);
             setTimeout(() => setLikeAnim(false), 300);
+        }
+    };
+
+    const handleWishlistToggle = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setWishlistAnim(true);
+        setTimeout(() => setWishlistAnim(false), 400);
+        if (isAuthenticated) {
+            try { await toggleWishlistApi(productId).unwrap(); } catch {}
+        } else {
+            dispatch(toggleWishlist({
+                id: productId,
+                name: product.name,
+                price: product.price,
+                mrp: product.originalPrice || product.mrp || product.price,
+                image: product.image,
+                category: product.categoryName || '',
+                rating: product.rating || 0,
+            }));
         }
     };
 
@@ -167,8 +202,9 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
 
     return (
         <>
+            <div className='bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-all duration-300 group'>
             <Link href={`/product/${product.slug || product.id}`}>
-                <div className='bg-white border border-gray-200 rounded-md overflow-hidden hover:shadow-lg transition-all duration-300 group'>
+                <div>
 
                     {/* Product Image */}
                     <div className='aspect-[4/3] bg-gray-100 overflow-hidden relative'>
@@ -243,6 +279,52 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                     </div>
                 </div>
             </Link>
+
+            {/* ── Social Action Bar ── */}
+            <div className='border-t border-gray-100 px-2.5 py-1.5 flex items-center justify-between bg-white'>
+                {/* Like */}
+                <button
+                    onClick={handleLike}
+                    className={`flex items-center gap-1 text-[11px] font-medium transition-all ${isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}
+                >
+                    <FiHeart
+                        size={13}
+                        style={{ fill: isLiked ? 'currentColor' : 'none' }}
+                        className={likeAnim ? 'scale-150' : 'scale-100'}
+                    />
+                    <span>{formatCount(stats.likes + (isLiked ? 1 : 0))}</span>
+                </button>
+                {/* Comment */}
+                <button
+                    onClick={handleCommentsClick}
+                    className='flex items-center gap-1 text-[11px] font-medium text-gray-400 hover:text-[var(--color-primary)] transition-colors'
+                >
+                    <FiMessageCircle size={13} />
+                    <span>{formatCount(stats.comments)}</span>
+                </button>
+                {/* Share */}
+                <button
+                    onClick={handleShareClick}
+                    className='flex items-center gap-1 text-[11px] font-medium text-gray-400 hover:text-[var(--color-primary)] transition-colors'
+                >
+                    <FiShare2 size={13} />
+                    <span>{formatCount(stats.shares)}</span>
+                </button>
+                {/* Wishlist / Save */}
+                <button
+                    onClick={handleWishlistToggle}
+                    className={`flex items-center gap-1 text-[11px] font-medium transition-all ${isInWishlist ? 'text-[var(--color-primary)]' : 'text-gray-400 hover:text-[var(--color-primary)]'} ${wishlistAnim ? 'scale-125' : 'scale-100'}`}
+                    title={isInWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                >
+                    <FiBookmark
+                        size={13}
+                        style={{ fill: isInWishlist ? 'currentColor' : 'none' }}
+                    />
+                    <span>{isInWishlist ? 'Saved' : 'Save'}</span>
+                </button>
+            </div>
+
+            </div>
 
             {/* ═══════════════════════════════════════ */}
             {/* ═══ COMMENTS / REVIEWS POPUP ═══ */}

@@ -105,7 +105,7 @@ const services = [
             </span>
         ),
         label: 'Wish List',
-        href: '/wishlist',
+        href: '/dashboard/user/wishlist',
     },
 ];
 
