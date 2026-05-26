@@ -18,6 +18,7 @@ const PAYMENT_META = [
     { id: 'bkash',  label: 'bKash',  color: '#E2136E' },
     { id: 'rocket', label: 'Rocket', color: '#8332AC' },
     { id: 'nagad',  label: 'Nagad',  color: '#F47920' },
+    { id: 'cod',    label: 'Cash on Delivery', color: '#16a34a' },
 ];
 
 const inputClass =
@@ -39,8 +40,8 @@ const CheckoutPage = () => {
     const methods = PAYMENT_META
         .map(m => ({
             ...m,
-            number: paymentCfg[m.id]?.number || '',
-            accountType: paymentCfg[m.id]?.accountType || 'Personal',
+            number: m.id === 'cod' ? '' : (paymentCfg[m.id]?.number || ''),
+            accountType: m.id === 'cod' ? '' : (paymentCfg[m.id]?.accountType || 'Personal'),
             active: paymentCfg[m.id]?.active !== false,
         }))
         .filter(m => m.active);
@@ -103,9 +104,11 @@ const CheckoutPage = () => {
         if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) e.email = 'Enter a valid email';
         if (!formData.address.trim()) e.address = 'Address is required';
         if (!formData.city.trim()) e.city = 'City is required';
-        if (!paymentDetails.senderNumber.trim()) e.senderNumber = 'Sender number is required';
-        if (!paymentDetails.transactionId.trim()) e.transactionId = 'Transaction ID is required';
-        if (!paymentDetails.paymentTime.trim()) e.paymentTime = 'Payment time is required';
+        if (selectedPayment !== 'cod') {
+            if (!paymentDetails.senderNumber.trim()) e.senderNumber = 'Sender number is required';
+            if (!paymentDetails.transactionId.trim()) e.transactionId = 'Transaction ID is required';
+            if (!paymentDetails.paymentTime.trim()) e.paymentTime = 'Payment time is required';
+        }
         return e;
     };
 
@@ -149,7 +152,7 @@ const CheckoutPage = () => {
                 postalCode: formData.postalCode,
             },
             paymentMethod: selectedPayment,
-            paymentDetails: {
+            paymentDetails: selectedPayment === 'cod' ? {} : {
                 senderNumber: paymentDetails.senderNumber,
                 transactionId: paymentDetails.transactionId,
                 paymentTime: paymentDetails.paymentTime,
@@ -275,7 +278,7 @@ const CheckoutPage = () => {
                                     <h2 className="text-sm font-semibold text-gray-900">Payment Method</h2>
                                 </div>
                                 <div className="px-5 py-5">
-                                    <div className="grid grid-cols-3 gap-3">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                         {methods.map((method) => {
                                             const active = selectedPayment === method.id;
                                             return (
@@ -295,51 +298,68 @@ const CheckoutPage = () => {
                                         })}
                                     </div>
 
-                                    {/* Merchant number */}
-                                    <div className="mt-5 rounded border border-dashed border-gray-300 bg-gray-50 px-4 py-3 flex items-center justify-between">
-                                        <div>
-                                            <p className="text-xs text-gray-500">
-                                                Send Money ({activeMethod.accountType}) to this {activeMethod.label} number
-                                            </p>
-                                            {activeMethod.number ? (
-                                                <p className="text-base font-semibold tracking-wide text-gray-900 mt-0.5">{activeMethod.number}</p>
-                                            ) : (
-                                                <p className="text-sm font-medium text-amber-600 mt-0.5">Number not set — please contact support</p>
+                                    {selectedPayment === 'cod' ? (
+                                        /* COD info box */
+                                        <div className="mt-5 rounded border border-green-200 bg-green-50 px-4 py-4 flex items-start gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                <span className="text-green-600 text-base">💵</span>
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-semibold text-green-800">Pay when your order arrives!</p>
+                                                <p className="text-xs text-green-700 mt-0.5 leading-relaxed">
+                                                    No advance payment needed. Our delivery agent will collect the full amount in cash when your order is delivered to your door.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            {/* Merchant number */}
+                                            <div className="mt-5 rounded border border-dashed border-gray-300 bg-gray-50 px-4 py-3 flex items-center justify-between">
+                                                <div>
+                                                    <p className="text-xs text-gray-500">
+                                                        Send Money ({activeMethod.accountType}) to this {activeMethod.label} number
+                                                    </p>
+                                                    {activeMethod.number ? (
+                                                        <p className="text-base font-semibold tracking-wide text-gray-900 mt-0.5">{activeMethod.number}</p>
+                                                    ) : (
+                                                        <p className="text-sm font-medium text-amber-600 mt-0.5">Number not set — please contact support</p>
+                                                    )}
+                                                </div>
+                                                {activeMethod.number && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={copyNumber}
+                                                        className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded border border-gray-300 bg-white text-gray-600 hover:border-gray-400 transition-colors"
+                                                    >
+                                                        {copied ? <><FiCheck size={13} /> Copied</> : <><FiCopy size={13} /> Copy</>}
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {paymentInstructions && (
+                                                <p className="mt-3 text-xs text-gray-500 leading-relaxed">{paymentInstructions}</p>
                                             )}
-                                        </div>
-                                        {activeMethod.number && (
-                                            <button
-                                                type="button"
-                                                onClick={copyNumber}
-                                                className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded border border-gray-300 bg-white text-gray-600 hover:border-gray-400 transition-colors"
-                                            >
-                                                {copied ? <><FiCheck size={13} /> Copied</> : <><FiCopy size={13} /> Copy</>}
-                                            </button>
-                                        )}
-                                    </div>
 
-                                    {paymentInstructions && (
-                                        <p className="mt-3 text-xs text-gray-500 leading-relaxed">{paymentInstructions}</p>
+                                            {/* Payment details form */}
+                                            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div className="md:col-span-2">
+                                                    <label className={labelClass}>Your {activeMethod.label} Number <span className="text-red-500">*</span></label>
+                                                    <input type="tel" name="senderNumber" value={paymentDetails.senderNumber} onChange={handlePaymentDetailChange} placeholder="Number you sent money from" className={cls('senderNumber')} />
+                                                    <FieldError field="senderNumber" />
+                                                </div>
+                                                <div>
+                                                    <label className={labelClass}>Transaction ID <span className="text-red-500">*</span></label>
+                                                    <input type="text" name="transactionId" value={paymentDetails.transactionId} onChange={handlePaymentDetailChange} placeholder="e.g. 9A1B2C3D4E" className={cls('transactionId')} />
+                                                    <FieldError field="transactionId" />
+                                                </div>
+                                                <div>
+                                                    <label className={labelClass}>Payment Time <span className="text-red-500">*</span></label>
+                                                    <input type="datetime-local" name="paymentTime" value={paymentDetails.paymentTime} onChange={handlePaymentDetailChange} className={cls('paymentTime')} />
+                                                    <FieldError field="paymentTime" />
+                                                </div>
+                                            </div>
+                                        </>
                                     )}
-
-                                    {/* Payment details form */}
-                                    <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="md:col-span-2">
-                                            <label className={labelClass}>Your {activeMethod.label} Number <span className="text-red-500">*</span></label>
-                                            <input type="tel" name="senderNumber" value={paymentDetails.senderNumber} onChange={handlePaymentDetailChange} placeholder="Number you sent money from" className={cls('senderNumber')} />
-                                            <FieldError field="senderNumber" />
-                                        </div>
-                                        <div>
-                                            <label className={labelClass}>Transaction ID <span className="text-red-500">*</span></label>
-                                            <input type="text" name="transactionId" value={paymentDetails.transactionId} onChange={handlePaymentDetailChange} placeholder="e.g. 9A1B2C3D4E" className={cls('transactionId')} />
-                                            <FieldError field="transactionId" />
-                                        </div>
-                                        <div>
-                                            <label className={labelClass}>Payment Time <span className="text-red-500">*</span></label>
-                                            <input type="datetime-local" name="paymentTime" value={paymentDetails.paymentTime} onChange={handlePaymentDetailChange} className={cls('paymentTime')} />
-                                            <FieldError field="paymentTime" />
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -389,7 +409,10 @@ const CheckoutPage = () => {
                                         <span className="text-lg font-semibold text-gray-900">৳{totalPrice.toLocaleString()}</span>
                                     </div>
                                     <p className="text-xs text-gray-400">
-                                        Paying via <span className="font-medium" style={{ color: activeMethod.color }}>{activeMethod.label}</span>
+                                        {selectedPayment === 'cod'
+                                            ? <><span className="font-medium text-green-600">Cash on Delivery</span> — pay when delivered</>
+                                            : <>Paying via <span className="font-medium" style={{ color: activeMethod.color }}>{activeMethod.label}</span></>
+                                        }
                                     </p>
                                 </div>
 

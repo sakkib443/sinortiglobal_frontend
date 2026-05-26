@@ -299,6 +299,7 @@ function PaymentTab({ data, setData }: { data: any; setData: any }) {
         { key: 'bkash', label: 'bKash', color: '#E2136E' },
         { key: 'rocket', label: 'Rocket', color: '#8332AC' },
         { key: 'nagad', label: 'Nagad', color: '#F47920' },
+        { key: 'cod', label: 'Cash on Delivery', color: '#16a34a' },
     ];
 
     const p = data.payment || {};
@@ -330,12 +331,14 @@ function PaymentTab({ data, setData }: { data: any; setData: any }) {
             {/* Method cards */}
             {methods.map(m => {
                 const md = p[m.key] || {};
+                const isCOD = m.key === 'cod';
                 return (
                     <div key={m.key} style={{ ...card, borderLeft: `3px solid ${m.color}` }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: isCOD ? 0 : '14px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: m.color }} />
                                 <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0, color: m.color }}>{m.label}</h3>
+                                {isCOD && <span style={{ fontSize: '11px', color: '#888', fontWeight: 400 }}>— no payment number needed</span>}
                             </div>
                             <label style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: '#555', cursor: 'pointer' }}>
                                 <input
@@ -347,29 +350,31 @@ function PaymentTab({ data, setData }: { data: any; setData: any }) {
                                 {md.active !== false ? 'Active' : 'Hidden'}
                             </label>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
-                            <div>
-                                <label style={label}>{m.label} Number</label>
-                                <input
-                                    value={md.number || ''}
-                                    onChange={e => updateMethod(m.key, 'number', e.target.value)}
-                                    placeholder="01XXXXXXXXX"
-                                    style={input}
-                                />
+                        {!isCOD && (
+                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '12px' }}>
+                                <div>
+                                    <label style={label}>{m.label} Number</label>
+                                    <input
+                                        value={md.number || ''}
+                                        onChange={e => updateMethod(m.key, 'number', e.target.value)}
+                                        placeholder="01XXXXXXXXX"
+                                        style={input}
+                                    />
+                                </div>
+                                <div>
+                                    <label style={label}>Account Type</label>
+                                    <select
+                                        value={md.accountType || 'Personal'}
+                                        onChange={e => updateMethod(m.key, 'accountType', e.target.value)}
+                                        style={input}
+                                    >
+                                        <option value="Personal">Personal</option>
+                                        <option value="Agent">Agent</option>
+                                        <option value="Merchant">Merchant</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div>
-                                <label style={label}>Account Type</label>
-                                <select
-                                    value={md.accountType || 'Personal'}
-                                    onChange={e => updateMethod(m.key, 'accountType', e.target.value)}
-                                    style={input}
-                                >
-                                    <option value="Personal">Personal</option>
-                                    <option value="Agent">Agent</option>
-                                    <option value="Merchant">Merchant</option>
-                                </select>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 );
             })}

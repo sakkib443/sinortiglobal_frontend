@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 import {
@@ -10,17 +10,11 @@ import {
     useReplyToReviewMutation,
     useLikeReplyMutation,
 } from '@/redux/api/reviewApi';
-import { useIncrementProductStatMutation } from '@/redux/api/productApi';
 import { useToggleWishlistMutation, useGetWishlistQuery } from '@/redux/api/userApi';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import { addToCart } from '@/redux/slices/cartSlice';
 import { toggleWishlist } from '@/redux/slices/wishlistSlice';
-import { FiStar, FiX, FiCopy, FiCheck, FiSend, FiThumbsUp, FiCornerDownRight, FiHeart, FiMessageCircle, FiShare2, FiBookmark } from 'react-icons/fi';
-import {
-    FaFacebookF, FaFacebookMessenger, FaWhatsapp, FaTelegramPlane,
-    FaLinkedinIn, FaPinterestP, FaEnvelope, FaInstagram
-} from 'react-icons/fa';
-import { FaXTwitter, FaTiktok } from 'react-icons/fa6';
+import { FiStar, FiX, FiCopy, FiCheck, FiSend, FiThumbsUp, FiCornerDownRight, FiHeart } from 'react-icons/fi';
 
 interface Product {
     _id?: string;
@@ -58,22 +52,6 @@ const formatCount = (n: number): string => {
 
 const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
 
-    const [isLiked, setIsLiked] = useState(false);
-    const [likeAnim, setLikeAnim] = useState(false);
-    const [showComments, setShowComments] = useState(false);
-    const [showShare, setShowShare] = useState(false);
-    const [linkCopied, setLinkCopied] = useState(false);
-
-    // Lock body scroll when any modal is open
-    useEffect(() => {
-        if (showComments || showShare) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-        return () => { document.body.style.overflow = ''; };
-    }, [showComments, showShare]);
-    const [incrementStat] = useIncrementProductStatMutation();
     const [toggleWishlistApi] = useToggleWishlistMutation();
     const dispatch = useAppDispatch();
     const productId = String(product._id || product.id);
@@ -91,26 +69,9 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
         ? serverItems.some((item: any) => String(item._id || item.id) === productId)
         : localWishlist.some((item: any) => item.id === productId);
     const [wishlistAnim, setWishlistAnim] = useState(false);
-    const [cartAnim, setCartAnim] = useState(false);
     const [showAlreadyAdded, setShowAlreadyAdded] = useState(false);
 
-    const productUrl = typeof window !== 'undefined'
-        ? `${window.location.origin}/product/${product.slug || product.id}`
-        : `/product/${product.slug || product.id}`;
 
-
-
-    // Like: calls API; optimistic cache update in the mutation keeps all pages in sync instantly.
-    const handleLike = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!isLiked) {
-            incrementStat({ id: productId, field: 'likeCount' });
-            setIsLiked(true);
-            setLikeAnim(true);
-            setTimeout(() => setLikeAnim(false), 300);
-        }
-    };
 
     const handleWishlistToggle = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -118,7 +79,11 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
         setWishlistAnim(true);
         setTimeout(() => setWishlistAnim(false), 400);
         if (isAuthenticated) {
-            try { await toggleWishlistApi(productId).unwrap(); } catch {}
+            try {
+                await toggleWishlistApi(productId).unwrap();
+            } catch (err) {
+                console.error('Wishlist toggle failed:', err);
+            }
         } else {
             dispatch(toggleWishlist({
                 id: productId,
@@ -130,25 +95,6 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                 rating: product.rating || 0,
             }));
         }
-    };
-
-    const handleCommentsClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setShowComments(true);
-    };
-
-    const handleShareClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setShowShare(true);
-        incrementStat({ id: productId, field: 'shareCount' });
-    };
-
-    const handleCopyLink = () => {
-        navigator.clipboard.writeText(productUrl);
-        setLinkCopied(true);
-        setTimeout(() => setLinkCopied(false), 2000);
     };
 
     const handleAddToCart = (e: React.MouseEvent) => {
@@ -168,37 +114,12 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
             image: product.image,
             category: product.categoryName || 'General',
         }));
-        setCartAnim(true);
-        setTimeout(() => setCartAnim(false), 600);
     };
-
-    const shareText = `${product.name} - Tk.${product.price}`;
-    const shareLinks = [
-        { name: 'Facebook', icon: FaFacebookF, color: '#1877F2', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}&quote=${encodeURIComponent(shareText)}` },
-        { name: 'WhatsApp', icon: FaWhatsapp, color: '#25D366', url: `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + '\n' + productUrl)}` },
-        { name: 'Messenger', icon: FaFacebookMessenger, color: '#0078FF', url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(productUrl)}&app_id=966242223397117&redirect_uri=${encodeURIComponent(productUrl)}` },
-        { name: 'X', icon: FaXTwitter, color: '#000000', url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(shareText)}` },
-        { name: 'Telegram', icon: FaTelegramPlane, color: '#0088cc', url: `https://t.me/share/url?url=${encodeURIComponent(productUrl)}&text=${encodeURIComponent(shareText)}` },
-        { name: 'LinkedIn', icon: FaLinkedinIn, color: '#0A66C2', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(productUrl)}` },
-        { name: 'Pinterest', icon: FaPinterestP, color: '#E60023', url: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(productUrl)}&media=${encodeURIComponent(product.image)}&description=${encodeURIComponent(shareText)}` },
-        { name: 'Instagram', icon: FaInstagram, color: '#E1306C', url: `https://www.instagram.com/` },
-        { name: 'TikTok', icon: FaTiktok, color: '#000000', url: `https://www.tiktok.com/` },
-        { name: 'Email', icon: FaEnvelope, color: '#555555', url: `mailto:?subject=${encodeURIComponent(product.name)}&body=${encodeURIComponent(shareText + '\n\n' + productUrl)}` },
-    ];
 
     const currentPrice = product.price;
     const oldPrice = product.mrp || product.originalPrice;
     const discountPercent = oldPrice ? Math.round(((oldPrice - currentPrice) / oldPrice) * 100) : 0;
-    const priceType = product.priceType || 'negotiable';
     const soldCount = product.sold || product.soldCount || product.totalSold || 0;
-
-    // reviewCount is the source of truth (post-save hook keeps it accurate)
-    const stats = useMemo(() => ({
-        likes: product.likeCount || 0,
-        comments: product.reviewCount ?? product.commentCount ?? 0,
-        shares: product.shareCount || 0,
-        views: product.viewCount || 0,
-    }), [product.likeCount, product.commentCount, product.reviewCount, product.shareCount, product.viewCount]);
 
     return (
         <>
@@ -223,8 +144,20 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                             {isInCart && <span className='absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white' />}
                         </button>
+                        {/* Wishlist Button — below cart */}
+                        <button
+                            onClick={handleWishlistToggle}
+                            className={`absolute top-12 right-2 z-10 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all hover:scale-110 ${wishlistAnim ? 'scale-125' : ''}`}
+                            title={isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                        >
+                            <FiHeart
+                                size={15}
+                                className={isInWishlist ? 'text-red-500' : 'text-gray-500'}
+                                style={{ fill: isInWishlist ? 'currentColor' : 'none' }}
+                            />
+                        </button>
                         {showAlreadyAdded && (
-                            <span className='absolute top-11 right-2 z-10 text-[10px] font-medium text-white bg-black/70 px-2 py-0.5 rounded'>
+                            <span className='absolute top-3 right-12 z-10 text-[10px] font-medium text-white bg-black/70 px-2 py-0.5 rounded whitespace-nowrap'>
                                 Already Added
                             </span>
                         )}
@@ -280,163 +213,8 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                 </div>
             </Link>
 
-            {/* ── Social Action Bar ── */}
-            <div className='border-t border-gray-100 px-2.5 py-1.5 flex items-center justify-between bg-white'>
-                {/* Like */}
-                <button
-                    onClick={handleLike}
-                    className={`flex items-center gap-1 text-[11px] font-medium transition-all ${isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-400'}`}
-                >
-                    <FiHeart
-                        size={13}
-                        style={{ fill: isLiked ? 'currentColor' : 'none' }}
-                        className={likeAnim ? 'scale-150' : 'scale-100'}
-                    />
-                    <span>{formatCount(stats.likes + (isLiked ? 1 : 0))}</span>
-                </button>
-                {/* Comment */}
-                <button
-                    onClick={handleCommentsClick}
-                    className='flex items-center gap-1 text-[11px] font-medium text-gray-400 hover:text-[var(--color-primary)] transition-colors'
-                >
-                    <FiMessageCircle size={13} />
-                    <span>{formatCount(stats.comments)}</span>
-                </button>
-                {/* Share */}
-                <button
-                    onClick={handleShareClick}
-                    className='flex items-center gap-1 text-[11px] font-medium text-gray-400 hover:text-[var(--color-primary)] transition-colors'
-                >
-                    <FiShare2 size={13} />
-                    <span>{formatCount(stats.shares)}</span>
-                </button>
-                {/* Wishlist / Save */}
-                <button
-                    onClick={handleWishlistToggle}
-                    className={`flex items-center gap-1 text-[11px] font-medium transition-all ${isInWishlist ? 'text-[var(--color-primary)]' : 'text-gray-400 hover:text-[var(--color-primary)]'} ${wishlistAnim ? 'scale-125' : 'scale-100'}`}
-                    title={isInWishlist ? 'Remove from Wishlist' : 'Save to Wishlist'}
-                >
-                    <FiBookmark
-                        size={13}
-                        style={{ fill: isInWishlist ? 'currentColor' : 'none' }}
-                    />
-                    <span>{isInWishlist ? 'Saved' : 'Save'}</span>
-                </button>
             </div>
 
-            </div>
-
-            {/* ═══════════════════════════════════════ */}
-            {/* ═══ COMMENTS / REVIEWS POPUP ═══ */}
-            {/* ═══════════════════════════════════════ */}
-            {showComments && (
-                <CommentsPopup
-                    productId={productId}
-                    productName={product.name}
-                    productImage={product.image}
-                    onClose={() => setShowComments(false)}
-                />
-            )}
-
-            {/* ═══════════════════════════════════════ */}
-            {/* ═══ SHARE POPUP ═══ */}
-            {/* ═══════════════════════════════════════ */}
-            {showShare && (
-                <div
-                    className='fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center p-4'
-                    onClick={() => setShowShare(false)}
-                >
-                    <div
-                        className='bg-white rounded-lg w-full max-w-[620px] max-h-[88vh] flex flex-col overflow-hidden shadow-2xl'
-                        onClick={(e) => e.stopPropagation()}
-                        style={{ animation: 'fbModalIn 0.2s ease-out' }}
-                    >
-                        {/* Header */}
-                        <div className='flex items-center justify-between px-4 py-2.5 border-b border-gray-200 shrink-0'>
-                            <h3 className='text-[15px] font-bold text-gray-900 truncate pr-4'>{product.name}</h3>
-                            <button
-                                onClick={() => setShowShare(false)}
-                                className='w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors shrink-0'
-                            >
-                                <FiX size={18} />
-                            </button>
-                        </div>
-
-                        {/* Product Image — full view like comments popup */}
-                        <div className='shrink-0 border-b border-gray-200'>
-                            <div className='w-full bg-gray-50 flex items-center justify-center' style={{ maxHeight: '280px' }}>
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className='w-full object-contain'
-                                    style={{ maxHeight: '280px' }}
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/620x200/f3f4f6/9ca3af?text=No+Image';
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Share With label */}
-                        <div className='px-4 pt-3 pb-1'>
-                            <p className='text-[13px] font-bold text-gray-900'>Share With</p>
-                        </div>
-
-                        {/* Social Media Grid */}
-                        <div className='px-4 py-2 overflow-y-auto flex-1'>
-                            <div className='grid grid-cols-5 gap-3'>
-                                {shareLinks.map((social) => (
-                                    <a
-                                        key={social.name}
-                                        href={social.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        onClick={(e) => e.stopPropagation()}
-                                        className='flex flex-col items-center gap-1.5 py-2 rounded-lg hover:bg-gray-50 transition-colors'
-                                    >
-                                        <div
-                                            className='w-10 h-10 rounded-full flex items-center justify-center text-white transition-transform hover:scale-110'
-                                            style={{ background: social.color }}
-                                        >
-                                            <social.icon size={16} />
-                                        </div>
-                                        <span className='text-[10px] font-medium text-gray-600'>{social.name}</span>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Copy Link Bar */}
-                        <div className='px-4 py-3 border-t border-gray-100 shrink-0'>
-                            <div className='flex items-center bg-gray-100 rounded-lg overflow-hidden'>
-                                <input
-                                    type="text"
-                                    readOnly
-                                    value={productUrl}
-                                    className='flex-1 bg-transparent text-xs text-gray-600 outline-none px-3 py-2.5 truncate'
-                                />
-                                <button
-                                    onClick={handleCopyLink}
-                                    className='px-4 py-2.5 bg-[var(--color-primary)] text-white text-xs font-semibold hover:bg-[var(--color-primary-dark)] transition-colors flex items-center gap-1.5 whitespace-nowrap'
-                                >
-                                    {linkCopied ? (
-                                        <><FiCheck size={13} /> Copied!</>
-                                    ) : (
-                                        <><FiCopy size={13} /> Copy</>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <style>{`
-                        @keyframes fbModalIn {
-                            from { transform: scale(0.95) translateY(10px); opacity: 0; }
-                            to { transform: scale(1) translateY(0); opacity: 1; }
-                        }
-                    `}</style>
-                </div>
-            )}
         </>
     );
 };
