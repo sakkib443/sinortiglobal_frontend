@@ -6,31 +6,37 @@ import { FiGlobe, FiShield, FiLock, FiTruck, FiRefreshCw, FiEye } from 'react-ic
 const features = [
     {
         icon: FiGlobe,
+        color: 'bg-blue-50 text-blue-500',
         title: 'Worldwide Purchase',
         desc: 'You have no boundaries for purchasing products that you like!',
     },
     {
         icon: FiShield,
+        color: 'bg-green-50 text-green-500',
         title: 'Verified Sellers',
         desc: 'We provide you with our verified seller that helps get a quality product',
     },
     {
         icon: FiLock,
+        color: 'bg-purple-50 text-purple-500',
         title: 'Safe Payment',
         desc: 'We care about every penny of our customers & we ensure safety of that',
     },
     {
         icon: FiTruck,
+        color: 'bg-orange-50 text-orange-500',
         title: 'Fast Delivery',
         desc: 'Shipping for Select Items Thanks to Our Enhanced Logistics Network',
     },
     {
         icon: FiRefreshCw,
+        color: 'bg-red-50 text-red-500',
         title: 'Refund Policy',
         desc: 'Our refund policy ensures we facilitate a hassle-free refund process',
     },
     {
         icon: FiEye,
+        color: 'bg-teal-50 text-teal-500',
         title: 'Transparency',
         desc: 'With us, you can expect clarity, accountability, & a commitment to ethical business',
     },
@@ -38,23 +44,31 @@ const features = [
 
 const QualityFeatures: React.FC = () => {
     return (
-        <section className="w-full bg-[var(--color-primary-lightest)] border-t border-[var(--color-primary)]/10">
-            <div className="container mx-auto px-2 py-10">
-                <div className="mb-8">
-                    <h3 className="text-2xl font-bold text-gray-900">Quality Choices, <span className="text-[var(--color-primary)]">Affordable Prices!</span></h3>
-                    <p className="text-sm text-gray-400 mt-1">Why thousands of customers trust Sinotri Global for their sourcing needs</p>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
-                    {features.map((item, idx) => (
-                        <div key={idx} className="flex flex-col items-center text-center group">
-                            <div className="w-14 h-14 rounded-xl bg-white border border-[var(--color-primary)]/15 flex items-center justify-center mb-3 shadow-sm group-hover:shadow-md group-hover:border-[var(--color-primary)]/30 transition-all duration-300">
-                                <item.icon size={24} className="text-[var(--color-primary)]" />
-                            </div>
-                            <h4 className="text-[13px] font-semibold text-gray-800 mb-1">{item.title}</h4>
-                            <p className="text-[11px] text-gray-500 leading-relaxed">{item.desc}</p>
+        <section className="w-full bg-[var(--color-primary)] py-14 px-4">
+            {/* Heading */}
+            <div className="text-center mb-10">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
+                    Quality Choices, <span className="text-yellow-300">Affordable Prices!</span>
+                </h2>
+                <p className="text-sm text-white/70 max-w-xl mx-auto">
+                    Why thousands of customers trust Sinotri Global for their sourcing needs
+                </p>
+            </div>
+
+            {/* Feature Cards */}
+            <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                {features.map((item, idx) => (
+                    <div
+                        key={idx}
+                        className="flex flex-col items-center text-center bg-white/10 hover:bg-white/20 border border-white/15 rounded-2xl py-6 px-3 transition-all duration-200 group cursor-default"
+                    >
+                        <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color} group-hover:scale-110 transition-transform duration-200`}>
+                            <item.icon size={26} />
                         </div>
-                    ))}
-                </div>
+                        <h4 className="text-[13px] font-bold text-white mb-1.5">{item.title}</h4>
+                        <p className="text-[11px] text-white/65 leading-relaxed">{item.desc}</p>
+                    </div>
+                ))}
             </div>
         </section>
     );

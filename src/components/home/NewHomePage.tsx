@@ -375,9 +375,6 @@ const NewHomePage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Quality Features — between Popular & New Arrivals */}
-            <QualityFeatures />
-
             <div className="container mx-auto px-2 py-6">
                 {/* ── New Arrivals Section ── */}
                 <div className="flex items-end justify-between mb-3 mt-10">
@@ -479,6 +476,9 @@ const NewHomePage: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            {/* Quality Features — after New Arrivals, full width */}
+            <QualityFeatures />
 
             {/* Associated Products */}
             <AssociatedProducts />
