@@ -8,10 +8,12 @@ import { loginSuccess } from '@/redux/slices/authSlice';
 import { useCreateOrderMutation, useGuestCheckoutMutation } from '@/redux/api/orderApi';
 import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
 import {
-    FiChevronLeft, FiInfo, FiCheck, FiCopy, FiLock
+    FiChevronLeft, FiInfo, FiCheck, FiCopy, FiLock, FiTag
 } from 'react-icons/fi';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+
+const COUPON_STORAGE_KEY = 'sinotri_applied_coupon';
 
 // ─── Payment method metadata (numbers come dynamically from site settings) ──
 const PAYMENT_META = [
@@ -58,6 +60,15 @@ const CheckoutPage = () => {
     });
     const [copied, setCopied] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; finalAmount: number } | null>(null);
+
+    // Load coupon from cart page
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(COUPON_STORAGE_KEY);
+            if (saved) setAppliedCoupon(JSON.parse(saved));
+        } catch {}
+    }, []);
 
     useEffect(() => {
         if (isAuthenticated && user) {
@@ -157,17 +168,20 @@ const CheckoutPage = () => {
                 transactionId: paymentDetails.transactionId,
                 paymentTime: paymentDetails.paymentTime,
             },
+            ...(appliedCoupon ? { couponCode: appliedCoupon.code, discount: appliedCoupon.discount } : {}),
         };
 
         try {
             if (isAuthenticated) {
                 await createOrder(orderPayload).unwrap();
                 dispatch(clearCart());
+                localStorage.removeItem(COUPON_STORAGE_KEY);
                 toast.success('Order placed successfully!', { duration: 5000 });
                 router.push('/checkout/success');
             } else {
                 const result = await guestCheckout(orderPayload).unwrap();
                 dispatch(clearCart());
+                localStorage.removeItem(COUPON_STORAGE_KEY);
 
                 if (result.data?.accessToken && result.data?.user) {
                     const userData = result.data.user;
@@ -400,13 +414,28 @@ const CheckoutPage = () => {
                                         <span className="text-gray-500">Subtotal ({items.reduce((a, i) => a + i.quantity, 0)} items)</span>
                                         <span className="text-gray-900">৳{totalPrice.toLocaleString()}</span>
                                     </div>
+                                    {appliedCoupon && (
+                                        <div className="flex justify-between text-sm text-green-600">
+                                            <span className="flex items-center gap-1">
+                                                <FiTag size={12} /> Coupon ({appliedCoupon.code})
+                                            </span>
+                                            <span className="font-medium">-৳{appliedCoupon.discount.toLocaleString()}</span>
+                                        </div>
+                                    )}
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-500">Delivery</span>
                                         <span className="text-gray-500 italic text-xs">To be negotiated</span>
                                     </div>
                                     <div className="flex justify-between items-center pt-3 mt-1 border-t border-gray-100">
                                         <span className="text-sm font-medium text-gray-900">Total</span>
-                                        <span className="text-lg font-semibold text-gray-900">৳{totalPrice.toLocaleString()}</span>
+                                        <div className="text-right">
+                                            {appliedCoupon && (
+                                                <p className="text-xs line-through text-gray-400">৳{totalPrice.toLocaleString()}</p>
+                                            )}
+                                            <span className="text-lg font-semibold text-gray-900">
+                                                ৳{(appliedCoupon ? appliedCoupon.finalAmount : totalPrice).toLocaleString()}
+                                            </span>
+                                        </div>
                                     </div>
                                     <p className="text-xs text-gray-400">
                                         {selectedPayment === 'cod'

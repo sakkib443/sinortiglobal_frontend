@@ -1,17 +1,67 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '@/redux';
 import { removeFromCart, increaseQuantity, decreaseQuantity, clearCart } from '@/redux/slices/cartSlice';
-import { FiTrash2, FiChevronLeft, FiAlertTriangle, FiMinus, FiPlus, FiShoppingCart } from 'react-icons/fi';
+import { FiTrash2, FiChevronLeft, FiAlertTriangle, FiMinus, FiPlus, FiShoppingCart, FiTag, FiX, FiCheck } from 'react-icons/fi';
 import EmptyState from '@/components/shared/EmptyState';
 import { toast } from 'react-hot-toast';
+import { useValidateCouponMutation } from '@/redux/api/couponApi';
+
+const COUPON_STORAGE_KEY = 'sinotri_applied_coupon';
 
 const CartPage = () => {
     const { items, totalPrice, totalQuantity } = useAppSelector((state) => state.cart);
     const dispatch = useAppDispatch();
     const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+    const [couponCode, setCouponCode] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; finalAmount: number; message: string } | null>(null);
+    const [couponError, setCouponError] = useState('');
+    const [validateCoupon, { isLoading: isValidating }] = useValidateCouponMutation();
+
+    // Restore saved coupon on mount
+    useEffect(() => {
+        try {
+            const saved = localStorage.getItem(COUPON_STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                setAppliedCoupon(parsed);
+                setCouponCode(parsed.code);
+            }
+        } catch {}
+    }, []);
+
+    const handleApplyCoupon = async () => {
+        const code = couponCode.trim().toUpperCase();
+        if (!code) return;
+        setCouponError('');
+        try {
+            const result = await validateCoupon({ code, orderAmount: totalPrice }).unwrap();
+            const couponData = {
+                code,
+                discount: result.data?.discount ?? result.discount ?? 0,
+                finalAmount: result.data?.finalAmount ?? result.finalAmount ?? totalPrice,
+                message: result.data?.message ?? result.message ?? 'Coupon applied!',
+            };
+            setAppliedCoupon(couponData);
+            localStorage.setItem(COUPON_STORAGE_KEY, JSON.stringify(couponData));
+            toast.success('Coupon applied successfully!');
+        } catch (err: any) {
+            const msg = err?.data?.message || 'Invalid or expired coupon code';
+            setCouponError(msg);
+            toast.error(msg);
+        }
+    };
+
+    const handleRemoveCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode('');
+        setCouponError('');
+        localStorage.removeItem(COUPON_STORAGE_KEY);
+    };
+
+    const finalTotal = appliedCoupon ? appliedCoupon.finalAmount : totalPrice;
 
     /* ═══ EMPTY CART STATE ═══ */
     if (items.length === 0) {
@@ -231,13 +281,71 @@ const CartPage = () => {
                                     <span className="text-gray-500">Subtotal ({totalQuantity} {totalQuantity === 1 ? 'item' : 'items'})</span>
                                     <span className="text-gray-900">৳{totalPrice.toLocaleString()}</span>
                                 </div>
+                                {appliedCoupon && (
+                                    <div className="flex justify-between text-sm text-green-600">
+                                        <span className="flex items-center gap-1">
+                                            <FiTag size={12} />
+                                            Coupon ({appliedCoupon.code})
+                                        </span>
+                                        <span className="font-medium">-৳{appliedCoupon.discount.toLocaleString()}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">Transportation</span>
                                     <span className="text-gray-500 italic text-xs">To be negotiated</span>
                                 </div>
                                 <div className="flex justify-between items-center pt-3 mt-1 border-t border-gray-100">
                                     <span className="text-sm font-medium text-gray-900">Total</span>
-                                    <span className="text-lg font-semibold text-gray-900">৳{totalPrice.toLocaleString()}</span>
+                                    <div className="text-right">
+                                        {appliedCoupon && (
+                                            <p className="text-xs line-through text-gray-400">৳{totalPrice.toLocaleString()}</p>
+                                        )}
+                                        <span className="text-lg font-semibold text-gray-900">৳{finalTotal.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Coupon Input */}
+                            <div className="px-5 pb-4">
+                                <div className="border border-dashed border-gray-200 rounded-md p-3 bg-gray-50/50">
+                                    <p className="text-xs font-semibold text-gray-600 mb-2 flex items-center gap-1.5">
+                                        <FiTag size={12} /> Apply Coupon
+                                    </p>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={couponCode}
+                                            onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponError(''); }}
+                                            onKeyDown={e => e.key === 'Enter' && !appliedCoupon && handleApplyCoupon()}
+                                            placeholder="Enter coupon code"
+                                            disabled={!!appliedCoupon}
+                                            className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded outline-none focus:border-gray-400 bg-white disabled:bg-gray-100 disabled:text-gray-500 uppercase placeholder:normal-case placeholder:text-gray-400"
+                                        />
+                                        {appliedCoupon ? (
+                                            <button
+                                                onClick={handleRemoveCoupon}
+                                                className="px-3 py-2 text-xs font-semibold text-red-500 border border-red-200 rounded hover:bg-red-50 transition-colors flex items-center gap-1"
+                                            >
+                                                <FiX size={12} /> Remove
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={handleApplyCoupon}
+                                                disabled={isValidating || !couponCode.trim()}
+                                                className="px-4 py-2 text-xs font-semibold bg-gray-900 text-white rounded hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            >
+                                                {isValidating ? '...' : 'Apply'}
+                                            </button>
+                                        )}
+                                    </div>
+                                    {couponError && (
+                                        <p className="mt-1.5 text-xs text-red-500">{couponError}</p>
+                                    )}
+                                    {appliedCoupon && (
+                                        <p className="mt-1.5 text-xs text-green-600 font-medium flex items-center gap-1">
+                                            <FiCheck size={11} /> {appliedCoupon.message}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
 
