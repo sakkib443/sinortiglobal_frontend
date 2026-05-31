@@ -29,8 +29,8 @@ const FloatingContact: React.FC = () => {
         <div className="fixed bottom-6 right-4 z-[9999] flex flex-col items-center gap-2">
             <style>{`
                 @keyframes fcRipple {
-                    0%   { transform: scale(1);   opacity: 0.5; }
-                    100% { transform: scale(2.4); opacity: 0; }
+                    0%   { transform: scale(1);   opacity: 0.4; }
+                    100% { transform: scale(1.8); opacity: 0; }
                 }
                 @keyframes fcBeat {
                     0%, 100% { transform: scale(1); }
@@ -38,9 +38,8 @@ const FloatingContact: React.FC = () => {
                     20%      { transform: scale(1.04); }
                     40%      { transform: scale(1); }
                 }
-                .fc-ring  { animation: fcRipple 2s ease-out infinite; }
-                .fc-ring2 { animation: fcRipple 2s ease-out 1s infinite; }
-                .fc-btn   { animation: fcBeat 2.2s ease-in-out infinite; }
+                .fc-ring  { animation: fcRipple 2.8s ease-out infinite; }
+                .fc-btn   { animation: fcBeat 2.6s ease-in-out infinite; }
                 .group:hover .fc-btn { animation-play-state: paused; }
                 @media (prefers-reduced-motion: reduce) {
                     .fc-ring, .fc-ring2, .fc-btn { animation: none; }
@@ -55,9 +54,8 @@ const FloatingContact: React.FC = () => {
                     <div className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-4 border-t-transparent border-b-transparent border-l-[#25D366]" />
                 </div>
 
-                {/* Pulsing ripple rings (radar effect) */}
+                {/* Single soft pulsing ripple (radar effect) */}
                 <span className="fc-ring absolute left-0 top-0 w-12 h-12 rounded-full bg-[#25D366] pointer-events-none" />
-                <span className="fc-ring2 absolute left-0 top-0 w-12 h-12 rounded-full bg-[#25D366] pointer-events-none" />
 
                 <a
                     href={whatsappLink}
