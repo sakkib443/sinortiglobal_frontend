@@ -41,15 +41,19 @@ const HeroCarousel: React.FC<{ slides: HeroSlide[] }> = ({ slides }) => {
             const embed = getYouTubeEmbedUrl(slide.youtubeUrl);
             if (embed) {
                 return (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        {/* Container-relative cover: the 16:9 video fills the 16:5.5 banner.
-                            height 163.64% = (9/16) ÷ (5.5/16), so it works at any pixel size — full-width homepage AND the small admin preview. */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        {/* Container-relative cover: a 16:9 video fills the banner at every
+                            breakpoint. The cover height = (9/16) ÷ (banner aspect):
+                            mobile 16/9 → 100%, sm 16/7 → 128.57%, lg 16/5.5 → 163.64%. */}
                         <iframe
                             src={isActive ? embed : 'about:blank'}
                             title="Sinotri Global"
                             allow="autoplay; encrypted-media"
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[163.64%] border-0"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full sm:h-[128.571%] lg:h-[163.636%] border-0"
                         />
+                        {/* Transparent overlay captures every hover/tap so YouTube never
+                            reveals its player controls (play/pause/prev/next). */}
+                        <div className="absolute inset-0 z-[1]" />
                     </div>
                 );
             }
@@ -64,7 +68,10 @@ const HeroCarousel: React.FC<{ slides: HeroSlide[] }> = ({ slides }) => {
                     muted
                     loop
                     playsInline
-                    className="w-full h-full object-cover"
+                    controls={false}
+                    disablePictureInPicture
+                    controlsList="nodownload noplaybackrate nofullscreen noremoteplayback"
+                    className="hero-video w-full h-full object-cover pointer-events-none"
                 />
             );
         }
@@ -80,7 +87,7 @@ const HeroCarousel: React.FC<{ slides: HeroSlide[] }> = ({ slides }) => {
     };
 
     return (
-        <div className="relative w-full overflow-hidden bg-black" style={{ aspectRatio: '16 / 5.5' }}>
+        <div className="relative w-full overflow-hidden bg-black aspect-[16/9] sm:aspect-[16/7] lg:aspect-[16/5.5]">
             {slides.map((slide, idx) => (
                 <div
                     key={idx}

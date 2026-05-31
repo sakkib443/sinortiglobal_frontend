@@ -1,63 +1,60 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from './ThemeProvider';
 
 const Preloader: React.FC = () => {
+    const { logoUrl } = useTheme();
     const [isLoading, setIsLoading] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
     const [progress, setProgress] = useState(0);
 
     const pageLoadedRef = useRef(false);
     const finishedRef = useRef(false);
+    const progressRef = useRef(0);
 
     useEffect(() => {
-        // Mark when the actual page has fully loaded.
         const markLoaded = () => { pageLoadedRef.current = true; };
-        if (document.readyState === 'complete') {
-            pageLoadedRef.current = true;
-        } else {
-            window.addEventListener('load', markLoaded);
-        }
+        if (document.readyState === 'complete') pageLoadedRef.current = true;
+        else window.addEventListener('load', markLoaded);
 
         const finish = () => {
             if (finishedRef.current) return;
             finishedRef.current = true;
             setProgress(100);
-            // Hold at 100% briefly, then fade the website in.
             setTimeout(() => {
                 setFadeOut(true);
                 setTimeout(() => setIsLoading(false), 700);
-            }, 450);
+            }, 520);
         };
 
-        // Smoothly count up. Race ahead to ~90% while assets load, then
-        // only complete the final stretch once the page is actually ready.
-        const tick = setInterval(() => {
-            setProgress(prev => {
-                if (finishedRef.current) return prev;
+        // 0 → 100 plays at a constant, even pace (linear) over a fixed window,
+        // while the homepage loads in the background during it.
+        const MIN_DURATION = 3000;
+        const start = performance.now();
 
-                // If the page is ready, drive straight to 100%.
-                if (pageLoadedRef.current) {
-                    const next = prev + Math.max(2, (100 - prev) * 0.25);
-                    if (next >= 100) {
-                        clearInterval(tick);
-                        finish();
-                        return 100;
-                    }
-                    return next;
-                }
+        let raf = 0;
+        const loop = (now: number) => {
+            if (finishedRef.current) return;
+            const elapsed = now - start;
+            const t = Math.min(elapsed / MIN_DURATION, 1);
+            // Linear, constant-speed count — same pace start to finish.
+            let p = t * 100;
+            // Only pause near the end if the page genuinely isn't ready yet.
+            if (!pageLoadedRef.current) p = Math.min(p, 92);
+            else if (t < 1) p = Math.min(p, 99);
 
-                // Otherwise ease toward 90% and wait there.
-                if (prev >= 90) return 90;
-                return prev + Math.max(1.5, (90 - prev) * 0.12);
-            });
-        }, 90);
+            progressRef.current = p;
+            setProgress(p);
 
-        // Safety net: never let the preloader hang.
-        const safety = setTimeout(finish, 6000);
+            if (pageLoadedRef.current && t >= 1) { finish(); return; }
+            raf = requestAnimationFrame(loop);
+        };
+        raf = requestAnimationFrame(loop);
+        const safety = setTimeout(() => { pageLoadedRef.current = true; }, 8000);
 
         return () => {
-            clearInterval(tick);
+            cancelAnimationFrame(raf);
             clearTimeout(safety);
             window.removeEventListener('load', markLoaded);
         };
@@ -65,91 +62,76 @@ const Preloader: React.FC = () => {
 
     if (!isLoading) return null;
 
-    const rounded = Math.round(Math.min(progress, 100));
+    const pct = Math.min(progress, 100);
+    const rounded = Math.round(pct);
 
     return (
         <div
-            className={`fixed inset-0 z-[99999] flex items-center justify-center transition-all duration-700 ease-out ${fadeOut ? 'opacity-0 scale-[1.03]' : 'opacity-100 scale-100'}`}
+            className={`fixed inset-0 z-[99999] flex items-center justify-center transition-all duration-700 ease-out ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
             style={{
-                background: 'radial-gradient(120% 120% at 50% 0%, #ffffff 0%, #f4f8f4 55%, #eaf3ec 100%)',
+                background: 'radial-gradient(135% 135% at 50% 0%, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
                 pointerEvents: fadeOut ? 'none' : 'auto',
             }}
         >
-            {/* Soft brand glows */}
-            <div className="absolute inset-0 overflow-hidden">
+            {/* Subtle depth */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div
-                    className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full"
-                    style={{ background: 'rgba(24,118,74,0.10)', filter: 'blur(110px)', animation: 'preloaderFloat 7s ease-in-out infinite' }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full"
+                    style={{ background: 'rgba(255,255,255,0.05)', filter: 'blur(140px)' }}
                 />
                 <div
-                    className="absolute -bottom-40 -right-40 w-[460px] h-[460px] rounded-full"
-                    style={{ background: 'rgba(34,197,94,0.10)', filter: 'blur(90px)', animation: 'preloaderFloat 9s ease-in-out infinite reverse' }}
-                />
-                <div
-                    className="absolute inset-0 opacity-[0.04]"
-                    style={{
-                        backgroundImage: 'radial-gradient(circle, rgba(11,66,34,0.6) 1px, transparent 1px)',
-                        backgroundSize: '38px 38px',
-                    }}
+                    className="absolute inset-0 opacity-[0.035]"
+                    style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '44px 44px' }}
                 />
             </div>
 
             {/* Content */}
             <div className="relative z-10 flex flex-col items-center px-6">
 
-                {/* Logo with animated ring */}
-                <div className="relative mb-10 flex items-center justify-center">
-                    <div className="absolute w-44 h-44 sm:w-48 sm:h-48" style={{ animation: 'preloaderSpin 3.2s linear infinite' }}>
-                        <svg viewBox="0 0 200 200" className="w-full h-full">
-                            <circle cx="100" cy="100" r="96" fill="none" stroke="rgba(11,66,34,0.07)" strokeWidth="2" />
-                            <circle cx="100" cy="100" r="96" fill="none" stroke="url(#preloaderRing)" strokeWidth="3" strokeDasharray="120 480" strokeLinecap="round" />
-                            <defs>
-                                <linearGradient id="preloaderRing" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stopColor="#22c55e" />
-                                    <stop offset="100%" stopColor="#22c55e" stopOpacity="0" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </div>
-
-                    <div
-                        className="relative flex items-center justify-center rounded-3xl bg-white px-7 py-6 shadow-[0_18px_50px_-12px_rgba(11,66,34,0.25)]"
-                        style={{ animation: 'preloaderPop 0.7s cubic-bezier(0.22,1,0.36,1) both, preloaderPulse 2.4s ease-in-out 0.7s infinite' }}
-                    >
+                {/* Logo that fills from bottom to top as it loads */}
+                <div
+                    className="rounded-xl bg-white px-10 py-7 shadow-[0_30px_80px_-24px_rgba(0,0,0,0.6)]"
+                    style={{ animation: 'preloaderPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}
+                >
+                    <div className="relative inline-block">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src="/logo.svg" alt="Sinotri Global" className="h-9 sm:h-11 w-auto select-none" draggable={false} />
+                        <img
+                            src={logoUrl}
+                            alt="Sinotri Global"
+                            className="block h-14 sm:h-16 w-auto max-w-[230px] object-contain opacity-[0.14] grayscale select-none"
+                            draggable={false}
+                        />
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={logoUrl}
+                            alt=""
+                            aria-hidden
+                            className="absolute top-0 left-0 block h-14 sm:h-16 w-auto max-w-[230px] object-contain select-none"
+                            style={{ clipPath: `inset(${100 - pct}% 0 0 0)` }}
+                            draggable={false}
+                        />
                     </div>
                 </div>
 
-                {/* Progress */}
-                <div className="w-60 sm:w-72" style={{ animation: 'preloaderFadeUp 0.7s ease-out 0.25s both' }}>
-                    <div className="relative h-[5px] w-full overflow-hidden rounded-full bg-[rgba(11,66,34,0.08)]">
-                        <div
-                            className="h-full rounded-full transition-all duration-300 ease-out"
-                            style={{
-                                width: `${Math.min(progress, 100)}%`,
-                                background: 'linear-gradient(90deg, #0B4222, #18764a 55%, #22c55e)',
-                                boxShadow: '0 0 10px rgba(34,197,94,0.45)',
-                            }}
-                        />
-                        {/* Moving shimmer */}
-                        <div
-                            className="absolute top-0 left-0 h-full w-1/3"
-                            style={{
-                                background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
-                                animation: 'preloaderShimmer 1.4s ease-in-out infinite',
-                            }}
-                        />
-                    </div>
+                {/* Brand line */}
+                <div
+                    className="mt-7 text-[11px] sm:text-xs font-medium uppercase tracking-[0.42em] text-white/70"
+                    style={{ animation: 'preloaderFadeUp 0.7s ease-out 0.25s both' }}
+                >
+                    Sinotri&nbsp;Global
+                </div>
 
-                    <div className="mt-3 flex items-center justify-between">
-                        <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#0B4222]/45">
-                            Loading
-                        </span>
-                        <span className="text-[13px] font-bold tabular-nums text-[#18764a]">
-                            {rounded}%
-                        </span>
+                {/* Thin progress line + counter */}
+                <div className="mt-8 flex flex-col items-center gap-3" style={{ animation: 'preloaderFadeUp 0.7s ease-out 0.35s both' }}>
+                    <div className="relative h-px w-56 sm:w-64 overflow-hidden bg-white/15">
+                        <div
+                            className="absolute inset-y-0 left-0 bg-white"
+                            style={{ width: `${pct}%`, boxShadow: '0 0 10px rgba(255,255,255,0.7)' }}
+                        />
                     </div>
+                    <span className="text-[12px] font-light tabular-nums tracking-[0.25em] text-white/80">
+                        {rounded.toString().padStart(2, '0')}%
+                    </span>
                 </div>
             </div>
         </div>
