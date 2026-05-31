@@ -112,10 +112,21 @@ const services = [
 const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
     return (
         <section className="w-full bg-white py-7 px-6">
+            <style>{`
+                @keyframes qsFloat {
+                    0%, 100% { transform: translateY(0) rotate(0deg); }
+                    25% { transform: translateY(-5px) rotate(-3deg); }
+                    50% { transform: translateY(-9px) rotate(0deg); }
+                    75% { transform: translateY(-5px) rotate(3deg); }
+                }
+                .qs-icon { animation: qsFloat 2.4s ease-in-out infinite; will-change: transform; }
+                .group:hover .qs-icon { animation-duration: 0.6s; }
+                @media (prefers-reduced-motion: reduce) { .qs-icon { animation: none; } }
+            `}</style>
             <div className="max-w-6xl mx-auto">
                 {/* 6-column grid: 3 cols mobile → 6 cols desktop */}
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                    {services.map((service) => {
+                    {services.map((service, i) => {
                         const cardClass =
                             'flex flex-col items-center justify-start gap-3 bg-white border border-gray-100 rounded-2xl py-5 px-2 sm:px-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-[var(--color-primary-border)] transition-all duration-200 group cursor-pointer';
 
@@ -126,8 +137,8 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                                     onClick={onCategoryClick}
                                     className={cardClass}
                                 >
-                                    <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-amber-50 group-hover:scale-105 transition-transform duration-200">
-                                        {service.emoji}
+                                    <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-amber-50 group-hover:scale-[1.15] transition-transform duration-200">
+                                        <div className="qs-icon" style={{ animationDelay: `-${i * 0.5}s` }}>{service.emoji}</div>
                                     </div>
                                     <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors min-h-[32px] flex items-center justify-center">
                                         {service.label}
@@ -141,8 +152,8 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                                 href={service.href}
                                 className={cardClass}
                             >
-                                <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:scale-105 transition-transform duration-200">
-                                    {service.emoji}
+                                <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:scale-[1.15] transition-transform duration-200">
+                                    <div className="qs-icon" style={{ animationDelay: `-${i * 0.5}s` }}>{service.emoji}</div>
                                 </div>
                                 <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors min-h-[32px] flex items-center justify-center">
                                     {service.label}

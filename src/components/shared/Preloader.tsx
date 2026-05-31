@@ -60,6 +60,7 @@ const Preloader: React.FC = () => {
 
     const pct = Math.min(progress, 100);
     const rounded = Math.round(pct);
+    const RING_C = 2 * Math.PI * 54; // progress-ring circumference (r=54)
 
     return (
         <div
@@ -110,53 +111,54 @@ const Preloader: React.FC = () => {
             {/* ── Content ── */}
             <div className="relative z-10 flex flex-col items-center px-6 text-center">
 
-                {/* Wordmark — outline text with a bottom→top brand fill */}
-                <div className="relative inline-block" style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}>
-                    {/* faint outline base */}
-                    <h1
-                        className="text-[34px] sm:text-[52px] md:text-[60px] font-extrabold tracking-[0.06em] leading-none select-none"
-                        style={{ color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.35)' }}
-                    >
-                        SINOTRI<span className="font-light"> GLOBAL</span>
-                    </h1>
-                    {/* solid white fill, revealed bottom→top with progress */}
-                    <h1
-                        aria-hidden
-                        className="absolute inset-0 text-[34px] sm:text-[52px] md:text-[60px] font-extrabold tracking-[0.06em] leading-none text-white select-none"
-                        style={{ clipPath: `inset(${100 - pct}% 0 0 0)`, transition: 'clip-path 0.12s linear', textShadow: '0 2px 24px rgba(255,255,255,0.25)' }}
-                    >
-                        SINOTRI<span className="font-light"> GLOBAL</span>
-                    </h1>
-                    {/* shimmer sweep across the wordmark */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)', animation: 'plShimmer 2.4s ease-in-out infinite' }} />
+                {/* Circular progress ring with orbiting glow dot + center counter */}
+                <div
+                    className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center"
+                    style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}
+                >
+                    {/* glassy plate behind the ring */}
+                    <div className="absolute inset-2 rounded-full" style={{ background: 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.10), rgba(255,255,255,0.02))', backdropFilter: 'blur(2px)' }} />
+
+                    {/* orbiting glow dot */}
+                    <div className="pl-anim absolute inset-0" style={{ animation: 'plSpin 1.6s linear infinite' }}>
+                        <span className="absolute left-1/2 -top-px -translate-x-1/2 w-2 h-2 rounded-full bg-white" style={{ boxShadow: '0 0 10px 2px rgba(255,255,255,0.85)' }} />
                     </div>
+
+                    {/* progress ring */}
+                    <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="2.5" />
+                        <circle
+                            cx="60" cy="60" r="54" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"
+                            strokeDasharray={RING_C}
+                            strokeDashoffset={RING_C * (1 - pct / 100)}
+                            style={{ transition: 'stroke-dashoffset 0.12s linear', filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.6))' }}
+                        />
+                    </svg>
+
+                    {/* center counter */}
+                    <span className="text-3xl sm:text-4xl font-extralight text-white tabular-nums tracking-tight select-none">
+                        {rounded}<span className="text-sm align-super text-white/50 ml-0.5">%</span>
+                    </span>
+                </div>
+
+                {/* Wordmark — light, airy with a soft shimmer sweep */}
+                <div className="relative mt-8 overflow-hidden" style={{ animation: 'plFadeUp 0.7s ease-out 0.2s both' }}>
+                    <h1 className="text-[18px] sm:text-[24px] font-light tracking-[0.4em] text-white select-none">
+                        SINOTRI<span className="font-semibold">&nbsp;GLOBAL</span>
+                    </h1>
+                    <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)', animation: 'plShimmer 2.6s ease-in-out infinite' }} />
                 </div>
 
                 {/* Tagline + animated dots */}
                 <div
-                    className="mt-5 flex items-center gap-2 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.42em] text-white/70"
-                    style={{ animation: 'plFadeUp 0.7s ease-out 0.25s both' }}
+                    className="mt-3 flex items-center gap-2 text-[9.5px] sm:text-[10px] font-medium uppercase tracking-[0.42em] text-white/55"
+                    style={{ animation: 'plFadeUp 0.7s ease-out 0.32s both' }}
                 >
                     Sourcing the world to you
                     <span className="flex gap-1 ml-1">
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out infinite' }} />
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.2s infinite' }} />
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.4s infinite' }} />
-                    </span>
-                </div>
-
-                {/* Progress bar with shimmer + counter */}
-                <div className="mt-8 flex flex-col items-center gap-3 w-60 sm:w-72" style={{ animation: 'plFadeUp 0.7s ease-out 0.35s both' }}>
-                    <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-white/15">
-                        <div
-                            className="absolute inset-y-0 left-0 rounded-full bg-white"
-                            style={{ width: `${pct}%`, boxShadow: '0 0 12px rgba(255,255,255,0.8)', transition: 'width 0.12s linear' }}
-                        />
-                        <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent)', animation: 'plShimmer 1.5s ease-in-out infinite' }} />
-                    </div>
-                    <span className="text-[13px] font-light tabular-nums tracking-[0.3em] text-white/85">
-                        {rounded.toString().padStart(2, '0')}%
                     </span>
                 </div>
             </div>

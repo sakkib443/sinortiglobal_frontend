@@ -21,6 +21,11 @@ const RATE_TABLE: Record<string, { air: number; sea: number }> = {
 
 const COUNTRIES = Object.keys(RATE_TABLE);
 
+/* The per-kg rates above are in USD. We show the customer the cost in BDT (৳),
+   matching the rest of the site. Update this to your current exchange rate. */
+const USD_TO_BDT = 122;
+const toBDT = (usd: number) => Math.round(usd * USD_TO_BDT);
+
 const CATEGORIES = [
     'Electronics', 'Fashion & Clothing', 'Home & Garden', 'Beauty & Health',
     'Sports & Outdoors', 'Toys & Games', 'Automotive', 'Food & Beverages',
@@ -48,6 +53,8 @@ interface Result {
     airCost: number;
     seaCost: number;
     currency: string;
+    fromCountry: string;
+    orderType: 'buy-ship' | 'ship-only';
 }
 
 const CostCalculatorPage: React.FC = () => {
@@ -96,6 +103,8 @@ const CostCalculatorPage: React.FC = () => {
             airCost: Math.round(airCost * 100) / 100,
             seaCost: Math.round(seaCost * 100) / 100,
             currency: 'USD',
+            fromCountry,
+            orderType,
         });
     };
 
@@ -216,7 +225,7 @@ const CostCalculatorPage: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block text-xs font-semibold text-gray-500 mb-1">
-                                    CBM{' '}
+                                    Dimensions L × W × H{' '}
                                     <span className="font-normal text-gray-400">(optional — for volumetric weight)</span>
                                 </label>
                                 <div className="flex gap-2 items-center">
@@ -258,16 +267,22 @@ const CostCalculatorPage: React.FC = () => {
                     {/* ── Result ── */}
                     {result && (
                         <div className="border-t border-gray-100 bg-[var(--color-primary-lightest)] px-8 py-6">
-                            <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <h2 className="text-base font-bold text-gray-800 mb-1 flex items-center gap-2">
                                 <FiPackage className="text-[var(--color-primary)]" />
                                 Estimated Shipping Cost
                             </h2>
+                            <p className="text-xs text-gray-500 mb-4">
+                                Service:{' '}
+                                <span className="font-semibold text-[var(--color-primary)]">
+                                    {result.orderType === 'buy-ship' ? 'Buy And Ship For Me' : 'Only Ship For Me'}
+                                </span>
+                            </p>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                                 {[
                                     { label: 'Actual Weight', value: `${result.actualWeight} Kg` },
                                     { label: 'Volumetric Weight', value: result.volumetricWeight > 0 ? `${result.volumetricWeight.toFixed(2)} Kg` : 'N/A' },
                                     { label: 'Billable Weight', value: `${result.billableWeight.toFixed(2)} Kg` },
-                                    { label: 'From', value: fromCountry },
+                                    { label: 'From', value: result.fromCountry },
                                 ].map(item => (
                                     <div key={item.label} className="bg-white rounded-xl p-4 border border-[var(--color-primary-border)]">
                                         <p className="text-xs text-gray-400 mb-1">{item.label}</p>
@@ -282,9 +297,9 @@ const CostCalculatorPage: React.FC = () => {
                                         <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-semibold">Faster</span>
                                     </div>
                                     <p className="text-2xl font-extrabold text-[var(--color-primary)]">
-                                        ${result.airCost.toFixed(2)} <span className="text-sm font-normal text-gray-400">USD</span>
+                                        ৳{toBDT(result.airCost).toLocaleString()}
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-1">Est. 7–14 business days</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">≈ ${result.airCost.toFixed(2)} USD · Est. 7–14 business days</p>
                                 </div>
                                 <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
                                     <div className="flex items-center justify-between mb-1">
@@ -292,14 +307,14 @@ const CostCalculatorPage: React.FC = () => {
                                         <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-semibold">Economical</span>
                                     </div>
                                     <p className="text-2xl font-extrabold text-gray-800">
-                                        ${result.seaCost.toFixed(2)} <span className="text-sm font-normal text-gray-400">USD</span>
+                                        ৳{toBDT(result.seaCost).toLocaleString()}
                                     </p>
-                                    <p className="text-xs text-gray-400 mt-1">Est. 25–40 business days</p>
+                                    <p className="text-xs text-gray-400 mt-0.5">≈ ${result.seaCost.toFixed(2)} USD · Est. 25–40 business days</p>
                                 </div>
                             </div>
                             <p className="text-xs text-gray-400 mt-4 flex items-center gap-1">
                                 <FiInfo size={12} />
-                                These are estimates only. Final rates may vary based on actual shipment details and surcharges.
+                                These are estimates only (BDT converted at ৳{USD_TO_BDT}/USD). Final rates may vary based on actual shipment details, customs and surcharges.
                             </p>
                         </div>
                     )}

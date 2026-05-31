@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FiArrowLeft, FiCheckCircle, FiXCircle, FiUpload } from 'react-icons/fi';
 import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
+import { useUploadImagesMutation } from '@/redux/api/uploadApi';
 import { useAppSelector } from '@/redux';
 import { toast } from 'react-hot-toast';
 
@@ -86,6 +87,7 @@ const RequestQuotationPage: React.FC = () => {
 
     const { user } = useAppSelector((s: any) => s.auth);
     const [createInquiry, { isLoading: submitting }] = useCreateInquiryMutation();
+    const [uploadImages, { isLoading: uploading }] = useUploadImagesMutation();
 
     // Prefill contact details for logged-in users
     useEffect(() => {
@@ -123,6 +125,19 @@ const RequestQuotationPage: React.FC = () => {
             form.photos.length ? `Attached files: ${form.photos.length}` : null,
         ].filter(Boolean).join('\n');
         try {
+            // Upload reference photos first (if any) so the admin can see them
+            let attachments: string[] = [];
+            if (form.photos.length > 0) {
+                const fd = new FormData();
+                form.photos.forEach((f) => fd.append('images', f));
+                try {
+                    const res = await uploadImages(fd).unwrap();
+                    attachments = res?.data?.urls || [];
+                } catch {
+                    toast.error('Photos could not be uploaded — submitting without them.');
+                }
+            }
+
             await createInquiry({
                 name: form.contactName.trim() || 'RFQ Customer',
                 email: form.contactEmail.trim(),
@@ -130,6 +145,7 @@ const RequestQuotationPage: React.FC = () => {
                 subject: `RFQ: ${form.productName.trim()}`,
                 message,
                 type: 'rfq',
+                attachments,
             }).unwrap();
             setSubmitted(true);
             toast.success('Your quotation request has been submitted!');
@@ -419,10 +435,10 @@ const RequestQuotationPage: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={handleSubmit}
-                                disabled={submitting}
+                                disabled={submitting || uploading}
                                 className="px-8 py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                             >
-                                {submitting ? 'Submitting...' : 'Request Quotes'}
+                                {uploading ? 'Uploading photos...' : submitting ? 'Submitting...' : 'Request Quotes'}
                             </button>
                         </div>
                     </div>
