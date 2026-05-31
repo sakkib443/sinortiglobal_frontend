@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import { FiTruck } from 'react-icons/fi';
 
 const Preloader: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -26,24 +27,37 @@ const Preloader: React.FC = () => {
             }, 520);
         };
 
-        // 0 → 100 plays at a constant, even pace (linear) over a fixed window,
-        // while the homepage loads in the background during it.
-        const MIN_DURATION = 3000;
+        // Count up at a STEADY, even pace (linear) — like 1,2,3,4,5… — advanced
+        // per real frame (NOT from wall-clock elapsed), so if the main thread is
+        // briefly busy loading, dropped frames just slow the count a touch
+        // instead of making it teleport. It creeps steadily toward 90 while the
+        // page is still loading, then runs the rest of the way to 100 smoothly
+        // once the page is ready.
+        const MIN_DURATION = 1800;
         const start = performance.now();
+
+        const CREEP = 0.4;   // % per frame while still loading (steady, gentle)
+        const FINISH = 2.2;  // % per frame once ready (smooth, quick run to 100)
 
         let raf = 0;
         const loop = (now: number) => {
             if (finishedRef.current) return;
-            const elapsed = now - start;
-            const t = Math.min(elapsed / MIN_DURATION, 1);
-            let p = t * 100;
-            if (!pageLoadedRef.current) p = Math.min(p, 92);
-            else if (t < 1) p = Math.min(p, 99);
+            const ready = pageLoadedRef.current && (now - start) >= MIN_DURATION;
 
-            progressRef.current = p;
-            setProgress(p);
-
-            if (pageLoadedRef.current && t >= 1) { finish(); return; }
+            let next: number;
+            if (ready) {
+                next = progressRef.current + FINISH;
+                if (next >= 100) {
+                    progressRef.current = 100;
+                    setProgress(100);
+                    finish();
+                    return;
+                }
+            } else {
+                next = Math.min(progressRef.current + CREEP, 90);
+            }
+            progressRef.current = next;
+            setProgress(next);
             raf = requestAnimationFrame(loop);
         };
         raf = requestAnimationFrame(loop);
@@ -60,7 +74,6 @@ const Preloader: React.FC = () => {
 
     const pct = Math.min(progress, 100);
     const rounded = Math.round(pct);
-    const RING_C = 2 * Math.PI * 54; // progress-ring circumference (r=54)
 
     return (
         <div
@@ -84,6 +97,9 @@ const Preloader: React.FC = () => {
                 @keyframes plFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
                 @keyframes plShimmer { 0% { transform: translateX(-120%); } 100% { transform: translateX(320%); } }
                 @keyframes plDot { 0%,100% { opacity: 0.25; } 50% { opacity: 1; } }
+                @keyframes plDrop { 0% { transform: translateY(-50px) rotate(-10deg); opacity: 0; } 55% { transform: translateY(5px) rotate(3deg); opacity: 1; } 75% { transform: translateY(-2px) rotate(-1deg); } 100% { transform: translateY(0) rotate(0deg); opacity: 1; } }
+                @keyframes plBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+                @keyframes plRoad { to { background-position: -24px 0; } }
                 @media (prefers-reduced-motion: reduce) {
                     .pl-anim { animation: none !important; }
                 }
@@ -111,50 +127,55 @@ const Preloader: React.FC = () => {
             {/* ── Content ── */}
             <div className="relative z-10 flex flex-col items-center px-6 text-center">
 
-                {/* Circular progress ring with orbiting glow dot + center counter */}
-                <div
-                    className="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center"
-                    style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}
-                >
-                    {/* glassy plate behind the ring */}
-                    <div className="absolute inset-2 rounded-full" style={{ background: 'radial-gradient(circle at 50% 35%, rgba(255,255,255,0.10), rgba(255,255,255,0.02))', backdropFilter: 'blur(2px)' }} />
-
-                    {/* orbiting glow dot */}
-                    <div className="pl-anim absolute inset-0" style={{ animation: 'plSpin 1.6s linear infinite' }}>
-                        <span className="absolute left-1/2 -top-px -translate-x-1/2 w-2 h-2 rounded-full bg-white" style={{ boxShadow: '0 0 10px 2px rgba(255,255,255,0.85)' }} />
-                    </div>
-
-                    {/* progress ring */}
-                    <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 120 120">
-                        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="2.5" />
-                        <circle
-                            cx="60" cy="60" r="54" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"
-                            strokeDasharray={RING_C}
-                            strokeDashoffset={RING_C * (1 - pct / 100)}
-                            style={{ transition: 'stroke-dashoffset 0.12s linear', filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.6))' }}
-                        />
-                    </svg>
-
-                    {/* center counter */}
-                    <span className="text-3xl sm:text-4xl font-extralight text-white tabular-nums tracking-tight select-none">
-                        {rounded}<span className="text-sm align-super text-white/50 ml-0.5">%</span>
-                    </span>
-                </div>
-
-                {/* Wordmark — light, airy with a soft shimmer sweep */}
-                <div className="relative mt-8 overflow-hidden" style={{ animation: 'plFadeUp 0.7s ease-out 0.2s both' }}>
-                    <h1 className="text-[18px] sm:text-[24px] font-light tracking-[0.4em] text-white select-none">
+                {/* Logo / wordmark on top */}
+                <div className="relative overflow-hidden" style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}>
+                    <h1 className="text-[20px] sm:text-[26px] font-light tracking-[0.4em] text-white select-none">
                         SINOTRI<span className="font-semibold">&nbsp;GLOBAL</span>
                     </h1>
                     <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)', animation: 'plShimmer 2.6s ease-in-out infinite' }} />
                 </div>
 
-                {/* Tagline + animated dots */}
-                <div
-                    className="mt-3 flex items-center gap-2 text-[9.5px] sm:text-[10px] font-medium uppercase tracking-[0.42em] text-white/55"
-                    style={{ animation: 'plFadeUp 0.7s ease-out 0.32s both' }}
+                {/* Tagline */}
+                <p
+                    className="mt-2 text-[9.5px] sm:text-[10px] font-medium uppercase tracking-[0.42em] text-white/55"
+                    style={{ animation: 'plFadeUp 0.7s ease-out 0.2s both' }}
                 >
                     Sourcing the world to you
+                </p>
+
+                {/* Delivery road with a travelling truck */}
+                <div className="relative mt-14 w-72 sm:w-80" style={{ animation: 'plFadeUp 0.7s ease-out 0.3s both' }}>
+                    {/* Truck — drops in from the top, then rides along to the progress point */}
+                    <div
+                        className="absolute -top-7 z-20"
+                        style={{ left: `${pct}%`, transform: 'translateX(-50%)', transition: 'left 0.2s linear' }}
+                    >
+                        <div style={{ animation: 'plDrop 0.9s cubic-bezier(0.34,1.56,0.64,1) both' }}>
+                            <div className="pl-anim" style={{ animation: 'plBob 0.55s ease-in-out infinite' }}>
+                                <FiTruck size={30} className="text-white" style={{ filter: 'drop-shadow(0 4px 7px rgba(0,0,0,0.35))' }} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Road */}
+                    <div className="relative h-[3px] w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                        {/* moving road dashes */}
+                        <div className="pl-anim absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.7) 0 8px, transparent 8px 16px)', animation: 'plRoad 0.5s linear infinite' }} />
+                        {/* progress fill */}
+                        <div className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: `${pct}%`, boxShadow: '0 0 12px rgba(255,255,255,0.85)', transition: 'width 0.2s linear' }} />
+                    </div>
+
+                    {/* end markers */}
+                    <div className="flex justify-between mt-2 text-[9px] font-medium tracking-widest text-white/35 select-none">
+                        <span>0%</span><span>100%</span>
+                    </div>
+                </div>
+
+                {/* Percent counter below */}
+                <div className="mt-4 flex items-center gap-2" style={{ animation: 'plFadeUp 0.7s ease-out 0.4s both' }}>
+                    <span className="text-2xl sm:text-3xl font-extralight text-white tabular-nums tracking-tight select-none">
+                        {rounded}<span className="text-sm align-super text-white/50 ml-0.5">%</span>
+                    </span>
                     <span className="flex gap-1 ml-1">
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out infinite' }} />
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.2s infinite' }} />
