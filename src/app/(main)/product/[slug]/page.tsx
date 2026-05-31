@@ -136,8 +136,23 @@ export default function ProductDetailsPage() {
 
     const isInCart = product ? cartItems.some((item: any) => item.id === getCartId()) : false;
 
+    // Customer must pick the required variant options before buying.
+    const validateVariantSelection = () => {
+        if (colorSwatches.length > 0 && !selectedColor) {
+            toast.error('Please select a color first.');
+            return false;
+        }
+        if (sizeList.length > 0 && !selectedSize) {
+            toast.error('Please select a size first.');
+            return false;
+        }
+        return true;
+    };
+
     const handleAddToCart = () => {
         if (!product) return;
+        if (!validateVariantSelection()) return;
+        if (displayStock === 0) { toast.error('This item is out of stock.'); return; }
         const cartId = getCartId();
 
         if (isInCart) {
@@ -168,7 +183,9 @@ export default function ProductDetailsPage() {
 
     // Buy Now → add to cart (if not already) then go straight to checkout
     const handleBuyNow = () => {
-        if (!product || displayStock === 0) return;
+        if (!product) return;
+        if (!validateVariantSelection()) return;
+        if (displayStock === 0) { toast.error('This item is out of stock.'); return; }
         const cartId = getCartId();
         if (!isInCart) {
             const variantImage = activeVariant?.images?.[0] || allImages[selectedImage] || product.thumbnail;
