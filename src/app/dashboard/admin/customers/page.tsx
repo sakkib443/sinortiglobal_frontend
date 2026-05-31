@@ -67,7 +67,7 @@ export default function CustomersPage() {
     const [page, setPage] = useState(1);
     const [editingRole, setEditingRole] = useState<string | null>(null);
     const [showCreateAdmin, setShowCreateAdmin] = useState(false);
-    const [createForm, setCreateForm] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '' });
+    const [createForm, setCreateForm] = useState({ firstName: '', lastName: '', email: '', phone: '', password: '', role: 'admin' as 'admin' | 'user' });
 
     const {
         data: usersData, isLoading: isUsersLoading, isFetching: isUsersFetching, refetch: refetchUsers
@@ -105,22 +105,23 @@ export default function CustomersPage() {
             return;
         }
         try {
-            // Step 1: Register as user
-            const res = await registerUser({ ...createForm }).unwrap();
+            // Step 1: Register the account (defaults to a regular user)
+            const { role, ...registerData } = createForm;
+            const res = await registerUser({ ...registerData }).unwrap();
             const newUserId = res?.data?.user?._id;
 
-            // Step 2: Promote to admin
-            if (newUserId) {
+            // Step 2: Promote to admin only when the admin role was chosen
+            if (role === 'admin' && newUserId) {
                 await updateUser({ id: newUserId, role: 'admin' }).unwrap();
             }
 
-            toast.success('Admin account created!');
+            toast.success(`${role === 'admin' ? 'Admin' : 'User'} account created!`);
             setShowCreateAdmin(false);
-            setCreateForm({ firstName: '', lastName: '', email: '', phone: '', password: '' });
+            setCreateForm({ firstName: '', lastName: '', email: '', phone: '', password: '', role: 'admin' });
             refetchUsers();
             refetchStats();
         } catch (err: any) {
-            toast.error(err?.data?.message || 'Failed to create admin');
+            toast.error(err?.data?.message || 'Failed to create account');
         }
     };
 
@@ -159,7 +160,7 @@ export default function CustomersPage() {
                         onClick={() => setShowCreateAdmin(true)}
                         className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-md"
                     >
-                        <FiUserPlus size={16} /> Create Admin
+                        <FiUserPlus size={16} /> Create User
                     </button>
                 </div>
             </div>
@@ -341,13 +342,36 @@ export default function CustomersPage() {
                         </button>
 
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
-                                <FiShield size={20} className="text-purple-600" />
+                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${createForm.role === 'admin' ? 'bg-purple-50' : 'bg-blue-50'}`}>
+                                {createForm.role === 'admin'
+                                    ? <FiShield size={20} className="text-purple-600" />
+                                    : <FiUsers size={20} className="text-blue-600" />}
                             </div>
                             <div>
-                                <h2 className="text-lg font-bold text-gray-900">Create Admin Account</h2>
-                                <p className="text-xs text-gray-500">This user will have full admin access</p>
+                                <h2 className="text-lg font-bold text-gray-900">Create {createForm.role === 'admin' ? 'Admin' : 'User'} Account</h2>
+                                <p className="text-xs text-gray-500">
+                                    {createForm.role === 'admin'
+                                        ? 'This user will have full admin access'
+                                        : 'A regular customer who can shop and place orders'}
+                                </p>
                             </div>
+                        </div>
+
+                        {/* Role selector */}
+                        <div className="grid grid-cols-2 gap-3 mb-4">
+                            {(['admin', 'user'] as const).map((r) => (
+                                <button
+                                    key={r}
+                                    type="button"
+                                    onClick={() => setCreateForm({ ...createForm, role: r })}
+                                    className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold border transition-colors ${createForm.role === r
+                                        ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
+                                        : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                                >
+                                    {r === 'admin' ? <FiShield size={15} /> : <FiUsers size={15} />}
+                                    {r === 'admin' ? 'Admin' : 'User'}
+                                </button>
+                            ))}
                         </div>
 
                         <div className="space-y-4">
@@ -382,7 +406,7 @@ export default function CustomersPage() {
 
                         <button onClick={handleCreateAdmin} disabled={isCreating}
                             className="w-full mt-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-60 shadow-md">
-                            {isCreating ? 'Creating...' : <><FiUserPlus size={16} /> Create Admin Account</>}
+                            {isCreating ? 'Creating...' : <><FiUserPlus size={16} /> Create {createForm.role === 'admin' ? 'Admin' : 'User'} Account</>}
                         </button>
                     </div>
                 </div>
