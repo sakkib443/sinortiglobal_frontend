@@ -152,7 +152,6 @@ export default function ProductDetailsPage() {
     const handleAddToCart = () => {
         if (!product) return;
         if (!validateVariantSelection()) return;
-        if (displayStock === 0) { toast.error('This item is out of stock.'); return; }
         const cartId = getCartId();
 
         if (isInCart) {
@@ -185,7 +184,6 @@ export default function ProductDetailsPage() {
     const handleBuyNow = () => {
         if (!product) return;
         if (!validateVariantSelection()) return;
-        if (displayStock === 0) { toast.error('This item is out of stock.'); return; }
         const cartId = getCartId();
         if (!isInCart) {
             const variantImage = activeVariant?.images?.[0] || allImages[selectedImage] || product.thumbnail;
@@ -1108,35 +1106,33 @@ export default function ProductDetailsPage() {
                                                 <FiPlus size={14} />
                                             </button>
                                         </div>
-                                        {/* Add to Cart */}
+                                        {/* Add to Cart — allowed even when out of stock (sourcing model) */}
                                         <button
                                             onClick={handleAddToCart}
-                                            disabled={product.stock === 0}
                                             style={{
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                                                 background: '#fff', border: '2px solid var(--color-primary)', color: 'var(--color-primary)',
-                                                fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                                                fontWeight: 700, fontSize: '12px', cursor: 'pointer',
                                                 padding: '10px 12px', letterSpacing: '0.3px',
                                                 textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
                                                 borderRadius: '10px', transition: 'all 0.2s ease',
-                                                opacity: product.stock === 0 ? 0.5 : 1, height: '40px',
+                                                height: '40px',
                                             }}
                                         >
                                             <FiShoppingCart size={14} />
                                             {isInCart ? '✓ ADDED' : addedToCart ? 'ADDED!' : 'ADD TO CART'}
                                         </button>
-                                        {/* Buy Now */}
+                                        {/* Buy Now — allowed even when out of stock (sourcing model) */}
                                         <button
                                             onClick={handleBuyNow}
-                                            disabled={product.stock === 0}
                                             style={{
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                                                 background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))', border: 'none', color: '#fff',
-                                                fontWeight: 700, fontSize: '12px', cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                                                fontWeight: 700, fontSize: '12px', cursor: 'pointer',
                                                 padding: '10px 12px', letterSpacing: '0.3px',
                                                 textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
                                                 borderRadius: '10px', transition: 'all 0.2s ease',
-                                                opacity: product.stock === 0 ? 0.5 : 1, height: '40px',
+                                                height: '40px',
                                                 boxShadow: '0 2px 8px rgba(11,66,34,0.25)',
                                             }}
                                         >
