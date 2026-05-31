@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from './ThemeProvider';
 
 const Preloader: React.FC = () => {
-    const { logoUrl } = useTheme();
     const [isLoading, setIsLoading] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -110,59 +108,37 @@ const Preloader: React.FC = () => {
             </div>
 
             {/* ── Content ── */}
-            <div className="relative z-10 flex flex-col items-center px-6">
+            <div className="relative z-10 flex flex-col items-center px-6 text-center">
 
-                {/* Logo with a rotating conic glow ring behind it */}
-                <div className="relative flex items-center justify-center" style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}>
-                    {/* spinning conic ring */}
-                    <div
-                        className="pl-anim absolute w-[230px] h-[230px] sm:w-[260px] sm:h-[260px] rounded-full"
-                        style={{
-                            background: 'conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.0) 200deg, rgba(255,255,255,0.85) 320deg, #fff 360deg)',
-                            WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))',
-                            mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))',
-                            animation: 'plSpin 2.6s linear infinite',
-                            opacity: 0.9,
-                        }}
-                    />
-                    {/* soft glow halo */}
-                    <div className="absolute w-[210px] h-[210px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%)', filter: 'blur(20px)' }} />
-
-                    {/* Glass logo card with bottom→top fill */}
-                    <div
-                        className="relative rounded-2xl px-9 py-6 backdrop-blur-md"
-                        style={{
-                            background: 'rgba(255,255,255,0.96)',
-                            boxShadow: '0 30px 90px -20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.6)',
-                        }}
+                {/* Wordmark — outline text with a bottom→top brand fill */}
+                <div className="relative inline-block" style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}>
+                    {/* faint outline base */}
+                    <h1
+                        className="text-[34px] sm:text-[52px] md:text-[60px] font-extrabold tracking-[0.06em] leading-none select-none"
+                        style={{ color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.35)' }}
                     >
-                        <div className="relative inline-block">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={logoUrl}
-                                alt="Sinotri Global"
-                                className="block h-14 sm:h-16 w-auto max-w-[220px] object-contain opacity-[0.12] grayscale select-none"
-                                draggable={false}
-                            />
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                                src={logoUrl}
-                                alt=""
-                                aria-hidden
-                                className="absolute top-0 left-0 block h-14 sm:h-16 w-auto max-w-[220px] object-contain select-none"
-                                style={{ clipPath: `inset(${100 - pct}% 0 0 0)`, transition: 'clip-path 0.12s linear' }}
-                                draggable={false}
-                            />
-                        </div>
+                        SINOTRI<span className="font-light"> GLOBAL</span>
+                    </h1>
+                    {/* solid white fill, revealed bottom→top with progress */}
+                    <h1
+                        aria-hidden
+                        className="absolute inset-0 text-[34px] sm:text-[52px] md:text-[60px] font-extrabold tracking-[0.06em] leading-none text-white select-none"
+                        style={{ clipPath: `inset(${100 - pct}% 0 0 0)`, transition: 'clip-path 0.12s linear', textShadow: '0 2px 24px rgba(255,255,255,0.25)' }}
+                    >
+                        SINOTRI<span className="font-light"> GLOBAL</span>
+                    </h1>
+                    {/* shimmer sweep across the wordmark */}
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)', animation: 'plShimmer 2.4s ease-in-out infinite' }} />
                     </div>
                 </div>
 
-                {/* Brand line + animated dots */}
+                {/* Tagline + animated dots */}
                 <div
-                    className="mt-9 flex items-center gap-2 text-[11px] sm:text-xs font-medium uppercase tracking-[0.42em] text-white/75"
+                    className="mt-5 flex items-center gap-2 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.42em] text-white/70"
                     style={{ animation: 'plFadeUp 0.7s ease-out 0.25s both' }}
                 >
-                    Sinotri&nbsp;Global
+                    Sourcing the world to you
                     <span className="flex gap-1 ml-1">
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out infinite' }} />
                         <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.2s infinite' }} />
@@ -171,7 +147,7 @@ const Preloader: React.FC = () => {
                 </div>
 
                 {/* Progress bar with shimmer + counter */}
-                <div className="mt-7 flex flex-col items-center gap-3 w-60 sm:w-72" style={{ animation: 'plFadeUp 0.7s ease-out 0.35s both' }}>
+                <div className="mt-8 flex flex-col items-center gap-3 w-60 sm:w-72" style={{ animation: 'plFadeUp 0.7s ease-out 0.35s both' }}>
                     <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-white/15">
                         <div
                             className="absolute inset-y-0 left-0 rounded-full bg-white"
