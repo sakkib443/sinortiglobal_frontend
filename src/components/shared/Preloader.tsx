@@ -38,9 +38,7 @@ const Preloader: React.FC = () => {
             if (finishedRef.current) return;
             const elapsed = now - start;
             const t = Math.min(elapsed / MIN_DURATION, 1);
-            // Linear, constant-speed count — same pace start to finish.
             let p = t * 100;
-            // Only pause near the end if the page genuinely isn't ready yet.
             if (!pageLoadedRef.current) p = Math.min(p, 92);
             else if (t < 1) p = Math.min(p, 99);
 
@@ -67,69 +65,121 @@ const Preloader: React.FC = () => {
 
     return (
         <div
-            className={`fixed inset-0 z-[99999] flex items-center justify-center transition-all duration-700 ease-out ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
-            style={{
-                background: 'radial-gradient(135% 135% at 50% 0%, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
-                pointerEvents: fadeOut ? 'none' : 'auto',
-            }}
+            className={`fixed inset-0 z-[99999] flex items-center justify-center overflow-hidden transition-all duration-700 ease-out ${fadeOut ? 'opacity-0 scale-[1.04]' : 'opacity-100 scale-100'}`}
+            style={{ pointerEvents: fadeOut ? 'none' : 'auto', background: 'var(--color-primary-dark)' }}
         >
-            {/* Subtle depth */}
+            <style>{`
+                @keyframes plAurora {
+                    0%   { transform: translate(-12%, -8%) scale(1); }
+                    33%  { transform: translate(10%, 6%) scale(1.15); }
+                    66%  { transform: translate(-6%, 10%) scale(1.05); }
+                    100% { transform: translate(-12%, -8%) scale(1); }
+                }
+                @keyframes plAurora2 {
+                    0%   { transform: translate(8%, 10%) scale(1.1); }
+                    50%  { transform: translate(-10%, -6%) scale(1); }
+                    100% { transform: translate(8%, 10%) scale(1.1); }
+                }
+                @keyframes plSpin { to { transform: rotate(360deg); } }
+                @keyframes plPop { 0% { opacity: 0; transform: scale(0.85); } 100% { opacity: 1; transform: scale(1); } }
+                @keyframes plFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes plShimmer { 0% { transform: translateX(-120%); } 100% { transform: translateX(320%); } }
+                @keyframes plDot { 0%,100% { opacity: 0.25; } 50% { opacity: 1; } }
+                @media (prefers-reduced-motion: reduce) {
+                    .pl-anim { animation: none !important; }
+                }
+            `}</style>
+
+            {/* ── Animated aurora background ── */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full"
-                    style={{ background: 'rgba(255,255,255,0.05)', filter: 'blur(140px)' }}
+                    className="pl-anim absolute -top-1/3 -left-1/4 w-[80vw] h-[80vw] rounded-full"
+                    style={{ background: 'radial-gradient(circle, var(--color-primary) 0%, transparent 65%)', filter: 'blur(80px)', opacity: 0.9, animation: 'plAurora 14s ease-in-out infinite' }}
                 />
                 <div
-                    className="absolute inset-0 opacity-[0.035]"
-                    style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '44px 44px' }}
+                    className="pl-anim absolute -bottom-1/3 -right-1/4 w-[70vw] h-[70vw] rounded-full"
+                    style={{ background: 'radial-gradient(circle, var(--color-secondary) 0%, transparent 65%)', filter: 'blur(90px)', opacity: 0.5, animation: 'plAurora2 16s ease-in-out infinite' }}
                 />
+                <div
+                    className="pl-anim absolute top-1/4 right-1/3 w-[45vw] h-[45vw] rounded-full"
+                    style={{ background: 'radial-gradient(circle, var(--color-primary-light) 0%, transparent 70%)', filter: 'blur(100px)', opacity: 0.25, animation: 'plAurora 20s ease-in-out infinite reverse' }}
+                />
+                {/* dotted texture + dark vignette for depth */}
+                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '46px 46px' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(0,0,0,0.35) 100%)' }} />
             </div>
 
-            {/* Content */}
+            {/* ── Content ── */}
             <div className="relative z-10 flex flex-col items-center px-6">
 
-                {/* Logo that fills from bottom to top as it loads */}
-                <div
-                    className="rounded-xl bg-white px-10 py-7 shadow-[0_30px_80px_-24px_rgba(0,0,0,0.6)]"
-                    style={{ animation: 'preloaderPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}
-                >
-                    <div className="relative inline-block">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={logoUrl}
-                            alt="Sinotri Global"
-                            className="block h-14 sm:h-16 w-auto max-w-[230px] object-contain opacity-[0.14] grayscale select-none"
-                            draggable={false}
-                        />
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={logoUrl}
-                            alt=""
-                            aria-hidden
-                            className="absolute top-0 left-0 block h-14 sm:h-16 w-auto max-w-[230px] object-contain select-none"
-                            style={{ clipPath: `inset(${100 - pct}% 0 0 0)` }}
-                            draggable={false}
-                        />
+                {/* Logo with a rotating conic glow ring behind it */}
+                <div className="relative flex items-center justify-center" style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}>
+                    {/* spinning conic ring */}
+                    <div
+                        className="pl-anim absolute w-[230px] h-[230px] sm:w-[260px] sm:h-[260px] rounded-full"
+                        style={{
+                            background: 'conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.0) 200deg, rgba(255,255,255,0.85) 320deg, #fff 360deg)',
+                            WebkitMask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))',
+                            mask: 'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))',
+                            animation: 'plSpin 2.6s linear infinite',
+                            opacity: 0.9,
+                        }}
+                    />
+                    {/* soft glow halo */}
+                    <div className="absolute w-[210px] h-[210px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%)', filter: 'blur(20px)' }} />
+
+                    {/* Glass logo card with bottom→top fill */}
+                    <div
+                        className="relative rounded-2xl px-9 py-6 backdrop-blur-md"
+                        style={{
+                            background: 'rgba(255,255,255,0.96)',
+                            boxShadow: '0 30px 90px -20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.6)',
+                        }}
+                    >
+                        <div className="relative inline-block">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={logoUrl}
+                                alt="Sinotri Global"
+                                className="block h-14 sm:h-16 w-auto max-w-[220px] object-contain opacity-[0.12] grayscale select-none"
+                                draggable={false}
+                            />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src={logoUrl}
+                                alt=""
+                                aria-hidden
+                                className="absolute top-0 left-0 block h-14 sm:h-16 w-auto max-w-[220px] object-contain select-none"
+                                style={{ clipPath: `inset(${100 - pct}% 0 0 0)`, transition: 'clip-path 0.12s linear' }}
+                                draggable={false}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                {/* Brand line */}
+                {/* Brand line + animated dots */}
                 <div
-                    className="mt-7 text-[11px] sm:text-xs font-medium uppercase tracking-[0.42em] text-white/70"
-                    style={{ animation: 'preloaderFadeUp 0.7s ease-out 0.25s both' }}
+                    className="mt-9 flex items-center gap-2 text-[11px] sm:text-xs font-medium uppercase tracking-[0.42em] text-white/75"
+                    style={{ animation: 'plFadeUp 0.7s ease-out 0.25s both' }}
                 >
                     Sinotri&nbsp;Global
+                    <span className="flex gap-1 ml-1">
+                        <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out infinite' }} />
+                        <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.2s infinite' }} />
+                        <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.4s infinite' }} />
+                    </span>
                 </div>
 
-                {/* Thin progress line + counter */}
-                <div className="mt-8 flex flex-col items-center gap-3" style={{ animation: 'preloaderFadeUp 0.7s ease-out 0.35s both' }}>
-                    <div className="relative h-px w-56 sm:w-64 overflow-hidden bg-white/15">
+                {/* Progress bar with shimmer + counter */}
+                <div className="mt-7 flex flex-col items-center gap-3 w-60 sm:w-72" style={{ animation: 'plFadeUp 0.7s ease-out 0.35s both' }}>
+                    <div className="relative h-[3px] w-full overflow-hidden rounded-full bg-white/15">
                         <div
-                            className="absolute inset-y-0 left-0 bg-white"
-                            style={{ width: `${pct}%`, boxShadow: '0 0 10px rgba(255,255,255,0.7)' }}
+                            className="absolute inset-y-0 left-0 rounded-full bg-white"
+                            style={{ width: `${pct}%`, boxShadow: '0 0 12px rgba(255,255,255,0.8)', transition: 'width 0.12s linear' }}
                         />
+                        <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent)', animation: 'plShimmer 1.5s ease-in-out infinite' }} />
                     </div>
-                    <span className="text-[12px] font-light tabular-nums tracking-[0.25em] text-white/80">
+                    <span className="text-[13px] font-light tabular-nums tracking-[0.3em] text-white/85">
                         {rounded.toString().padStart(2, '0')}%
                     </span>
                 </div>
