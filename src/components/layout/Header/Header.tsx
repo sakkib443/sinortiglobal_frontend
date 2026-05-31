@@ -141,7 +141,7 @@ const Header: React.FC = () => {
                     searchMeta: { ...data.data.searchMeta, colors: analysis.colors },
                     previewImage: imageUrl,
                 }));
-                router.push('/products');
+                router.push('/');
             } else {
                 dispatch(setImageSearching(false));
             }
@@ -277,8 +277,8 @@ const Header: React.FC = () => {
                                 onMouseLeave={handleCategoryMouseLeave}
                             >
                                 <button
+                                    onClick={() => setIsCategoryHovered(v => !v)}
                                     className="flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-[#093a1d] transition-colors"
-                                    tabIndex={-1}
                                 >
                                     <span>Categories</span>
                                     <FiChevronDown
@@ -463,7 +463,7 @@ const Header: React.FC = () => {
                                                         My Orders
                                                     </Link>
                                                     <Link
-                                                        href="/wishlist"
+                                                        href="/dashboard/user/wishlist"
                                                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
@@ -550,7 +550,7 @@ const Header: React.FC = () => {
                                     )}
                                     <Link href="/products" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Products</Link>
                                     <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Support</Link>
-                                    <Link href="/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Wishlist</Link>
+                                    <Link href="/dashboard/user/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Wishlist</Link>
                                 </div>
                             </div>
                         )}

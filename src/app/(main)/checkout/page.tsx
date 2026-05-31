@@ -173,11 +173,12 @@ const CheckoutPage = () => {
 
         try {
             if (isAuthenticated) {
-                await createOrder(orderPayload).unwrap();
+                const res = await createOrder(orderPayload).unwrap();
                 dispatch(clearCart());
                 localStorage.removeItem(COUPON_STORAGE_KEY);
                 toast.success('Order placed successfully!', { duration: 5000 });
-                router.push('/checkout/success');
+                const oid = res?.data?._id || res?.data?.order?._id || res?.data?.orderId || '';
+                router.push(`/checkout/success${oid ? `?order=${encodeURIComponent(oid)}` : ''}`);
             } else {
                 const result = await guestCheckout(orderPayload).unwrap();
                 dispatch(clearCart());
@@ -198,7 +199,8 @@ const CheckoutPage = () => {
                 }
 
                 toast.success('Order placed! Your account has been created.', { duration: 7000 });
-                router.push('/checkout/success');
+                const oid = result?.data?._id || result?.data?.order?._id || result?.data?.orderId || '';
+                router.push(`/checkout/success${oid ? `?order=${encodeURIComponent(oid)}` : ''}`);
             }
         } catch (err: any) {
             const errorData = err?.data;

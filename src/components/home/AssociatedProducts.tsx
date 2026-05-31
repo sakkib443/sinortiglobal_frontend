@@ -38,7 +38,7 @@ const AssociatedProducts: React.FC = () => {
                 <div className="associated-carousel-wrapper">
                     <div className="associated-carousel-track">
                         {displayPartners.map((p, idx) => (
-                            <div key={`${p.name}-${idx}`} className="associated-carousel-item flex items-center gap-2 cursor-pointer group">
+                            <div key={`${p.name}-${idx}`} className="associated-carousel-item flex items-center gap-2 cursor-default group">
                                 {p.icon && iconPaths[p.icon] && (
                                     <div
                                         className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
