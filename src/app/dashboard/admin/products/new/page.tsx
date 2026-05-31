@@ -741,37 +741,6 @@ const ProductFormInner = () => {
                             </details>
                         ))}
 
-                        {/* Material, Pattern, Gender — kept below */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Material <span className="text-xs text-gray-400">(comma-separated)</span></label>
-                                <input type="text" placeholder="e.g. cotton, polyester" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.material.join(', ')} onChange={(e) => handleArrayChange('material', e.target.value)} />
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-2">
-                                    <label className="text-sm font-semibold text-gray-700">Pattern</label>
-                                    <select name="pattern" className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.pattern} onChange={handleChange}>
-                                        <option value="">None</option>
-                                        <option value="solid">Solid</option>
-                                        <option value="striped">Striped</option>
-                                        <option value="floral">Floral</option>
-                                        <option value="graphic print">Graphic</option>
-                                        <option value="embroidered">Embroidered</option>
-                                        <option value="camo">Camo</option>
-                                    </select>
-                                </div>
-                                <div className="space-y-2">
-                                    <label className="text-sm font-semibold text-gray-700">Gender</label>
-                                    <select name="gender" className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.gender} onChange={handleChange}>
-                                        <option value="">Any</option>
-                                        <option value="men">Men</option>
-                                        <option value="women">Women</option>
-                                        <option value="unisex">Unisex</option>
-                                        <option value="kids">Kids</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
 

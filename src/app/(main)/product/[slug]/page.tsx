@@ -395,7 +395,6 @@ export default function ProductDetailsPage() {
             productDetails.push({ key: spec.key, value: spec.value });
         });
     }
-    if (product.material?.length > 0) productDetails.push({ key: 'Material', value: product.material.join(', ') });
     if (product.weight > 0) productDetails.push({ key: 'Weight', value: `${product.weight}g` });
     if (product.colors?.length > 0) productDetails.push({ key: product.productType === 'multi-color' ? 'Multi Color' : 'Color', value: product.colors.join(', ') });
     if (product.sizes?.length > 0) productDetails.push({ key: 'Size', value: product.sizes.join(', ') });
@@ -1321,12 +1320,6 @@ export default function ProductDetailsPage() {
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
                                                 <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Origin</span>
                                                 <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.origin}</p>
-                                            </div>
-                                        )}
-                                        {product.material && (
-                                            <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Material</span>
-                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.material}</p>
                                             </div>
                                         )}
                                         {product.weight && (
