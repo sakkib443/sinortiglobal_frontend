@@ -15,6 +15,7 @@ import QuickServices from './QuickServices';
 import CategoryExpertise from './CategoryExpertise';
 import QualityFeatures from './QualityFeatures';
 import AssociatedProducts from './AssociatedProducts';
+import WorldToBangladesh from './WorldToBangladesh';
 import CtaBanner from './CtaBanner';
 
 const LIMIT = 20;
@@ -482,6 +483,9 @@ const NewHomePage: React.FC = () => {
 
             {/* Associated Products */}
             <AssociatedProducts />
+
+            {/* From the World to Bangladesh — sourcing routes map */}
+            <WorldToBangladesh />
 
             {/* CTA Banner */}
             <CtaBanner />

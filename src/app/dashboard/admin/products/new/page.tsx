@@ -306,6 +306,9 @@ const ProductFormInner = () => {
     if (isEditing && isFetching) return <div className="p-20 text-center text-[var(--color-primary)] font-bold animate-pulse">Loading product data...</div>;
 
     const categories = categoriesData?.data || [];
+    // Top-level categories for the main dropdown; subcategories filtered by the chosen parent
+    const topCategories = categories.filter((c: any) => !c.parent);
+    const subCategories = categories.filter((c: any) => (c.parent?._id || c.parent) === formData.category);
 
     return (
         <div className="max-w-7xl mx-auto space-y-6 pb-32">
@@ -842,12 +845,34 @@ const ProductFormInner = () => {
                         <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiTag className="text-indigo-500" /> Organization</h3>
                         <div className="space-y-1.5" data-field="category">
                             <label className="text-xs font-bold text-gray-400 uppercase">Category <span className="text-red-400">*</span></label>
-                            <select name="category" required className={`w-full px-4 py-2.5 bg-white border rounded-md text-sm font-semibold outline-none cursor-pointer ${errors.category ? 'border-red-400 bg-red-50/30' : 'border-gray-200 focus:border-indigo-400'}`} value={formData.category} onChange={handleChange}>
+                            <select
+                                name="category"
+                                required
+                                className={`w-full px-4 py-2.5 bg-white border rounded-md text-sm font-semibold outline-none cursor-pointer ${errors.category ? 'border-red-400 bg-red-50/30' : 'border-gray-200 focus:border-indigo-400'}`}
+                                value={formData.category}
+                                onChange={(e) => { setFormData((prev: any) => ({ ...prev, category: e.target.value, subcategory: '' })); clearError('category'); }}
+                            >
                                 <option value="">Select Category</option>
-                                {categories.map((cat: any) => (<option key={cat._id} value={cat._id}>{cat.name}</option>))}
+                                {topCategories.map((cat: any) => (<option key={cat._id} value={cat._id}>{cat.icon ? `${cat.icon} ` : ''}{cat.name}</option>))}
                             </select>
                             {errors.category && <p className="text-xs text-red-500 font-medium">⚠ {errors.category}</p>}
                         </div>
+
+                        {/* Subcategory — only shown when the chosen category has subcategories */}
+                        {formData.category && subCategories.length > 0 && (
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-gray-400 uppercase">Subcategory <span className="text-gray-300">(optional)</span></label>
+                                <select
+                                    name="subcategory"
+                                    className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none cursor-pointer focus:border-indigo-400"
+                                    value={formData.subcategory || ''}
+                                    onChange={(e) => setFormData((prev: any) => ({ ...prev, subcategory: e.target.value }))}
+                                >
+                                    <option value="">— None —</option>
+                                    {subCategories.map((sub: any) => (<option key={sub._id} value={sub._id}>{sub.icon ? `${sub.icon} ` : ''}{sub.name}</option>))}
+                                </select>
+                            </div>
+                        )}
                         <div className="space-y-1.5" data-field="country">
                             <label className="text-xs font-bold text-gray-400 uppercase">Country <span className="text-gray-300">(sourcing origin)</span></label>
                             <select name="country" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none cursor-pointer focus:border-indigo-400" value={formData.country} onChange={handleChange}>

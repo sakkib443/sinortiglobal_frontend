@@ -16,13 +16,14 @@ import {
     FiChevronRight,
     FiRefreshCw,
     FiCalendar,
-    FiMoreVertical
+    FiTrash2
 } from 'react-icons/fi';
 import {
     useGetAdminOrdersQuery,
     useUpdateOrderStatusMutation,
     useUpdatePaymentStatusMutation,
-    useGetOrderStatsQuery
+    useGetOrderStatsQuery,
+    useDeleteOrderMutation
 } from '@/redux/api/orderApi';
 import { toast } from 'react-hot-toast';
 
@@ -97,6 +98,7 @@ export default function OrdersPage() {
     const { data: statsData } = useGetOrderStatsQuery({});
     const [updateStatus] = useUpdateOrderStatusMutation();
     const [updatePayment] = useUpdatePaymentStatusMutation();
+    const [deleteOrder, { isLoading: isDeleting }] = useDeleteOrderMutation();
 
     const handleStatusChange = async (orderId: string, newStatus: string) => {
         try {
@@ -119,6 +121,19 @@ export default function OrdersPage() {
             refetch();
         } catch (err: any) {
             toast.error(err?.data?.message || 'Failed to update payment');
+        }
+    };
+
+    const handleDelete = async (orderId: string, orderLabel: string) => {
+        if (!window.confirm(`Delete order ${orderLabel}? It will be removed from the orders list. This cannot be undone.`)) return;
+        try {
+            await deleteOrder(orderId).unwrap();
+            toast.success('Order deleted', {
+                style: { borderRadius: '8px', background: 'var(--color-primary)', color: '#fff' },
+            });
+            refetch();
+        } catch (err: any) {
+            toast.error(err?.data?.message || 'Failed to delete order');
         }
     };
 
@@ -344,8 +359,13 @@ export default function OrdersPage() {
                                                 >
                                                     <FiEye size={18} />
                                                 </Link>
-                                                <button className="p-2 hover:bg-white hover:shadow-md rounded-md text-gray-400 hover:text-gray-600 transition-all border border-transparent hover:border-gray-100">
-                                                    <FiMoreVertical size={18} />
+                                                <button
+                                                    onClick={() => handleDelete(order._id, order.orderId || order.orderNumber || '')}
+                                                    disabled={isDeleting}
+                                                    className="p-2 hover:bg-red-50 hover:shadow-md rounded-md text-gray-400 hover:text-red-600 transition-all border border-transparent hover:border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title="Delete Order"
+                                                >
+                                                    <FiTrash2 size={18} />
                                                 </button>
                                             </div>
                                         </td>

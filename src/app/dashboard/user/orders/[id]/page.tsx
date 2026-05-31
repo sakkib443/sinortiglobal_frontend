@@ -16,8 +16,10 @@ import {
     FiMail,
     FiUser,
     FiCopy,
+    FiDownload,
 } from 'react-icons/fi';
 import { useGetOrderByIdQuery } from '@/redux/api/orderApi';
+import { downloadInvoice } from '@/utils/invoice';
 
 const statusSteps = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
 const statusIcons: Record<string, React.ElementType> = {
@@ -101,14 +103,24 @@ export default function OrderDetailPage() {
                             })}
                         </p>
                     </div>
-                    <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold capitalize ${
-                        order.status === 'delivered' ? 'bg-emerald-50 text-emerald-700' :
-                        order.status === 'cancelled' ? 'bg-red-50 text-red-700' :
-                        'bg-blue-50 text-blue-700'
-                    }`}>
-                        {React.createElement(statusIcons[order.status] || FiClock, { size: 16 })}
-                        {order.status}
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold capitalize ${
+                            order.status === 'delivered' ? 'bg-emerald-50 text-emerald-700' :
+                            order.status === 'cancelled' ? 'bg-red-50 text-red-700' :
+                            'bg-blue-50 text-blue-700'
+                        }`}>
+                            {React.createElement(statusIcons[order.status] || FiClock, { size: 16 })}
+                            {order.status}
+                        </span>
+                        <button
+                            onClick={() => downloadInvoice(order)}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] shadow-md shadow-[var(--color-primary)]/20 transition-all"
+                            title="Download receipt as PDF"
+                        >
+                            <FiDownload size={15} />
+                            Download Receipt
+                        </button>
+                    </div>
                 </div>
             </div>
 

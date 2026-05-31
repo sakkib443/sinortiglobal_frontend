@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useRef, useState } from 'react';
-import { FiUploadCloud, FiX, FiImage } from 'react-icons/fi';
-import { useUploadImageMutation, useUploadImagesMutation } from '@/redux/api/uploadApi';
+import { FiUploadCloud, FiX, FiImage, FiVideo } from 'react-icons/fi';
+import { useUploadImageMutation, useUploadImagesMutation, useUploadVideoMutation } from '@/redux/api/uploadApi';
 
 /* ════════════════════════════════════════════
    SINGLE IMAGE UPLOADER
@@ -15,12 +15,16 @@ export function SingleImageUploader({
     onChange,
     required = false,
     folder = 'image',
+    accept = 'image/*',
+    hint = 'JPG, PNG, WebP — max 10MB',
 }: {
     label: string;
     value: string;
     onChange: (url: string) => void;
     required?: boolean;
     folder?: string;
+    accept?: string;
+    hint?: string;
 }) {
     const [uploadImage, { isLoading }] = useUploadImageMutation();
     const [error, setError] = useState('');
@@ -29,6 +33,8 @@ export function SingleImageUploader({
     const handleFile = async (file: File) => {
         if (!file) return;
         if (file.size > 10 * 1024 * 1024) { setError('File must be under 10MB'); return; }
+        // Enforce PNG when the caller restricts the accept type to PNG
+        if (accept === 'image/png' && file.type !== 'image/png') { setError('Please upload a PNG file'); return; }
         setError('');
         const fd = new FormData();
         fd.append('image', file);
@@ -86,13 +92,105 @@ export function SingleImageUploader({
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
                         <FiUploadCloud size={28} color="#9ca3af" />
                         <span style={{ fontSize: '12.5px', color: '#6b7280', fontWeight: 500 }}>Click or drag image here</span>
-                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>JPG, PNG, WebP — max 10MB</span>
+                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>{hint}</span>
                     </div>
                 )}
             </div>
 
             {error && <p style={{ fontSize: '11.5px', color: '#ef4444', margin: '4px 0 0', fontWeight: 500 }}>{error}</p>}
-            <input ref={ref} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }} />
+            <input ref={ref} type="file" accept={accept} style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }} />
+        </div>
+    );
+}
+
+
+/* ════════════════════════════════════════════
+   SINGLE VIDEO UPLOADER
+   Usage:
+     <SingleVideoUploader value={url} onChange={setUrl} label="Hero Video" />
+════════════════════════════════════════════ */
+export function SingleVideoUploader({
+    label,
+    value,
+    onChange,
+    required = false,
+}: {
+    label: string;
+    value: string;
+    onChange: (url: string) => void;
+    required?: boolean;
+}) {
+    const [uploadVideo, { isLoading }] = useUploadVideoMutation();
+    const [error, setError] = useState('');
+    const ref = useRef<HTMLInputElement>(null);
+
+    const handleFile = async (file: File) => {
+        if (!file) return;
+        if (file.size > 100 * 1024 * 1024) { setError('Video must be under 100MB'); return; }
+        setError('');
+        const fd = new FormData();
+        fd.append('video', file);
+        try {
+            const res = await uploadVideo(fd).unwrap();
+            onChange(res.data.url);
+        } catch {
+            setError('Upload failed. Try again.');
+        }
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files?.[0];
+        if (file) handleFile(file);
+    };
+
+    return (
+        <div>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
+                {label} {required && <span style={{ color: 'var(--color-secondary)' }}>*</span>}
+            </label>
+
+            {/* Upload Zone */}
+            <div
+                onClick={() => !isLoading && ref.current?.click()}
+                onDrop={handleDrop}
+                onDragOver={e => e.preventDefault()}
+                style={{
+                    border: `2px dashed ${error ? '#fca5a5' : value ? '#86efac' : '#d1d5db'}`,
+                    borderRadius: '10px', padding: '20px', textAlign: 'center',
+                    cursor: isLoading ? 'wait' : 'pointer',
+                    background: value ? 'var(--color-primary-lightest)' : '#fafafa',
+                    transition: 'all 0.2s ease', position: 'relative',
+                    minHeight: '110px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+            >
+                {isLoading ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                        <span style={{ fontSize: '12px', color: '#6b7280' }}>Uploading video... please wait</span>
+                    </div>
+                ) : value ? (
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <video src={value} muted style={{ maxHeight: '120px', maxWidth: '100%', borderRadius: '8px', objectFit: 'contain', background: '#000' }} />
+                        <button
+                            type="button"
+                            onClick={e => { e.stopPropagation(); onChange(''); }}
+                            style={{ position: 'absolute', top: '-8px', right: '-8px', width: '22px', height: '22px', borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}
+                        >
+                            <FiX size={12} />
+                        </button>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                        <FiVideo size={28} color="#9ca3af" />
+                        <span style={{ fontSize: '12.5px', color: '#6b7280', fontWeight: 500 }}>Click or drag video here</span>
+                        <span style={{ fontSize: '11px', color: '#9ca3af' }}>MP4, WebM, MOV — max 100MB</span>
+                    </div>
+                )}
+            </div>
+
+            {error && <p style={{ fontSize: '11.5px', color: '#ef4444', margin: '4px 0 0', fontWeight: 500 }}>{error}</p>}
+            <input ref={ref} type="file" accept="video/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }} />
         </div>
     );
 }

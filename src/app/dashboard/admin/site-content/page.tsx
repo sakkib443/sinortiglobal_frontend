@@ -7,8 +7,11 @@ import dynamic from 'next/dynamic';
 import {
     FiPhone, FiMessageCircle, FiLayout, FiFileText, FiImage,
     FiSave, FiPlus, FiTrash2, FiCheckCircle, FiArrowUp, FiArrowDown, FiCreditCard,
+    FiVideo, FiYoutube, FiUploadCloud,
 } from 'react-icons/fi';
-import { SingleImageUploader } from '@/components/ui/ImageUploader';
+import { SingleImageUploader, SingleVideoUploader } from '@/components/ui/ImageUploader';
+import { isValidYouTube, getYouTubeEmbedUrl, getYouTubeThumbnail } from '@/utils/youtube';
+import HeroCarousel from '@/components/home/HeroCarousel';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false, loading: () => <div style={{ height: '350px', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', animation: 'pulse 1.5s ease-in-out infinite' }} /> });
 import 'react-quill-new/dist/quill.snow.css';
@@ -566,10 +569,38 @@ function LegalPagesTab() {
 function HeroSlidesTab({ data, setData, onSave, isSaving }: { data: any; setData: any; onSave: () => void; isSaving: boolean }) {
     const slides = data.heroSlides || [];
 
-    const addSlide = (imageUrl: string) => {
-        if (!imageUrl) return;
-        const newSlides = [...slides, { imageUrl, active: true, order: slides.length }];
+    // Live homepage preview — mirrors exactly what HeroSection shows (active slides, with image fallback)
+    const activeSlides = slides.filter((s: any) => s.active !== false);
+    const previewSlides = activeSlides.length > 0 ? activeSlides : [{ mediaType: 'image', imageUrl: '/images/hero.jpg' }];
+
+    // ── Add-slide form state ──
+    const [mediaType, setMediaType] = useState<'image' | 'video'>('image');
+    const [videoSource, setVideoSource] = useState<'upload' | 'youtube'>('youtube');
+    const [youtubeInput, setYoutubeInput] = useState('');
+
+    const pushSlide = (slide: any) => {
+        const newSlides = [...slides, { ...slide, active: true, order: slides.length }];
         setData((p: any) => ({ ...p, heroSlides: newSlides }));
+    };
+
+    const addImageSlide = (imageUrl: string) => {
+        if (!imageUrl) return;
+        pushSlide({ mediaType: 'image', imageUrl });
+    };
+
+    const addUploadedVideoSlide = (videoUrl: string) => {
+        if (!videoUrl) return;
+        pushSlide({ mediaType: 'video', videoUrl });
+    };
+
+    const addYoutubeSlide = () => {
+        if (!isValidYouTube(youtubeInput)) {
+            toast.error('Please enter a valid YouTube link');
+            return;
+        }
+        pushSlide({ mediaType: 'video', youtubeUrl: youtubeInput.trim() });
+        setYoutubeInput('');
+        toast.success('YouTube slide added');
     };
 
     const removeSlide = (idx: number) => {
@@ -585,9 +616,36 @@ function HeroSlidesTab({ data, setData, onSave, isSaving }: { data: any; setData
         setData((p: any) => ({ ...p, heroSlides: newSlides }));
     };
 
-    const handleSaveHero = async () => {
-        // Update heroSlides in formData then trigger parent save
-        onSave();
+    // ── Toggle button helper ──
+    const toggleBtn = (active: boolean): React.CSSProperties => ({
+        ...btn, padding: '7px 16px', fontSize: '12.5px',
+        background: active ? 'var(--color-primary)' : '#f3f4f6',
+        color: active ? '#fff' : '#555',
+    });
+
+    // ── Renders the right preview for a slide in the grid ──
+    const renderSlidePreview = (slide: any) => {
+        if (slide.mediaType === 'video' && slide.youtubeUrl) {
+            const thumb = getYouTubeThumbnail(slide.youtubeUrl);
+            return (
+                <div style={{ position: 'relative', width: '100%', height: '120px', background: '#000' }}>
+                    {thumb && <img src={thumb} alt="yt" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />}
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <FiYoutube size={34} color="#fff" style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.6))' }} />
+                    </div>
+                </div>
+            );
+        }
+        if (slide.mediaType === 'video' && slide.videoUrl) {
+            return <video src={slide.videoUrl} muted style={{ width: '100%', height: '120px', objectFit: 'cover', background: '#000' }} />;
+        }
+        return <img src={slide.imageUrl} alt="slide" style={{ width: '100%', height: '120px', objectFit: 'cover' }} />;
+    };
+
+    const slideBadge = (slide: any) => {
+        if (slide.mediaType === 'video' && slide.youtubeUrl) return { icon: <FiYoutube size={11} />, text: 'YouTube', bg: '#fef2f2', color: '#dc2626' };
+        if (slide.mediaType === 'video') return { icon: <FiVideo size={11} />, text: 'Video', bg: '#eff6ff', color: '#2563eb' };
+        return { icon: <FiImage size={11} />, text: 'Image', bg: '#f0fdf4', color: '#16a34a' };
     };
 
     return (
@@ -595,8 +653,33 @@ function HeroSlidesTab({ data, setData, onSave, isSaving }: { data: any; setData
             {/* Info */}
             <div style={{ ...card, background: '#fffbeb', borderColor: '#fde68a' }}>
                 <p style={{ fontSize: '12px', color: '#b45309', fontWeight: 600, margin: 0 }}>
-                    🖼️ Hero slides appear at the top of your homepage as a banner carousel. Add multiple images and they will auto-rotate.
+                    🖼️ Hero slides appear at the top of your homepage as a banner carousel. You can add <b>images</b>, <b>uploaded videos</b>, or <b>YouTube links</b> — they auto-rotate.
                 </p>
+            </div>
+
+            {/* Live Homepage Preview */}
+            <div style={card}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        🖥️ Homepage Preview
+                        <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '999px', background: 'var(--color-primary-lightest)', color: '#16a34a' }}>LIVE</span>
+                    </h3>
+                    <span style={{ fontSize: '11px', color: '#888' }}>Exactly how the banner will look on the homepage</span>
+                </div>
+                {/* Constrained to the same 16:4.5 ratio the homepage uses */}
+                <div style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid #e5e7eb', background: '#000' }}>
+                    <HeroCarousel slides={previewSlides} />
+                </div>
+                {activeSlides.length === 0 && (
+                    <p style={{ fontSize: '11.5px', color: '#b45309', margin: '8px 0 0', fontWeight: 500 }}>
+                        ⚠️ No active slides yet — the homepage is showing the default fallback image above. Add a slide below, then click <b>Save Hero Slides</b>.
+                    </p>
+                )}
+                {activeSlides.length > 0 && (
+                    <p style={{ fontSize: '11.5px', color: '#888', margin: '8px 0 0' }}>
+                        💡 This preview updates instantly as you add slides — but remember to click <b>Save Hero Slides</b> to make it live on the real homepage.
+                    </p>
+                )}
             </div>
 
             {/* Current Slides */}
@@ -604,66 +687,146 @@ function HeroSlidesTab({ data, setData, onSave, isSaving }: { data: any; setData
                 <div style={{ ...card }}>
                     <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>Current Slides ({slides.length})</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
-                        {slides.map((slide: any, idx: number) => (
-                            <div key={idx} style={{
-                                position: 'relative', borderRadius: '10px', overflow: 'hidden',
-                                border: '1px solid #e5e7eb', background: '#f9fafb',
-                            }}>
-                                <img
-                                    src={slide.imageUrl}
-                                    alt={`Slide ${idx + 1}`}
-                                    style={{ width: '100%', height: '120px', objectFit: 'cover' }}
-                                />
-                                <div style={{ padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '11px', fontWeight: 700, color: '#555' }}>Slide {idx + 1}</span>
-                                    <div style={{ display: 'flex', gap: '4px' }}>
-                                        <button
-                                            onClick={() => moveSlide(idx, 'up')}
-                                            disabled={idx === 0}
-                                            style={{ ...btnSmall, padding: '4px 6px', opacity: idx === 0 ? 0.3 : 1 }}
-                                            title="Move Up"
-                                        >
-                                            <FiArrowUp size={12} />
-                                        </button>
-                                        <button
-                                            onClick={() => moveSlide(idx, 'down')}
-                                            disabled={idx === slides.length - 1}
-                                            style={{ ...btnSmall, padding: '4px 6px', opacity: idx === slides.length - 1 ? 0.3 : 1 }}
-                                            title="Move Down"
-                                        >
-                                            <FiArrowDown size={12} />
-                                        </button>
-                                        <button
-                                            onClick={() => removeSlide(idx)}
-                                            style={{ ...btnSmall, padding: '4px 6px', background: '#fef2f2', color: '#dc2626' }}
-                                            title="Delete"
-                                        >
-                                            <FiTrash2 size={12} />
-                                        </button>
+                        {slides.map((slide: any, idx: number) => {
+                            const badge = slideBadge(slide);
+                            return (
+                                <div key={idx} style={{
+                                    position: 'relative', borderRadius: '10px', overflow: 'hidden',
+                                    border: '1px solid #e5e7eb', background: '#f9fafb',
+                                }}>
+                                    {renderSlidePreview(slide)}
+                                    {/* Type badge */}
+                                    <span style={{
+                                        position: 'absolute', top: '8px', left: '8px', display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                        padding: '3px 8px', borderRadius: '999px', fontSize: '10px', fontWeight: 700,
+                                        background: badge.bg, color: badge.color,
+                                    }}>
+                                        {badge.icon} {badge.text}
+                                    </span>
+                                    <div style={{ padding: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '11px', fontWeight: 700, color: '#555' }}>Slide {idx + 1}</span>
+                                        <div style={{ display: 'flex', gap: '4px' }}>
+                                            <button
+                                                onClick={() => moveSlide(idx, 'up')}
+                                                disabled={idx === 0}
+                                                style={{ ...btnSmall, padding: '4px 6px', opacity: idx === 0 ? 0.3 : 1 }}
+                                                title="Move Up"
+                                            >
+                                                <FiArrowUp size={12} />
+                                            </button>
+                                            <button
+                                                onClick={() => moveSlide(idx, 'down')}
+                                                disabled={idx === slides.length - 1}
+                                                style={{ ...btnSmall, padding: '4px 6px', opacity: idx === slides.length - 1 ? 0.3 : 1 }}
+                                                title="Move Down"
+                                            >
+                                                <FiArrowDown size={12} />
+                                            </button>
+                                            <button
+                                                onClick={() => removeSlide(idx)}
+                                                style={{ ...btnSmall, padding: '4px 6px', background: '#fef2f2', color: '#dc2626' }}
+                                                title="Delete"
+                                            >
+                                                <FiTrash2 size={12} />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             )}
 
             {/* Add New Slide */}
             <div style={card}>
-                <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 6px' }}>Add New Slide</h3>
-                <p style={{ fontSize: '11px', color: '#888', margin: '0 0 12px' }}>
-                    Upload a high-quality banner image (recommended: 1920×540px or 16:4.5 ratio)
-                </p>
-                <SingleImageUploader
-                    label="Slide Image"
-                    value=""
-                    onChange={(url) => { if (url) addSlide(url); }}
-                />
+                <h3 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 12px' }}>Add New Slide</h3>
+
+                {/* Media type toggle */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                    <button type="button" onClick={() => setMediaType('image')} style={toggleBtn(mediaType === 'image')}>
+                        <FiImage size={14} /> Image
+                    </button>
+                    <button type="button" onClick={() => setMediaType('video')} style={toggleBtn(mediaType === 'video')}>
+                        <FiVideo size={14} /> Video
+                    </button>
+                </div>
+
+                {/* IMAGE */}
+                {mediaType === 'image' && (
+                    <>
+                        <p style={{ fontSize: '11px', color: '#888', margin: '0 0 12px' }}>
+                            Upload a high-quality banner image (recommended: 1920×540px or 16:4.5 ratio)
+                        </p>
+                        <SingleImageUploader
+                            label="Slide Image"
+                            value=""
+                            onChange={(url) => addImageSlide(url)}
+                        />
+                    </>
+                )}
+
+                {/* VIDEO */}
+                {mediaType === 'video' && (
+                    <>
+                        {/* Video source sub-toggle */}
+                        <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                            <button type="button" onClick={() => setVideoSource('youtube')} style={{ ...toggleBtn(videoSource === 'youtube'), padding: '6px 13px', fontSize: '12px' }}>
+                                <FiYoutube size={13} /> YouTube Link
+                            </button>
+                            <button type="button" onClick={() => setVideoSource('upload')} style={{ ...toggleBtn(videoSource === 'upload'), padding: '6px 13px', fontSize: '12px' }}>
+                                <FiUploadCloud size={13} /> Upload Video
+                            </button>
+                        </div>
+
+                        {/* YouTube link */}
+                        {videoSource === 'youtube' && (
+                            <div>
+                                <label style={label}>YouTube Video Link</label>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                    <input
+                                        style={input}
+                                        placeholder="https://www.youtube.com/watch?v=..."
+                                        value={youtubeInput}
+                                        onChange={(e) => setYoutubeInput(e.target.value)}
+                                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addYoutubeSlide(); } }}
+                                    />
+                                    <button type="button" onClick={addYoutubeSlide} style={{ ...btnPrimary, whiteSpace: 'nowrap' }}>
+                                        <FiPlus size={13} /> Add
+                                    </button>
+                                </div>
+                                {/* Live preview */}
+                                {youtubeInput && isValidYouTube(youtubeInput) && (
+                                    <div style={{ marginTop: '12px', maxWidth: '320px', aspectRatio: '16 / 9', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e5e7eb' }}>
+                                        <iframe src={getYouTubeEmbedUrl(youtubeInput) || ''} title="preview" allow="autoplay; encrypted-media" style={{ width: '100%', height: '100%', border: 0 }} />
+                                    </div>
+                                )}
+                                {youtubeInput && !isValidYouTube(youtubeInput) && (
+                                    <p style={{ fontSize: '11.5px', color: '#ef4444', margin: '6px 0 0', fontWeight: 500 }}>Not a valid YouTube link</p>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Upload video */}
+                        {videoSource === 'upload' && (
+                            <>
+                                <p style={{ fontSize: '11px', color: '#888', margin: '0 0 12px' }}>
+                                    Upload a short banner video (MP4/WebM/MOV, max 100MB). It will play muted and looped.
+                                </p>
+                                <SingleVideoUploader
+                                    label="Slide Video"
+                                    value=""
+                                    onChange={(url) => addUploadedVideoSlide(url)}
+                                />
+                            </>
+                        )}
+                    </>
+                )}
             </div>
 
             {/* Save Button */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-                <button onClick={handleSaveHero} disabled={isSaving} style={{ ...btnPrimary, opacity: isSaving ? 0.6 : 1 }}>
+                <button onClick={onSave} disabled={isSaving} style={{ ...btnPrimary, opacity: isSaving ? 0.6 : 1 }}>
                     <FiSave size={13} /> {isSaving ? 'Saving...' : 'Save Hero Slides'}
                 </button>
             </div>

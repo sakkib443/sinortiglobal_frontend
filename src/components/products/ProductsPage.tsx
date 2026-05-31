@@ -23,6 +23,7 @@ const ProductsPage: React.FC = () => {
     const searchParams = useSearchParams();
 
     const categoryParam = searchParams.get('category') || '';
+    const subcategoryParam = searchParams.get('subcategory') || '';
     const searchParam = searchParams.get('q') || '';
     const countryParam = searchParams.get('country') || '';
 
@@ -32,9 +33,17 @@ const ProductsPage: React.FC = () => {
     const [showMobileFilter, setShowMobileFilter] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
     const [selectedCategory, setSelectedCategory] = useState(categoryParam);
+    const [selectedSubcategory, setSelectedSubcategory] = useState(subcategoryParam);
     const [selectedCountry, setSelectedCountry] = useState(countryParam);
     const [localSearch, setLocalSearch] = useState(searchParam);
     const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+
+    // Category hierarchy helpers
+    const topCategories = categories.filter((c: any) => !c.parent);
+    const childrenOf = (id: string) => categories.filter((c: any) => (c.parent?._id || c.parent) === id);
+    const catIcon = (c: any) => c.image
+        ? <img src={c.image} alt="" className="w-4 h-4 rounded object-cover shrink-0" />
+        : c.icon ? <span>{c.icon}</span> : null;
 
     // Fetch categories
     useEffect(() => {
@@ -51,55 +60,52 @@ const ProductsPage: React.FC = () => {
     // Sync URL params
     useEffect(() => {
         setSelectedCategory(categoryParam);
+        setSelectedSubcategory(subcategoryParam);
         setSelectedCountry(countryParam);
         setLocalSearch(searchParam);
         setPage(1);
-    }, [categoryParam, searchParam, countryParam]);
+    }, [categoryParam, subcategoryParam, searchParam, countryParam]);
 
     // Build query
     const queryParams = useMemo(() => {
         const params: any = { page, limit: LIMIT, sort: sortBy };
         if (selectedCategory) params.category = selectedCategory;
+        if (selectedSubcategory) params.subcategory = selectedSubcategory;
         if (selectedCountry && selectedCountry !== 'All') params.country = selectedCountry;
         if (searchParam) params.searchTerm = searchParam;
         if (priceRange.min) params.minPrice = priceRange.min;
         if (priceRange.max) params.maxPrice = priceRange.max;
         return params;
-    }, [page, sortBy, selectedCategory, selectedCountry, searchParam, priceRange]);
+    }, [page, sortBy, selectedCategory, selectedSubcategory, selectedCountry, searchParam, priceRange]);
 
     const { data, isFetching } = useGetProductsQuery(queryParams);
     const products = data?.data || [];
     const meta = data?.meta || { total: 0, totalPage: 1 };
 
-    const handleCategorySelect = (catId: string) => {
+    // Central URL builder — only the passed keys change, the rest are preserved
+    const pushFilters = (next: { category?: string; subcategory?: string; country?: string; q?: string }) => {
+        const category = next.category !== undefined ? next.category : selectedCategory;
+        const subcategory = next.subcategory !== undefined ? next.subcategory : selectedSubcategory;
+        const country = next.country !== undefined ? next.country : selectedCountry;
+        const q = next.q !== undefined ? next.q : searchParam;
         const params = new URLSearchParams();
-        if (catId) params.set('category', catId);
-        if (searchParam) params.set('q', searchParam);
-        if (selectedCountry && selectedCountry !== 'All') params.set('country', selectedCountry);
-        router.push(`/products?${params.toString()}`);
-        setShowMobileFilter(false);
-    };
-
-    const handleCountrySelect = (country: string) => {
-        const params = new URLSearchParams();
-        if (selectedCategory) params.set('category', selectedCategory);
-        if (searchParam) params.set('q', searchParam);
+        if (q && q.trim()) params.set('q', q.trim());
+        if (category) params.set('category', category);
+        if (subcategory) params.set('subcategory', subcategory);
         if (country && country !== 'All') params.set('country', country);
         router.push(`/products?${params.toString()}`);
         setShowMobileFilter(false);
     };
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        const params = new URLSearchParams();
-        if (localSearch.trim()) params.set('q', localSearch.trim());
-        if (selectedCategory) params.set('category', selectedCategory);
-        if (selectedCountry && selectedCountry !== 'All') params.set('country', selectedCountry);
-        router.push(`/products?${params.toString()}`);
-    };
+    // Selecting a category resets any active subcategory
+    const handleCategorySelect = (catId: string) => pushFilters({ category: catId, subcategory: '' });
+    const handleSubcategorySelect = (catId: string, subId: string) => pushFilters({ category: catId, subcategory: subId });
+    const handleCountrySelect = (country: string) => pushFilters({ country });
+    const handleSearch = (e: React.FormEvent) => { e.preventDefault(); pushFilters({ q: localSearch }); };
 
     const clearFilters = () => {
         setSelectedCategory('');
+        setSelectedSubcategory('');
         setSelectedCountry('');
         setLocalSearch('');
         setPriceRange({ min: '', max: '' });
@@ -107,6 +113,7 @@ const ProductsPage: React.FC = () => {
     };
 
     const activeCategoryName = categories.find(c => c._id === selectedCategory)?.name || '';
+    const activeSubcategoryName = categories.find(c => c._id === selectedSubcategory)?.name || '';
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -120,13 +127,19 @@ const ProductsPage: React.FC = () => {
                         {activeCategoryName && (
                             <>
                                 <span>/</span>
-                                <span className="text-[var(--color-primary)] font-medium">{activeCategoryName}</span>
+                                <span className={activeSubcategoryName ? 'hover:text-[var(--color-primary)] cursor-pointer' : 'text-[var(--color-primary)] font-medium'} onClick={() => activeSubcategoryName && handleCategorySelect(selectedCategory)}>{activeCategoryName}</span>
+                            </>
+                        )}
+                        {activeSubcategoryName && (
+                            <>
+                                <span>/</span>
+                                <span className="text-[var(--color-primary)] font-medium">{activeSubcategoryName}</span>
                             </>
                         )}
                     </div>
                     <div className="flex items-center justify-between">
                         <h1 className="text-2xl font-bold text-gray-900">
-                            {searchParam ? `Results for "${searchParam}"` : activeCategoryName || 'All Products'}
+                            {searchParam ? `Results for "${searchParam}"` : activeSubcategoryName || activeCategoryName || 'All Products'}
                         </h1>
                         <span className="text-sm text-gray-400">{meta.total || products.length} products found</span>
                     </div>
@@ -171,24 +184,63 @@ const ProductsPage: React.FC = () => {
                                             All Categories
                                         </label>
                                     </li>
-                                    {categories.map((cat: any) => (
-                                        <li key={cat._id}>
-                                            <label
-                                                className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${selectedCategory === cat._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedCategory === cat._id}
-                                                    onChange={() => handleCategorySelect(cat._id)}
-                                                    className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] accent-[var(--color-primary)]"
-                                                />
-                                                <span className="flex-1">{cat.name}</span>
-                                                {cat.productCount > 0 && (
-                                                    <span className="text-[10px] text-gray-400">({cat.productCount})</span>
+                                    {topCategories.map((cat: any) => {
+                                        const subs = childrenOf(cat._id);
+                                        const isOpen = selectedCategory === cat._id;
+                                        return (
+                                            <li key={cat._id}>
+                                                <label
+                                                    className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${isOpen ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isOpen}
+                                                        onChange={() => handleCategorySelect(cat._id)}
+                                                        className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] accent-[var(--color-primary)]"
+                                                    />
+                                                    {catIcon(cat)}
+                                                    <span className="flex-1">{cat.name}</span>
+                                                    {cat.productCount > 0 && (
+                                                        <span className="text-[10px] text-gray-400">({cat.productCount})</span>
+                                                    )}
+                                                </label>
+
+                                                {/* Subcategories — shown when the parent is the active category */}
+                                                {isOpen && subs.length > 0 && (
+                                                    <ul className="mt-1 ml-4 pl-2 border-l border-gray-200 space-y-1">
+                                                        <li>
+                                                            <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${!selectedSubcategory ? 'text-[var(--color-primary)] font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={!selectedSubcategory}
+                                                                    onChange={() => handleCategorySelect(cat._id)}
+                                                                    className="w-3.5 h-3.5 rounded border-gray-300 accent-[var(--color-primary)]"
+                                                                />
+                                                                All {cat.name}
+                                                            </label>
+                                                        </li>
+                                                        {subs.map((sub: any) => (
+                                                            <li key={sub._id}>
+                                                                <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${selectedSubcategory === sub._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={selectedSubcategory === sub._id}
+                                                                        onChange={() => handleSubcategorySelect(cat._id, sub._id)}
+                                                                        className="w-3.5 h-3.5 rounded border-gray-300 accent-[var(--color-primary)]"
+                                                                    />
+                                                                    {catIcon(sub)}
+                                                                    <span className="flex-1">{sub.name}</span>
+                                                                    {sub.productCount > 0 && (
+                                                                        <span className="text-[10px] text-gray-400">({sub.productCount})</span>
+                                                                    )}
+                                                                </label>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
                                                 )}
-                                            </label>
-                                        </li>
-                                    ))}
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             </div>
 
@@ -267,6 +319,12 @@ const ProductsPage: React.FC = () => {
                                         <button onClick={() => handleCategorySelect('')}><FiX size={12} /></button>
                                     </span>
                                 )}
+                                {activeSubcategoryName && (
+                                    <span className="hidden sm:flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-medium">
+                                        {activeSubcategoryName}
+                                        <button onClick={() => handleCategorySelect(selectedCategory)}><FiX size={12} /></button>
+                                    </span>
+                                )}
                                 {selectedCountry && selectedCountry !== 'All' && (
                                     <span className="hidden sm:flex items-center gap-1 text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-medium">
                                         {selectedCountry}
@@ -276,7 +334,7 @@ const ProductsPage: React.FC = () => {
                                 {searchParam && (
                                     <span className="hidden sm:flex items-center gap-1 text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-medium">
                                         "{searchParam}"
-                                        <button onClick={() => router.push(`/products${selectedCategory ? `?category=${selectedCategory}` : ''}`)}><FiX size={12} /></button>
+                                        <button onClick={() => pushFilters({ q: '' })}><FiX size={12} /></button>
                                     </span>
                                 )}
                             </div>
@@ -420,14 +478,38 @@ const ProductsPage: React.FC = () => {
                                     All
                                 </label>
                             </li>
-                            {categories.map((cat: any) => (
-                                <li key={cat._id}>
-                                    <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${selectedCategory === cat._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}>
-                                        <input type="checkbox" checked={selectedCategory === cat._id} onChange={() => handleCategorySelect(cat._id)} className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]" />
-                                        {cat.name}
-                                    </label>
-                                </li>
-                            ))}
+                            {topCategories.map((cat: any) => {
+                                const subs = childrenOf(cat._id);
+                                const isOpen = selectedCategory === cat._id;
+                                return (
+                                    <li key={cat._id}>
+                                        <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${isOpen ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}>
+                                            <input type="checkbox" checked={isOpen} onChange={() => handleCategorySelect(cat._id)} className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]" />
+                                            {catIcon(cat)}
+                                            {cat.name}
+                                        </label>
+                                        {isOpen && subs.length > 0 && (
+                                            <ul className="mt-1 ml-4 pl-2 border-l border-gray-200 space-y-1">
+                                                <li>
+                                                    <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer ${!selectedSubcategory ? 'text-[var(--color-primary)] font-medium' : 'text-gray-500'}`}>
+                                                        <input type="checkbox" checked={!selectedSubcategory} onChange={() => handleCategorySelect(cat._id)} className="w-3.5 h-3.5 rounded border-gray-300 accent-[var(--color-primary)]" />
+                                                        All {cat.name}
+                                                    </label>
+                                                </li>
+                                                {subs.map((sub: any) => (
+                                                    <li key={sub._id}>
+                                                        <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer ${selectedSubcategory === sub._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-500'}`}>
+                                                            <input type="checkbox" checked={selectedSubcategory === sub._id} onChange={() => handleSubcategorySelect(cat._id, sub._id)} className="w-3.5 h-3.5 rounded border-gray-300 accent-[var(--color-primary)]" />
+                                                            {catIcon(sub)}
+                                                            {sub.name}
+                                                        </label>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </li>
+                                );
+                            })}
                         </ul>
 
                         {/* Country */}

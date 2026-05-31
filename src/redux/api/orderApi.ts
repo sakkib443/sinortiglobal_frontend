@@ -55,6 +55,14 @@ export const orderApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Orders'],
         }),
+        // Admin: delete order (soft delete) — Backend route: DELETE /api/orders/admin/:id
+        deleteOrder: builder.mutation({
+            query: (id) => ({
+                url: `/orders/admin/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Orders'],
+        }),
 
         // ===== User endpoints =====
         // User: create order — Backend route: POST /api/orders/
@@ -111,6 +119,7 @@ export const {
     useUpdateOrderStatusMutation,
     useUpdatePaymentStatusMutation,
     useAddAdminNoteMutation,
+    useDeleteOrderMutation,
     // User hooks
     useCreateOrderMutation,
     useGuestCheckoutMutation,

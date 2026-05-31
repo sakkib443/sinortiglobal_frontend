@@ -22,10 +22,21 @@ export const uploadApi = baseApi.injectEndpoints({
                 formData: true,
             }),
         }),
+
+        // Upload single video — POST /api/upload/video
+        uploadVideo: builder.mutation<{ data: { url: string } }, FormData>({
+            query: (formData) => ({
+                url: '/upload/video',
+                method: 'POST',
+                body: formData,
+                formData: true,
+            }),
+        }),
     }),
 });
 
 export const {
     useUploadImageMutation,
     useUploadImagesMutation,
+    useUploadVideoMutation,
 } = uploadApi;

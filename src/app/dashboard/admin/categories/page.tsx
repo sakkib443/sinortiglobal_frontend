@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-    FiPlus, FiEdit2, FiTrash2, FiSearch, FiX, FiSave, FiGrid,
+    FiPlus, FiEdit2, FiTrash2, FiSearch, FiX, FiSave, FiGrid, FiImage, FiSmile,
 } from 'react-icons/fi';
 import {
     useGetCategoriesQuery,
@@ -10,34 +10,58 @@ import {
     useCreateCategoryMutation,
     useUpdateCategoryMutation,
 } from '@/redux/api/categoryApi';
+import { SingleImageUploader } from '@/components/ui/ImageUploader';
 import { toast } from 'react-hot-toast';
 
 /* ─── Styles ─── */
 const inp: React.CSSProperties = { width: '100%', padding: '9px 12px', border: '1.5px solid #e5e7eb', borderRadius: '7px', fontSize: '13px', outline: 'none', boxSizing: 'border-box' };
 const lbl: React.CSSProperties = { fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '5px' };
 
-/* ─── 20 Default Icons ─── */
+/* ─── Default Icon Library (searchable) ─── */
 const ICON_OPTIONS = [
-    { emoji: '👗', label: 'Fashion' },
-    { emoji: '👔', label: 'Men Clothing' },
-    { emoji: '📱', label: 'Mobile' },
-    { emoji: '💻', label: 'Electronics' },
-    { emoji: '🏠', label: 'Home' },
-    { emoji: '🌾', label: 'Agriculture' },
-    { emoji: '🚗', label: 'Automotive' },
-    { emoji: '🔧', label: 'Industrial' },
-    { emoji: '🏗️', label: 'Construction' },
-    { emoji: '⚡', label: 'Electrical' },
-    { emoji: '👶', label: 'Kids & Baby' },
-    { emoji: '💊', label: 'Healthcare' },
-    { emoji: '🎁', label: 'Gifts' },
-    { emoji: '👜', label: 'Bags' },
-    { emoji: '💄', label: 'Beauty' },
-    { emoji: '⚽', label: 'Sports' },
-    { emoji: '🌍', label: 'Global' },
-    { emoji: '📦', label: 'Wholesale' },
-    { emoji: '🍎', label: 'Food' },
-    { emoji: '💎', label: 'Jewelry' },
+    // Fashion & apparel
+    { emoji: '👗', label: 'Fashion' }, { emoji: '👔', label: 'Men Clothing' }, { emoji: '👚', label: 'Women Clothing' },
+    { emoji: '👕', label: 'T-Shirt' }, { emoji: '👖', label: 'Jeans' }, { emoji: '🧥', label: 'Jacket' },
+    { emoji: '🧦', label: 'Socks' }, { emoji: '🧣', label: 'Scarf' }, { emoji: '🧤', label: 'Gloves' },
+    { emoji: '👟', label: 'Shoes' }, { emoji: '👠', label: 'Heels' }, { emoji: '👜', label: 'Bags' },
+    { emoji: '🎒', label: 'Backpack' }, { emoji: '👓', label: 'Glasses' }, { emoji: '🕶️', label: 'Sunglasses' },
+    { emoji: '⌚', label: 'Watch' }, { emoji: '💍', label: 'Ring' }, { emoji: '💎', label: 'Jewelry' },
+    { emoji: '👑', label: 'Premium' }, { emoji: '🧢', label: 'Cap' },
+    // Electronics & tech
+    { emoji: '📱', label: 'Mobile' }, { emoji: '💻', label: 'Laptop' }, { emoji: '🖥️', label: 'Computer' },
+    { emoji: '⌨️', label: 'Keyboard' }, { emoji: '🖱️', label: 'Mouse' }, { emoji: '🎧', label: 'Headphones' },
+    { emoji: '📷', label: 'Camera' }, { emoji: '📺', label: 'TV' }, { emoji: '🔌', label: 'Electrical' },
+    { emoji: '⚡', label: 'Power' }, { emoji: '🔋', label: 'Battery' }, { emoji: '💡', label: 'Lighting' },
+    { emoji: '🎮', label: 'Gaming' }, { emoji: '🖨️', label: 'Printer' },
+    // Home & living
+    { emoji: '🏠', label: 'Home' }, { emoji: '🛋️', label: 'Furniture' }, { emoji: '🛏️', label: 'Bedroom' },
+    { emoji: '🪑', label: 'Chair' }, { emoji: '🚪', label: 'Doors' }, { emoji: '🧹', label: 'Cleaning' },
+    { emoji: '🧺', label: 'Laundry' }, { emoji: '🍽️', label: 'Kitchenware' }, { emoji: '🛁', label: 'Bath' },
+    { emoji: '🪟', label: 'Decor' }, { emoji: '🕯️', label: 'Candles' },
+    // Industry & tools
+    { emoji: '🔧', label: 'Industrial' }, { emoji: '🔨', label: 'Tools' }, { emoji: '🪛', label: 'Hardware' },
+    { emoji: '⚙️', label: 'Machinery' }, { emoji: '🏭', label: 'Manufacturing' }, { emoji: '🏗️', label: 'Construction' },
+    { emoji: '🧱', label: 'Building' }, { emoji: '🪚', label: 'Carpentry' }, { emoji: '⛏️', label: 'Mining' },
+    // Automotive & transport
+    { emoji: '🚗', label: 'Automotive' }, { emoji: '🏍️', label: 'Motorbike' }, { emoji: '🚲', label: 'Bicycle' },
+    { emoji: '🚚', label: 'Transport' }, { emoji: '✈️', label: 'Aviation' }, { emoji: '🛞', label: 'Tyres' },
+    // Beauty & health
+    { emoji: '💄', label: 'Beauty' }, { emoji: '💅', label: 'Cosmetics' }, { emoji: '🧴', label: 'Skincare' },
+    { emoji: '🧼', label: 'Hygiene' }, { emoji: '💊', label: 'Healthcare' }, { emoji: '🩺', label: 'Medical' },
+    { emoji: '🦷', label: 'Dental' }, { emoji: '🧬', label: 'Wellness' },
+    // Kids, sports & leisure
+    { emoji: '👶', label: 'Kids & Baby' }, { emoji: '🧸', label: 'Toys' }, { emoji: '⚽', label: 'Sports' },
+    { emoji: '🏏', label: 'Cricket' }, { emoji: '🏀', label: 'Basketball' }, { emoji: '🏋️', label: 'Fitness' },
+    { emoji: '🎨', label: 'Art & Craft' }, { emoji: '🎵', label: 'Music' }, { emoji: '📚', label: 'Books' },
+    { emoji: '✏️', label: 'Stationery' },
+    // Food & agriculture
+    { emoji: '🍎', label: 'Food' }, { emoji: '🥦', label: 'Vegetables' }, { emoji: '🍚', label: 'Grocery' },
+    { emoji: '🥛', label: 'Dairy' }, { emoji: '☕', label: 'Beverages' }, { emoji: '🌾', label: 'Agriculture' },
+    { emoji: '🌱', label: 'Plants' }, { emoji: '🐄', label: 'Livestock' }, { emoji: '🐟', label: 'Seafood' },
+    // General / commerce
+    { emoji: '🎁', label: 'Gifts' }, { emoji: '📦', label: 'Wholesale' }, { emoji: '🛒', label: 'Shopping' },
+    { emoji: '🏷️', label: 'Offers' }, { emoji: '🌍', label: 'Global' }, { emoji: '💼', label: 'Office' },
+    { emoji: '🔒', label: 'Security' }, { emoji: '🐾', label: 'Pets' },
 ];
 
 const CategoriesPage = () => {
@@ -50,14 +74,22 @@ const CategoriesPage = () => {
     /* ─── Modal State ─── */
     const [modalOpen, setModalOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [form, setForm] = useState({ name: '', icon: '', description: '', isActive: true, showInMenu: true, showInHome: true });
+    const [form, setForm] = useState({ name: '', icon: '', image: '', description: '', parent: '', isActive: true, showInMenu: true, showInHome: true });
+    const [iconMode, setIconMode] = useState<'emoji' | 'image'>('emoji');
+    const [emojiSearch, setEmojiSearch] = useState('');
 
     const categories = categoriesData?.data || [];
     const isSaving = isCreating || isUpdating;
 
-    const openCreate = () => {
+    // Top-level categories (no parent) — eligible to be a parent of a subcategory
+    const parentOptions = categories.filter((c: any) => !c.parent);
+    const parentId = (cat: any) => (cat.parent?._id || cat.parent || '');
+
+    const openCreate = (presetParent = '') => {
         setEditingId(null);
-        setForm({ name: '', icon: '', description: '', isActive: true, showInMenu: true, showInHome: true });
+        setForm({ name: '', icon: '', image: '', description: '', parent: presetParent, isActive: true, showInMenu: true, showInHome: true });
+        setIconMode('emoji');
+        setEmojiSearch('');
         setModalOpen(true);
     };
 
@@ -66,11 +98,15 @@ const CategoriesPage = () => {
         setForm({
             name: cat.name || '',
             icon: cat.icon || '',
+            image: cat.image || '',
             description: cat.description || '',
+            parent: parentId(cat),
             isActive: cat.isActive !== false,
             showInMenu: cat.showInMenu !== false,
             showInHome: cat.showInHome !== false,
         });
+        setIconMode(cat.image ? 'image' : 'emoji');
+        setEmojiSearch('');
         setModalOpen(true);
     };
 
@@ -78,13 +114,14 @@ const CategoriesPage = () => {
 
     const handleSave = async () => {
         if (!form.name.trim()) { toast.error('Category name is required'); return; }
-        if (!form.icon) { toast.error('Please select an icon for this category'); return; }
+        if (!form.icon && !form.image) { toast.error('Please pick an emoji icon or upload an icon image'); return; }
         try {
+            const payload = { ...form, parent: form.parent || null };
             if (editingId) {
-                await updateCategory({ id: editingId, data: form }).unwrap();
+                await updateCategory({ id: editingId, data: payload }).unwrap();
                 toast.success('Category updated');
             } else {
-                await createCategory(form).unwrap();
+                await createCategory(payload).unwrap();
                 toast.success('Category created');
             }
             closeModal();
@@ -104,9 +141,28 @@ const CategoriesPage = () => {
         }
     };
 
-    const filtered = categories.filter((cat: any) =>
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Build an ordered, hierarchy-aware row list: each parent followed by its subcategories.
+    // While searching, fall back to a flat name-filtered list.
+    const childrenOf = (id: string) => categories.filter((c: any) => parentId(c) === id);
+    const rows: { cat: any; isChild: boolean }[] = (() => {
+        if (searchTerm.trim()) {
+            return categories
+                .filter((c: any) => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                .map((c: any) => ({ cat: c, isChild: !!parentId(c) }));
+        }
+        const out: { cat: any; isChild: boolean }[] = [];
+        parentOptions.forEach((p: any) => {
+            out.push({ cat: p, isChild: false });
+            childrenOf(p._id).forEach((c: any) => out.push({ cat: c, isChild: true }));
+        });
+        // Include any orphaned subcategories whose parent is missing/inactive
+        categories.forEach((c: any) => {
+            if (parentId(c) && !out.some((r) => r.cat._id === c._id)) {
+                out.push({ cat: c, isChild: true });
+            }
+        });
+        return out;
+    })();
 
     return (
         <div>
@@ -116,7 +172,7 @@ const CategoriesPage = () => {
                     <h1 style={{ fontSize: '18px', fontWeight: 800, color: '#111', margin: 0 }}>Categories</h1>
                     <p style={{ fontSize: '12px', color: '#888', margin: '2px 0 0' }}>Manage product categories</p>
                 </div>
-                <button onClick={openCreate} style={{
+                <button onClick={() => openCreate()} style={{
                     display: 'flex', alignItems: 'center', gap: '6px',
                     padding: '8px 16px', background: 'var(--color-primary)', color: '#fff',
                     border: 'none', borderRadius: '7px', fontSize: '12.5px', fontWeight: 700,
@@ -144,30 +200,48 @@ const CategoriesPage = () => {
                     <div style={{ padding: '40px', textAlign: 'center' }}>
                         <div style={{ width: '28px', height: '28px', border: '3px solid #e5e7eb', borderTopColor: 'var(--color-primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto' }} />
                     </div>
-                ) : filtered.length > 0 ? (
+                ) : rows.length > 0 ? (
                     <div>
-                        {filtered.map((cat: any, i: number) => (
+                        {rows.map(({ cat, isChild }, i: number) => (
                             <div key={cat._id} style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                                 padding: '12px 16px',
-                                borderBottom: i < filtered.length - 1 ? '1px solid #f5f5f5' : 'none',
+                                paddingLeft: isChild ? '40px' : '16px',
+                                background: isChild ? '#fcfcfc' : '#fff',
+                                borderBottom: i < rows.length - 1 ? '1px solid #f5f5f5' : 'none',
                                 transition: 'background 0.15s',
                             }}
                                 onMouseEnter={e => e.currentTarget.style.background = '#fafafa'}
-                                onMouseLeave={e => e.currentTarget.style.background = '#fff'}
+                                onMouseLeave={e => e.currentTarget.style.background = isChild ? '#fcfcfc' : '#fff'}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                    {isChild && <span style={{ color: '#cbd5e1', fontSize: '15px', marginLeft: '-14px', marginRight: '-2px' }}>↳</span>}
                                     <div style={{
-                                        width: '36px', height: '36px', borderRadius: '8px',
+                                        width: isChild ? '30px' : '36px', height: isChild ? '30px' : '36px', borderRadius: '8px',
                                         background: '#f5f5f5', display: 'flex', alignItems: 'center',
-                                        justifyContent: 'center', flexShrink: 0, fontSize: '18px',
+                                        justifyContent: 'center', flexShrink: 0, fontSize: isChild ? '15px' : '18px',
+                                        overflow: 'hidden',
                                     }}>
-                                        {cat.icon || <FiGrid size={16} color="#bbb" />}
+                                        {cat.image
+                                            ? <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            : cat.icon || <FiGrid size={16} color="#bbb" />}
                                     </div>
                                     <div>
-                                        <p style={{ fontSize: '13px', fontWeight: 700, color: '#111', margin: 0 }}>{cat.name}</p>
+                                        <p style={{ fontSize: '13px', fontWeight: 700, color: '#111', margin: 0 }}>
+                                            {cat.name}
+                                            {!isChild && childrenOf(cat._id).length > 0 && (
+                                                <span style={{ fontSize: '10px', fontWeight: 600, color: '#888', marginLeft: '6px' }}>
+                                                    ({childrenOf(cat._id).length} sub)
+                                                </span>
+                                            )}
+                                        </p>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
                                             <span style={{ fontSize: '10.5px', color: '#aaa', fontFamily: 'monospace' }}>{cat.slug}</span>
+                                            {isChild && cat.parent?.name && (
+                                                <span style={{ fontSize: '9px', fontWeight: 700, padding: '1px 6px', borderRadius: '999px', background: '#eff6ff', color: '#2563eb' }}>
+                                                    Sub of {cat.parent.name}
+                                                </span>
+                                            )}
                                             <span style={{
                                                 fontSize: '9px', fontWeight: 700,
                                                 padding: '1px 6px', borderRadius: '999px',
@@ -181,6 +255,18 @@ const CategoriesPage = () => {
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '4px' }}>
+                                    {!isChild && (
+                                        <button onClick={() => openCreate(cat._id)} title="Add subcategory" style={{
+                                            height: '30px', display: 'flex', alignItems: 'center', gap: '4px', padding: '0 9px',
+                                            background: 'transparent', border: '1px solid #e5e7eb', borderRadius: '6px',
+                                            cursor: 'pointer', color: 'var(--color-primary)', fontSize: '11px', fontWeight: 700, transition: 'all 0.15s',
+                                        }}
+                                            onMouseEnter={e => { e.currentTarget.style.background = 'var(--color-primary-lightest)'; }}
+                                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                                        >
+                                            <FiPlus size={12} /> Sub
+                                        </button>
+                                    )}
                                     <button onClick={() => openEdit(cat)} style={{
                                         width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                         background: 'transparent', border: '1px solid transparent', borderRadius: '6px',
@@ -209,7 +295,7 @@ const CategoriesPage = () => {
                     <div style={{ padding: '40px', textAlign: 'center' }}>
                         <FiGrid size={28} color="#ddd" style={{ margin: '0 auto 10px' }} />
                         <p style={{ fontSize: '13px', color: '#aaa', margin: '0 0 12px' }}>No categories found</p>
-                        <button onClick={openCreate} style={{
+                        <button onClick={() => openCreate()} style={{
                             padding: '7px 16px', background: 'var(--color-primary)', color: '#fff',
                             border: 'none', borderRadius: '7px', fontSize: '12px', fontWeight: 700, cursor: 'pointer',
                         }}>
@@ -244,7 +330,7 @@ const CategoriesPage = () => {
                             padding: '16px 20px', borderBottom: '1px solid #f0f0f0',
                         }}>
                             <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#111', margin: 0 }}>
-                                {editingId ? 'Edit Category' : 'Add Category'}
+                                {editingId ? 'Edit Category' : form.parent ? 'Add Subcategory' : 'Add Category'}
                             </h3>
                             <button onClick={closeModal} style={{
                                 width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -269,93 +355,143 @@ const CategoriesPage = () => {
                                 />
                             </div>
 
-                            {/* Icon Picker */}
+                            {/* Parent Category (makes this a subcategory) */}
                             <div>
-                                <label style={lbl}>
-                                    Category Icon <span style={{ color: '#ef4444' }}>*</span>
-                                    {form.icon && (
-                                        <span style={{
-                                            marginLeft: '10px', fontSize: '11px', fontWeight: 500,
-                                            color: '#16a34a', background: '#f0fdf4',
-                                            padding: '2px 8px', borderRadius: '999px',
-                                        }}>
-                                            Selected: {form.icon}
-                                        </span>
-                                    )}
-                                </label>
+                                <label style={lbl}>Parent Category <span style={{ color: '#aaa', fontWeight: 400 }}>(optional — leave as "None" for a main category)</span></label>
+                                <select
+                                    value={form.parent}
+                                    onChange={e => setForm(p => ({ ...p, parent: e.target.value }))}
+                                    style={inp}
+                                >
+                                    <option value="">— None (Main Category) —</option>
+                                    {parentOptions
+                                        .filter((p: any) => p._id !== editingId)
+                                        .map((p: any) => (
+                                            <option key={p._id} value={p._id}>{p.icon ? `${p.icon} ` : ''}{p.name}</option>
+                                        ))}
+                                </select>
+                                {form.parent && (
+                                    <p style={{ fontSize: '11px', color: '#2563eb', margin: '5px 0 0', fontWeight: 500 }}>
+                                        ↳ This will be a <b>subcategory</b> under "{parentOptions.find((p: any) => p._id === form.parent)?.name}"
+                                    </p>
+                                )}
+                            </div>
 
-                                {/* Preview Box */}
-                                {form.icon && (
+                            {/* Icon / Image Picker */}
+                            <div>
+                                <label style={lbl}>Category Icon / Image <span style={{ color: '#ef4444' }}>*</span></label>
+
+                                {/* Requirement note */}
+                                <p style={{ fontSize: '11px', color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '7px', padding: '6px 10px', margin: '0 0 10px', fontWeight: 500 }}>
+                                    📌 Pick an emoji icon, <b>or</b> upload an image. Uploaded images must be <b>PNG format</b> and <b>square shape</b> (e.g. 128×128px).
+                                </p>
+
+                                {/* Mode toggle */}
+                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                                    {([['emoji', 'Emoji Icon', <FiSmile key="s" size={14} />], ['image', 'Upload Image', <FiImage key="i" size={14} />]] as const).map(([mode, text, ic]) => (
+                                        <button
+                                            key={mode}
+                                            type="button"
+                                            onClick={() => setIconMode(mode)}
+                                            style={{
+                                                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                                                padding: '7px 14px', borderRadius: '7px', fontSize: '12px', fontWeight: 600, cursor: 'pointer',
+                                                border: 'none',
+                                                background: iconMode === mode ? 'var(--color-primary)' : '#f3f4f6',
+                                                color: iconMode === mode ? '#fff' : '#555',
+                                            }}
+                                        >
+                                            {ic} {text}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Current selection preview */}
+                                {(form.icon || form.image) && (
                                     <div style={{
-                                        display: 'flex', alignItems: 'center', gap: '10px',
+                                        display: 'flex', alignItems: 'center', gap: '12px',
                                         padding: '10px 14px', background: '#f8fffe',
-                                        border: '1.5px solid var(--color-primary)',
-                                        borderRadius: '8px', marginBottom: '10px',
+                                        border: '1.5px solid var(--color-primary)', borderRadius: '8px', marginBottom: '12px',
                                     }}>
-                                        <span style={{ fontSize: '32px', lineHeight: 1 }}>{form.icon}</span>
+                                        {form.image ? (
+                                            <img src={form.image} alt="icon" style={{ width: '44px', height: '44px', borderRadius: '8px', objectFit: 'cover', border: '1px solid #e5e7eb', background: '#fff' }} />
+                                        ) : (
+                                            <span style={{ fontSize: '34px', lineHeight: 1 }}>{form.icon}</span>
+                                        )}
                                         <div>
                                             <p style={{ margin: 0, fontSize: '12px', fontWeight: 700, color: '#111' }}>
-                                                {ICON_OPTIONS.find(i => i.emoji === form.icon)?.label || 'Custom'}
+                                                {form.image ? 'Uploaded image' : (ICON_OPTIONS.find(i => i.emoji === form.icon)?.label || 'Selected emoji')}
                                             </p>
-                                            <p style={{ margin: 0, fontSize: '11px', color: '#888' }}>Selected icon preview</p>
+                                            <p style={{ margin: 0, fontSize: '11px', color: '#888' }}>This is how the category will be shown</p>
                                         </div>
                                         <button
-                                            onClick={() => setForm(p => ({ ...p, icon: '' }))}
-                                            style={{
-                                                marginLeft: 'auto', background: 'none', border: 'none',
-                                                cursor: 'pointer', color: '#aaa', fontSize: '16px', lineHeight: 1,
-                                            }}
+                                            onClick={() => setForm(p => ({ ...p, icon: '', image: '' }))}
+                                            style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: '16px', lineHeight: 1 }}
                                             title="Clear selection"
                                         >×</button>
                                     </div>
                                 )}
 
-                                {/* Icon Grid */}
-                                <div style={{
-                                    display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px',
-                                    padding: '12px', background: '#fafafa',
-                                    border: `1.5px solid ${!form.icon ? '#fca5a5' : '#e5e7eb'}`,
-                                    borderRadius: '8px',
-                                }}>
-                                    {ICON_OPTIONS.map((opt) => (
-                                        <button
-                                            key={opt.emoji}
-                                            title={opt.label}
-                                            onClick={() => setForm(p => ({ ...p, icon: opt.emoji }))}
-                                            style={{
-                                                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                                                justifyContent: 'center', gap: '3px',
-                                                padding: '8px 4px', borderRadius: '8px', cursor: 'pointer',
-                                                border: form.icon === opt.emoji
-                                                    ? '2px solid var(--color-primary)'
-                                                    : '2px solid transparent',
-                                                background: form.icon === opt.emoji
-                                                    ? 'var(--color-primary-lightest, #f0fdf4)'
-                                                    : '#fff',
-                                                transition: 'all 0.15s',
-                                                boxShadow: form.icon === opt.emoji
-                                                    ? '0 0 0 1px var(--color-primary)'
-                                                    : '0 1px 3px rgba(0,0,0,0.06)',
-                                            }}
-                                            onMouseEnter={e => {
-                                                if (form.icon !== opt.emoji)
-                                                    (e.currentTarget as HTMLElement).style.background = '#f3f4f6';
-                                            }}
-                                            onMouseLeave={e => {
-                                                if (form.icon !== opt.emoji)
-                                                    (e.currentTarget as HTMLElement).style.background = '#fff';
-                                            }}
-                                        >
-                                            <span style={{ fontSize: '22px', lineHeight: 1 }}>{opt.emoji}</span>
-                                            <span style={{ fontSize: '9px', color: '#888', fontWeight: 500, textAlign: 'center', lineHeight: 1.2 }}>
-                                                {opt.label}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                                {!form.icon && (
-                                    <p style={{ fontSize: '11px', color: '#ef4444', marginTop: '4px', margin: '4px 0 0' }}>
-                                        ⚠ Please select an icon to continue
+                                {/* EMOJI MODE */}
+                                {iconMode === 'emoji' && (
+                                    <>
+                                        <div style={{ position: 'relative', marginBottom: '8px' }}>
+                                            <FiSearch size={13} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#bbb' }} />
+                                            <input
+                                                type="text"
+                                                placeholder="Search icons (e.g. mobile, food, tools)..."
+                                                value={emojiSearch}
+                                                onChange={e => setEmojiSearch(e.target.value)}
+                                                style={{ ...inp, paddingLeft: '30px', fontSize: '12px' }}
+                                            />
+                                        </div>
+                                        <div style={{
+                                            display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '6px',
+                                            padding: '12px', background: '#fafafa',
+                                            border: `1.5px solid ${(!form.icon && !form.image) ? '#fca5a5' : '#e5e7eb'}`,
+                                            borderRadius: '8px', maxHeight: '220px', overflowY: 'auto',
+                                        }}>
+                                            {ICON_OPTIONS
+                                                .filter(opt => !emojiSearch.trim() || opt.label.toLowerCase().includes(emojiSearch.toLowerCase()) || opt.emoji === emojiSearch.trim())
+                                                .map((opt) => (
+                                                    <button
+                                                        key={opt.emoji}
+                                                        type="button"
+                                                        title={opt.label}
+                                                        onClick={() => setForm(p => ({ ...p, icon: opt.emoji, image: '' }))}
+                                                        style={{
+                                                            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px',
+                                                            padding: '8px 4px', borderRadius: '8px', cursor: 'pointer',
+                                                            border: form.icon === opt.emoji ? '2px solid var(--color-primary)' : '2px solid transparent',
+                                                            background: form.icon === opt.emoji ? 'var(--color-primary-lightest, #f0fdf4)' : '#fff',
+                                                            transition: 'all 0.15s',
+                                                            boxShadow: form.icon === opt.emoji ? '0 0 0 1px var(--color-primary)' : '0 1px 3px rgba(0,0,0,0.06)',
+                                                        }}
+                                                        onMouseEnter={e => { if (form.icon !== opt.emoji) (e.currentTarget as HTMLElement).style.background = '#f3f4f6'; }}
+                                                        onMouseLeave={e => { if (form.icon !== opt.emoji) (e.currentTarget as HTMLElement).style.background = '#fff'; }}
+                                                    >
+                                                        <span style={{ fontSize: '22px', lineHeight: 1 }}>{opt.emoji}</span>
+                                                        <span style={{ fontSize: '8.5px', color: '#888', fontWeight: 500, textAlign: 'center', lineHeight: 1.2 }}>{opt.label}</span>
+                                                    </button>
+                                                ))}
+                                        </div>
+                                    </>
+                                )}
+
+                                {/* IMAGE MODE */}
+                                {iconMode === 'image' && (
+                                    <SingleImageUploader
+                                        label="Icon Image (PNG, square)"
+                                        value={form.image}
+                                        onChange={(url) => setForm(p => ({ ...p, image: url, icon: url ? '' : p.icon }))}
+                                        accept="image/png"
+                                        hint="PNG only • Square shape (e.g. 128×128px) • max 10MB"
+                                    />
+                                )}
+
+                                {!form.icon && !form.image && (
+                                    <p style={{ fontSize: '11px', color: '#ef4444', margin: '6px 0 0' }}>
+                                        ⚠ Please pick an emoji or upload a PNG square image to continue
                                     </p>
                                 )}
                             </div>
