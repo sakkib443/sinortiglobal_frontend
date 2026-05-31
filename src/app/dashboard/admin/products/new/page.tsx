@@ -65,20 +65,19 @@ const ProductFormInner = () => {
     const [formData, setFormData] = useState<any>({
         // Basic
         name: '', slug: '', sku: '', brand: '',
-        description: '', tagline: '',
-        priceType: 'negotiable',
+        description: '',
         productType: 'simple',
         // Pricing
-        price: 0, originalPrice: 0, costPrice: 0, discount: 0,
+        price: 0, originalPrice: 0, discount: 0,
         // Media
         thumbnail: '', images: [],
         // Organization
         category: '', subcategory: '', country: '',
         // Stock
-        stock: 0, lowStockThreshold: 5, unit: 'piece',
+        stock: 0, unit: 'piece',
         // Status
         status: 'active', visibility: 'visible',
-        isFeatured: false, isNewProduct: true, isOnSale: false,
+        isNewProduct: true, isOnSale: false,
         // Visual variants
         colors: [], colorHex: [], sizes: [], material: [],
         variants: [],
@@ -240,10 +239,6 @@ const ProductFormInner = () => {
             newErrors.thumbnail = 'Product thumbnail image is required';
         }
 
-        if (formData.tagline && formData.tagline.length > 200) {
-            newErrors.tagline = 'Tagline cannot exceed 200 characters';
-        }
-
         if (formData.stock < 0) {
             newErrors.stock = 'Stock cannot be negative';
         }
@@ -366,20 +361,6 @@ const ProductFormInner = () => {
                             <Input label="Brand" name="brand" type="text" placeholder="e.g. Lishan Group" value={formData.brand} onChange={handleChange} />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Tagline <span className="text-xs text-gray-400">(scrolling text on card)</span></label>
-                                <input type="text" name="tagline" placeholder="Lower price than others but quality higher" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[var(--color-primary)] transition-all text-sm" value={formData.tagline} onChange={handleChange} />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Price Type</label>
-                                <select name="priceType" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.priceType} onChange={handleChange}>
-                                    <option value="negotiable">Negotiable</option>
-                                    <option value="fixed">Fixed</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <div className="space-y-1.5" data-field="description">
                             <label className="text-sm font-semibold text-gray-700">Product Description <span className="text-red-400">*</span></label>
                             <div className={`product-editor-wrapper ${errors.description ? 'ring-1 ring-red-400 rounded-md' : ''}`}>
@@ -414,7 +395,7 @@ const ProductFormInner = () => {
                     <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-5">
                         <SectionHeader icon={<FiDollarSign size={20} />} title="Pricing & Inventory" color="bg-green-50 text-green-600" />
 
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-1.5" data-field="price">
                                 <label className="text-sm font-semibold text-gray-700">Selling Price <span className="text-red-400">*</span></label>
                                 <div className="relative">
@@ -431,21 +412,13 @@ const ProductFormInner = () => {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Cost Price</label>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">৳</span>
-                                    <input type="number" name="costPrice" placeholder="0" className="w-full pl-8 pr-3 py-2.5 bg-white border border-gray-200 rounded-md outline-none focus:border-[var(--color-primary)] text-base font-bold text-gray-500" value={formData.costPrice} onChange={handleChange} />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-1"><FiPercent size={14} /> Discount</label>
                                 <input type="number" name="discount" placeholder="Auto" className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-md outline-none text-base font-bold text-orange-600" value={formData.discount} readOnly />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Input label="Current Stock" name="stock" type="number" placeholder="0" value={formData.stock} onChange={handleChange} />
-                            <Input label="Low Stock Alert" name="lowStockThreshold" type="number" placeholder="5" value={formData.lowStockThreshold} onChange={handleChange} />
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700">Unit</label>
                                 <select name="unit" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.unit} onChange={handleChange}>
@@ -906,7 +879,6 @@ const ProductFormInner = () => {
                     <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-4">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiSettings className="text-orange-500" /> Visibility & Status</h3>
                         <div className="space-y-2">
-                            <Toggle label="Featured Product" name="isFeatured" checked={formData.isFeatured} onChange={handleChange} color="bg-yellow-500" />
                             <Toggle label="On Sale" name="isOnSale" checked={formData.isOnSale} onChange={handleChange} color="bg-rose-500" />
                             <Toggle label="New Arrival" name="isNewProduct" checked={formData.isNewProduct} onChange={handleChange} color="bg-emerald-500" />
                         </div>
