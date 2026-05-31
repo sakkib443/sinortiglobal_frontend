@@ -22,6 +22,7 @@ interface Category {
     name: string;
     slug: string;
     icon?: string;
+    image?: string;
 }
 
 // Country options for the search filter (flag codes map to flagcdn.com).
