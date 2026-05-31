@@ -11,9 +11,11 @@ import Link from 'next/link';
    equirectangular map, so they land on the correct countries.
 ═══════════════════════════════════════════════════════════════════ */
 
-// Equirectangular projection (full extent: lon -180..180, lat 90..-90)
+// Equirectangular projection. Longitude is full (-180..180); the map image is
+// cropped vertically to latitude +84..-56 (polar ice strips removed), so the
+// vertical mapping uses that range to keep markers on the right countries.
 const px = (lon: number) => ((lon + 180) / 360) * 100; // % from left
-const py = (lat: number) => ((90 - lat) / 180) * 100;   // % from top
+const py = (lat: number) => ((64 - lat) / 120) * 100;   // % from top (lat 64..-56)
 // SVG space is 200 x 100 (matches the 2:1 box → uniform scaling)
 const sx = (lon: number) => px(lon) * 2;
 const sy = (lat: number) => py(lat);
@@ -96,11 +98,11 @@ function Marker({ lon, lat, code, name, hub = false }: {
 
 const WorldToBangladesh: React.FC = () => {
     return (
-        <section className="w-full bg-white py-12 md:py-16">
+        <section className="w-full">
             <style>{`
                 @keyframes wbDash { to { stroke-dashoffset: -40; } }
                 @keyframes wbPing { 0% { transform: translate(-50%,-50%) scale(0.5); opacity: 0.5; } 100% { transform: translate(-50%,-50%) scale(2.6); opacity: 0; } }
-                .wb-route { animation: wbDash 1.2s linear infinite; }
+                .wb-route { animation: wbDash 3s linear infinite; }
                 @media (prefers-reduced-motion: reduce) { .wb-route, .wb-dot { animation: none !important; } }
             `}</style>
 
@@ -108,7 +110,7 @@ const WorldToBangladesh: React.FC = () => {
                 natural 2:1 proportion so it never looks squished */}
             <div
                 className="relative w-full overflow-hidden"
-                style={{ aspectRatio: '2 / 1' }}
+                style={{ aspectRatio: '1500 / 500' }}
             >
                     <img
                         src="/images/world-earth.jpg"
@@ -117,7 +119,7 @@ const WorldToBangladesh: React.FC = () => {
                         style={{ filter: 'saturate(1.05) brightness(1.12)' }}
                         draggable={false}
                     />
-                    {/* Light veil so the map is softer (less dark) and flags/routes pop */}
+                    {/* Light veil — gives the soft, natural look (less harsh) */}
                     <div
                         className="absolute inset-0 pointer-events-none"
                         style={{ background: 'rgba(255,255,255,0.24)' }}
@@ -134,13 +136,13 @@ const WorldToBangladesh: React.FC = () => {
                             const d = arcPath(c.lon, c.lat);
                             return (
                                 <g key={c.name}>
-                                    {/* dark underlay for contrast over bright ocean */}
-                                    <path d={d} fill="none" stroke="rgba(3,12,24,0.45)" strokeWidth={0.9} strokeLinecap="round" />
-                                    {/* white flight-path dashes flowing toward the hub */}
-                                    <path d={d} fill="none" stroke="rgba(255,255,255,0.92)" strokeWidth={0.5} strokeLinecap="round" strokeDasharray="1.5 3.2" className="wb-route" style={{ animationDelay: `${i * 0.2}s` }} />
+                                    {/* thin dark underlay for contrast over bright ocean */}
+                                    <path d={d} fill="none" stroke="rgba(3,12,24,0.35)" strokeWidth={0.45} strokeLinecap="round" />
+                                    {/* thin white flight-path dashes flowing slowly toward the hub */}
+                                    <path d={d} fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth={0.3} strokeLinecap="round" strokeDasharray="1.2 3" className="wb-route" style={{ animationDelay: `${i * 0.2}s` }} />
                                     {/* travelling parcel dot */}
-                                    <circle r={1.05} fill="#ffd24a" stroke="rgba(0,0,0,0.25)" strokeWidth={0.15} className="wb-dot">
-                                        <animateMotion dur="3.6s" repeatCount="indefinite" path={d} begin={`${i * 0.55}s`} />
+                                    <circle r={0.85} fill="#ffd24a" stroke="rgba(0,0,0,0.25)" strokeWidth={0.12} className="wb-dot">
+                                        <animateMotion dur="5.5s" repeatCount="indefinite" path={d} begin={`${i * 0.7}s`} />
                                     </circle>
                                 </g>
                             );
@@ -155,7 +157,7 @@ const WorldToBangladesh: React.FC = () => {
             </div>
 
             {/* Short content — placed below so the map stays clear */}
-            <div className="container text-center mt-8 md:mt-10">
+            <div className="container text-center py-9 md:py-11">
                 <h2 className="text-xl md:text-2xl font-semibold text-gray-900">
                     From the World to Bangladesh
                 </h2>
