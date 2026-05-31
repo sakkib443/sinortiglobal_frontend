@@ -76,7 +76,7 @@ export default function CreateProductPage() {
         name: '', description: '', tagline: '', priceType: 'negotiable',
         price: '', originalPrice: '',
         thumbnail: '', images: '',
-        category: '', status: 'active', visibility: 'visible', stock: '0',
+        category: '', country: '', status: 'active', visibility: 'visible', stock: '0',
     });
     const [tags, setTags] = useState<string[]>([]);
     const [colors, setColors] = useState<string[]>([]);
@@ -125,6 +125,7 @@ export default function CreateProductPage() {
             thumbnail:    form.thumbnail,
             images:       form.images ? form.images.split('\n').map(s => s.trim()).filter(Boolean) : [],
             category:     form.category,
+            country:      form.country || undefined,
             status:       form.status,
             visibility:   form.visibility,
             stock:        Number(form.stock) || 0,
@@ -349,6 +350,17 @@ export default function CreateProductPage() {
                                         {categories.map((cat: any) => (
                                             <option key={cat._id} value={cat._id}>{cat.name}</option>
                                         ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style={lbl}>Country <span style={{ fontSize: '11px', color: '#9ca3af', fontWeight: 400 }}>(sourcing origin)</span></label>
+                                    <select value={form.country} onChange={e => setF('country', e.target.value)} style={{ ...inp, cursor: 'pointer' }}>
+                                        <option value="">— Select Country —</option>
+                                        <option value="Bangladesh">🇧🇩 Bangladesh</option>
+                                        <option value="Pakistan">🇵🇰 Pakistan</option>
+                                        <option value="UAE">🇦🇪 UAE</option>
+                                        <option value="USA">🇺🇸 USA</option>
+                                        <option value="China">🇨🇳 China</option>
                                     </select>
                                 </div>
                                 <div>

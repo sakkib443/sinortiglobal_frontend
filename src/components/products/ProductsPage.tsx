@@ -8,6 +8,8 @@ import { FiGrid, FiList, FiChevronDown, FiX, FiSearch, FiFilter } from 'react-ic
 
 const LIMIT = 24;
 
+const COUNTRIES = ['All', 'Bangladesh', 'Pakistan', 'UAE', 'USA', 'China'];
+
 const SORT_OPTIONS = [
     { label: 'Newest First', value: '-createdAt' },
     { label: 'Price: Low to High', value: 'price' },
@@ -22,6 +24,7 @@ const ProductsPage: React.FC = () => {
 
     const categoryParam = searchParams.get('category') || '';
     const searchParam = searchParams.get('q') || '';
+    const countryParam = searchParams.get('country') || '';
 
     const [page, setPage] = useState(1);
     const [sortBy, setSortBy] = useState('-createdAt');
@@ -29,6 +32,7 @@ const ProductsPage: React.FC = () => {
     const [showMobileFilter, setShowMobileFilter] = useState(false);
     const [categories, setCategories] = useState<any[]>([]);
     const [selectedCategory, setSelectedCategory] = useState(categoryParam);
+    const [selectedCountry, setSelectedCountry] = useState(countryParam);
     const [localSearch, setLocalSearch] = useState(searchParam);
     const [priceRange, setPriceRange] = useState({ min: '', max: '' });
 
@@ -47,19 +51,21 @@ const ProductsPage: React.FC = () => {
     // Sync URL params
     useEffect(() => {
         setSelectedCategory(categoryParam);
+        setSelectedCountry(countryParam);
         setLocalSearch(searchParam);
         setPage(1);
-    }, [categoryParam, searchParam]);
+    }, [categoryParam, searchParam, countryParam]);
 
     // Build query
     const queryParams = useMemo(() => {
         const params: any = { page, limit: LIMIT, sort: sortBy };
         if (selectedCategory) params.category = selectedCategory;
+        if (selectedCountry && selectedCountry !== 'All') params.country = selectedCountry;
         if (searchParam) params.searchTerm = searchParam;
         if (priceRange.min) params.minPrice = priceRange.min;
         if (priceRange.max) params.maxPrice = priceRange.max;
         return params;
-    }, [page, sortBy, selectedCategory, searchParam, priceRange]);
+    }, [page, sortBy, selectedCategory, selectedCountry, searchParam, priceRange]);
 
     const { data, isFetching } = useGetProductsQuery(queryParams);
     const products = data?.data || [];
@@ -69,6 +75,16 @@ const ProductsPage: React.FC = () => {
         const params = new URLSearchParams();
         if (catId) params.set('category', catId);
         if (searchParam) params.set('q', searchParam);
+        if (selectedCountry && selectedCountry !== 'All') params.set('country', selectedCountry);
+        router.push(`/products?${params.toString()}`);
+        setShowMobileFilter(false);
+    };
+
+    const handleCountrySelect = (country: string) => {
+        const params = new URLSearchParams();
+        if (selectedCategory) params.set('category', selectedCategory);
+        if (searchParam) params.set('q', searchParam);
+        if (country && country !== 'All') params.set('country', country);
         router.push(`/products?${params.toString()}`);
         setShowMobileFilter(false);
     };
@@ -78,11 +94,13 @@ const ProductsPage: React.FC = () => {
         const params = new URLSearchParams();
         if (localSearch.trim()) params.set('q', localSearch.trim());
         if (selectedCategory) params.set('category', selectedCategory);
+        if (selectedCountry && selectedCountry !== 'All') params.set('country', selectedCountry);
         router.push(`/products?${params.toString()}`);
     };
 
     const clearFilters = () => {
         setSelectedCategory('');
+        setSelectedCountry('');
         setLocalSearch('');
         setPriceRange({ min: '', max: '' });
         router.push('/products');
@@ -174,6 +192,29 @@ const ProductsPage: React.FC = () => {
                                 </ul>
                             </div>
 
+                            {/* Country */}
+                            <div className="mb-5">
+                                <h4 className="text-sm font-bold text-gray-900 mb-3">Country</h4>
+                                <ul className="space-y-1.5">
+                                    {COUNTRIES.map((country) => {
+                                        const isActive = country === 'All' ? !selectedCountry || selectedCountry === 'All' : selectedCountry === country;
+                                        return (
+                                            <li key={country}>
+                                                <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={isActive}
+                                                        onChange={() => handleCountrySelect(country)}
+                                                        className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]"
+                                                    />
+                                                    {country}
+                                                </label>
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+
                             {/* Price Range */}
                             <div className="mb-5">
                                 <h4 className="text-sm font-bold text-gray-900 mb-3">Price Range</h4>
@@ -197,7 +238,7 @@ const ProductsPage: React.FC = () => {
                             </div>
 
                             {/* Clear Filters */}
-                            {(selectedCategory || searchParam || priceRange.min || priceRange.max) && (
+                            {(selectedCategory || (selectedCountry && selectedCountry !== 'All') || searchParam || priceRange.min || priceRange.max) && (
                                 <button onClick={clearFilters} className="w-full text-sm text-red-500 hover:text-red-600 font-medium py-2 border border-red-200 rounded-md hover:bg-red-50 transition-colors flex items-center justify-center gap-1">
                                     <FiX size={14} /> Clear All Filters
                                 </button>
@@ -224,6 +265,12 @@ const ProductsPage: React.FC = () => {
                                     <span className="hidden sm:flex items-center gap-1 text-xs bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2.5 py-1 rounded-full font-medium">
                                         {activeCategoryName}
                                         <button onClick={() => handleCategorySelect('')}><FiX size={12} /></button>
+                                    </span>
+                                )}
+                                {selectedCountry && selectedCountry !== 'All' && (
+                                    <span className="hidden sm:flex items-center gap-1 text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-medium">
+                                        {selectedCountry}
+                                        <button onClick={() => handleCountrySelect('All')}><FiX size={12} /></button>
                                     </span>
                                 )}
                                 {searchParam && (
@@ -381,6 +428,22 @@ const ProductsPage: React.FC = () => {
                                     </label>
                                 </li>
                             ))}
+                        </ul>
+
+                        {/* Country */}
+                        <h4 className="text-sm font-bold text-gray-900 mb-3">Country</h4>
+                        <ul className="space-y-1.5 mb-5">
+                            {COUNTRIES.map((country) => {
+                                const isActive = country === 'All' ? !selectedCountry || selectedCountry === 'All' : selectedCountry === country;
+                                return (
+                                    <li key={country}>
+                                        <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}>
+                                            <input type="checkbox" checked={isActive} onChange={() => handleCountrySelect(country)} className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]" />
+                                            {country}
+                                        </label>
+                                    </li>
+                                );
+                            })}
                         </ul>
 
                         {/* Price */}

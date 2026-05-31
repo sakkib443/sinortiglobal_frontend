@@ -73,7 +73,7 @@ const ProductFormInner = () => {
         // Media
         thumbnail: '', images: [],
         // Organization
-        category: '', subcategory: '',
+        category: '', subcategory: '', country: '',
         // Stock
         stock: 0, lowStockThreshold: 5, unit: 'piece',
         // Status
@@ -847,6 +847,17 @@ const ProductFormInner = () => {
                                 {categories.map((cat: any) => (<option key={cat._id} value={cat._id}>{cat.name}</option>))}
                             </select>
                             {errors.category && <p className="text-xs text-red-500 font-medium">⚠ {errors.category}</p>}
+                        </div>
+                        <div className="space-y-1.5" data-field="country">
+                            <label className="text-xs font-bold text-gray-400 uppercase">Country <span className="text-gray-300">(sourcing origin)</span></label>
+                            <select name="country" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm font-semibold outline-none cursor-pointer focus:border-indigo-400" value={formData.country} onChange={handleChange}>
+                                <option value="">Select Country</option>
+                                <option value="Bangladesh">🇧🇩 Bangladesh</option>
+                                <option value="Pakistan">🇵🇰 Pakistan</option>
+                                <option value="UAE">🇦🇪 UAE</option>
+                                <option value="USA">🇺🇸 USA</option>
+                                <option value="China">🇨🇳 China</option>
+                            </select>
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-gray-400 uppercase">Tags <span className="text-gray-300">(comma-separated)</span></label>

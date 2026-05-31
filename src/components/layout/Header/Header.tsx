@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
     FiShoppingCart, FiCamera, FiChevronDown, FiSearch, FiMenu, FiX,
-    FiUpload, FiUser, FiHeart, FiPhone, FiMail, FiMapPin
+    FiUpload, FiUser, FiHeart, FiPhone, FiMail, FiMapPin, FiGlobe
 } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '@/redux';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
@@ -22,6 +22,17 @@ interface Category {
     slug: string;
     icon?: string;
 }
+
+// Country options for the search filter (flag codes map to flagcdn.com).
+// "All" = no country filter.
+const COUNTRIES: { value: string; label: string; code: string }[] = [
+    { value: 'All', label: 'All', code: '' },
+    { value: 'Bangladesh', label: 'Bangladesh', code: 'bd' },
+    { value: 'Pakistan', label: 'Pakistan', code: 'pk' },
+    { value: 'UAE', label: 'UAE', code: 'ae' },
+    { value: 'USA', label: 'USA', code: 'us' },
+    { value: 'China', label: 'China', code: 'cn' },
+];
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,6 +51,9 @@ const Header: React.FC = () => {
     const { user, isAuthenticated } = useAppSelector((state) => state.auth);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
+    const [selectedCountry, setSelectedCountry] = useState('All');
+    const [isCountryOpen, setIsCountryOpen] = useState(false);
+    const countryRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -61,11 +75,14 @@ const Header: React.FC = () => {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    // Close profile dropdown on outside click
+    // Close profile / country dropdowns on outside click
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
                 setIsProfileOpen(false);
+            }
+            if (countryRef.current && !countryRef.current.contains(e.target as Node)) {
+                setIsCountryOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -170,9 +187,14 @@ const Header: React.FC = () => {
 
     const handleSearch = () => {
         const trimmed = searchQuery.trim();
-        if (!trimmed) return;
+        const hasCountry = selectedCountry && selectedCountry !== 'All';
+        // Nothing to search by — neither a query nor a country.
+        if (!trimmed && !hasCountry) return;
         dispatch(clearImageSearch());
-        router.push(`/products?q=${encodeURIComponent(trimmed)}`);
+        const params = new URLSearchParams();
+        if (trimmed) params.set('q', trimmed);
+        if (hasCountry) params.set('country', selectedCountry);
+        router.push(`/products?${params.toString()}`);
     };
 
     const handleGoHome = () => {
@@ -301,6 +323,51 @@ const Header: React.FC = () => {
                             {/* Search Bar (Desktop) */}
                             <div className="flex-1 max-w-2xl hidden md:flex items-center gap-0">
 
+                                {/* Country Selector */}
+                                <div className="relative h-[42px] shrink-0" ref={countryRef}>
+                                    {(() => {
+                                        const sel = COUNTRIES.find(c => c.value === selectedCountry) || COUNTRIES[0];
+                                        return (
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsCountryOpen(v => !v)}
+                                                title="Filter by country"
+                                                className="h-full flex items-center gap-1.5 pl-3 pr-2 bg-gray-50 border border-gray-300 border-r-0 rounded-l-md text-sm text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap"
+                                            >
+                                                {sel.code ? (
+                                                    // eslint-disable-next-line @next/next/no-img-element
+                                                    <img src={`https://flagcdn.com/w40/${sel.code}.png`} alt={sel.label} className="w-5 h-[14px] object-cover rounded-[2px]" />
+                                                ) : (
+                                                    <FiGlobe size={15} className="text-gray-500" />
+                                                )}
+                                                <span className="font-medium hidden lg:inline">{sel.label}</span>
+                                                <FiChevronDown size={14} className={`text-gray-400 transition-transform ${isCountryOpen ? 'rotate-180' : ''}`} />
+                                            </button>
+                                        );
+                                    })()}
+
+                                    {isCountryOpen && (
+                                        <div className="absolute left-0 top-full mt-1 w-44 bg-white rounded-md shadow-xl border border-gray-100 overflow-hidden z-50" style={{ animation: 'fadeIn 0.15s ease-out' }}>
+                                            {COUNTRIES.map((c) => (
+                                                <button
+                                                    key={c.value}
+                                                    type="button"
+                                                    onClick={() => { setSelectedCountry(c.value); setIsCountryOpen(false); }}
+                                                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${selectedCountry === c.value ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-gray-700 hover:bg-gray-50'}`}
+                                                >
+                                                    {c.code ? (
+                                                        // eslint-disable-next-line @next/next/no-img-element
+                                                        <img src={`https://flagcdn.com/w40/${c.code}.png`} alt={c.label} className="w-5 h-[14px] object-cover rounded-[2px]" />
+                                                    ) : (
+                                                        <FiGlobe size={15} className={selectedCountry === c.value ? 'text-white' : 'text-gray-500'} />
+                                                    )}
+                                                    {c.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
                                 {/* Search Input */}
                                 <div className="relative flex-1 h-[42px]">
                                     <input
@@ -309,7 +376,7 @@ const Header: React.FC = () => {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                         placeholder="Search products..."
-                                        className="w-full h-full bg-white border border-gray-300 border-r-0 rounded-l-md pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[var(--color-primary)] transition-all text-sm"
+                                        className="w-full h-full bg-white border border-gray-300 border-r-0 pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[var(--color-primary)] transition-all text-sm"
                                     />
                                 </div>
 
@@ -429,6 +496,18 @@ const Header: React.FC = () => {
                         {/* Mobile Search */}
                         <div className="md:hidden pb-3">
                             <div className="flex items-center gap-0">
+                                {/* Country (mobile) */}
+                                <div className="relative shrink-0">
+                                    <select
+                                        value={selectedCountry}
+                                        onChange={(e) => setSelectedCountry(e.target.value)}
+                                        aria-label="Filter by country"
+                                        className="h-[42px] bg-gray-50 border border-gray-300 border-r-0 rounded-l-md pl-2.5 pr-6 text-xs font-medium text-gray-700 outline-none appearance-none cursor-pointer"
+                                    >
+                                        {COUNTRIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                                    </select>
+                                    <FiChevronDown size={12} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                                </div>
                                 <div className="relative flex-1">
                                     <input
                                         type="text"
@@ -436,7 +515,7 @@ const Header: React.FC = () => {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                         placeholder="Search products..."
-                                        className="w-full bg-white border border-gray-300 rounded-l-md py-2.5 pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm"
+                                        className="w-full bg-white border border-gray-300 py-2.5 pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm"
                                     />
                                 </div>
                                 <button onClick={handleSearch} className="h-[42px] px-4 bg-[var(--color-primary)] text-white flex items-center rounded-r-md">
