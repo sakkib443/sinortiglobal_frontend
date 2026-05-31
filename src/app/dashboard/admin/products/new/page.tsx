@@ -79,9 +79,8 @@ const ProductFormInner = () => {
         status: 'active', visibility: 'visible',
         isNewProduct: true, isOnSale: false,
         // Visual variants
-        colors: [], colorHex: [], sizes: [], material: [],
+        colors: [], colorHex: [], sizes: [],
         variants: [],
-        pattern: '', gender: '',
         // Tags & AI
         tags: [], aiLabels: [],
         // Specs & Highlights
@@ -124,7 +123,6 @@ const ProductFormInner = () => {
                 colors: prod.colors || [],
                 colorHex: prod.colorHex || [],
                 sizes: prod.sizes || [],
-                material: prod.material || [],
                 variants: prod.variants || [],
                 aiLabels: prod.aiLabels || [],
                 productType: prod.productType || 'simple',
