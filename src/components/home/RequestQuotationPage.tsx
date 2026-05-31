@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { FiArrowLeft, FiCheckCircle, FiXCircle, FiUpload } from 'react-icons/fi';
+import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
+import { useAppSelector } from '@/redux';
+import { toast } from 'react-hot-toast';
 
 const COUNTRIES = [
     'China', 'USA', 'India', 'Germany', 'Japan', 'South Korea',
@@ -37,6 +40,9 @@ interface FormState {
     shippingMode: string;
     shippingType: string;
     warehouse: string;
+    contactName: string;
+    contactPhone: string;
+    contactEmail: string;
 }
 
 const completenessFields: { key: keyof FormState; label: string; alwaysGreen?: boolean }[] = [
@@ -70,12 +76,68 @@ const RequestQuotationPage: React.FC = () => {
         shippingMode: 'Cargo',
         shippingType: 'By Air',
         warehouse: 'Australia Melbourne Warehouse',
+        contactName: '',
+        contactPhone: '',
+        contactEmail: '',
     });
     const [dragOver, setDragOver] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
+
+    const { user } = useAppSelector((s: any) => s.auth);
+    const [createInquiry, { isLoading: submitting }] = useCreateInquiryMutation();
+
+    // Prefill contact details for logged-in users
+    useEffect(() => {
+        if (user) {
+            setForm(prev => ({
+                ...prev,
+                contactName: prev.contactName || user.name || '',
+                contactPhone: prev.contactPhone || user.phone || '',
+                contactEmail: prev.contactEmail || user.email || '',
+            }));
+        }
+    }, [user]);
 
     const set = (key: keyof FormState, value: string) =>
         setForm(prev => ({ ...prev, [key]: value }));
+
+    const handleSubmit = async () => {
+        if (!form.productName.trim() || !form.productCategory || !form.quantity || !form.aboutProduct.trim()) {
+            toast.error('Please fill the required product fields (name, category, quantity, details).');
+            return;
+        }
+        if (!form.contactPhone.trim() && !form.contactEmail.trim()) {
+            toast.error('Please add your phone or email so we can send you quotations.');
+            return;
+        }
+        const message = [
+            `Product: ${form.productName}`,
+            `Category: ${form.productCategory}`,
+            `Sourcing Country: ${form.sourcingCountry || '—'}`,
+            form.productLink ? `Product Link: ${form.productLink}` : null,
+            `Quantity: ${form.quantity} ${form.unit}`,
+            `Details: ${form.aboutProduct}`,
+            `Shipping Mode: ${form.shippingMode} (${form.shippingType})`,
+            `Destination: ${form.warehouse}`,
+            form.photos.length ? `Attached files: ${form.photos.length}` : null,
+        ].filter(Boolean).join('\n');
+        try {
+            await createInquiry({
+                name: form.contactName.trim() || 'RFQ Customer',
+                email: form.contactEmail.trim(),
+                phone: form.contactPhone.trim(),
+                subject: `RFQ: ${form.productName.trim()}`,
+                message,
+                type: 'rfq',
+            }).unwrap();
+            setSubmitted(true);
+            toast.success('Your quotation request has been submitted!');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch {
+            toast.error('Could not submit your request. Please try again.');
+        }
+    };
 
     const handleFiles = (files: FileList | null) => {
         if (!files) return;
@@ -92,6 +154,33 @@ const RequestQuotationPage: React.FC = () => {
     const r = 54, cx = 70, cy = 70, strokeW = 10;
     const circumference = 2 * Math.PI * r;
     const dash = (pct / 100) * circumference;
+
+    if (submitted) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-20">
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 max-w-md w-full text-center">
+                    <div className="w-16 h-16 rounded-full bg-[var(--color-primary-lightest)] flex items-center justify-center mx-auto mb-5">
+                        <FiCheckCircle className="text-[var(--color-primary)]" size={34} />
+                    </div>
+                    <h1 className="text-xl font-bold text-gray-800 mb-2">Request Submitted!</h1>
+                    <p className="text-sm text-gray-500 mb-7">
+                        Thank you. Our sourcing team has received your RFQ and will send you quotations soon.
+                    </p>
+                    <div className="flex items-center justify-center gap-3">
+                        <Link href="/" className="px-6 py-2.5 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors">
+                            Back to Home
+                        </Link>
+                        <button
+                            onClick={() => setSubmitted(false)}
+                            className="px-6 py-2.5 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors"
+                        >
+                            New Request
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -246,6 +335,43 @@ const RequestQuotationPage: React.FC = () => {
                             <input ref={fileRef} type="file" multiple accept="image/*,.pdf,.xlsx,.csv" className="hidden" onChange={e => handleFiles(e.target.files)} />
                         </div>
 
+                        {/* Your Contact Information */}
+                        <div className="border-t border-gray-100 pt-7 mb-2">
+                            <h2 className="text-lg font-bold text-gray-800 mb-1">Your Contact Information</h2>
+                            <p className="text-xs text-gray-400 mb-5">So we can send you the quotations.</p>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Full Name</label>
+                                    <input
+                                        type="text" placeholder="Your name"
+                                        value={form.contactName}
+                                        onChange={e => set('contactName', e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-[var(--color-primary)] transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                                        Phone <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="tel" placeholder="01XXXXXXXXX"
+                                        value={form.contactPhone}
+                                        onChange={e => set('contactPhone', e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-[var(--color-primary)] transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
+                                    <input
+                                        type="email" placeholder="example@email.com"
+                                        value={form.contactEmail}
+                                        onChange={e => set('contactEmail', e.target.value)}
+                                        className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-gray-700 outline-none focus:border-[var(--color-primary)] transition-colors"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Shipping Details */}
                         <div className="border-t border-gray-100 pt-7">
                             <h2 className="text-lg font-bold text-gray-800 mb-5">Shipping Details</h2>
@@ -292,9 +418,11 @@ const RequestQuotationPage: React.FC = () => {
 
                             <button
                                 type="button"
-                                className="px-8 py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm"
+                                onClick={handleSubmit}
+                                disabled={submitting}
+                                className="px-8 py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                             >
-                                Request Quotes
+                                {submitting ? 'Submitting...' : 'Request Quotes'}
                             </button>
                         </div>
                     </div>

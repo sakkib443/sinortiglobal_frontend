@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fi';
 import { BsWhatsapp } from 'react-icons/bs';
 import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
+import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
 
 /* ─── Types ─── */
 type FormState = { name: string; email: string; phone: string; subject: string; message: string };
@@ -15,6 +16,7 @@ type FormState = { name: string; email: string; phone: string; subject: string; 
 export default function ContactClient() {
     const { data: res, isLoading: contentLoading } = useGetSiteContentQuery({});
     const c = res?.data?.contact;
+    const [createInquiry] = useCreateInquiryMutation();
 
     const [form, setForm] = useState<FormState>({ name: '', email: '', phone: '', subject: '', message: '' });
     const [focusField, setFocusField] = useState<string | null>(null);
@@ -41,11 +43,23 @@ export default function ContactClient() {
         const errs = validate();
         if (Object.keys(errs).length) { setErrors(errs); return; }
         setLoading(true);
-        await new Promise(r => setTimeout(r, 1200));
-        setLoading(false);
-        setSubmitted(true);
-        setForm({ name: '', email: '', phone: '', subject: '', message: '' });
-        setTimeout(() => setSubmitted(false), 5000);
+        try {
+            await createInquiry({
+                name: form.name.trim(),
+                email: form.email.trim(),
+                phone: form.phone.trim(),
+                subject: form.subject || 'General Inquiry',
+                message: form.message.trim(),
+                type: 'contact',
+            }).unwrap();
+            setSubmitted(true);
+            setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+            setTimeout(() => setSubmitted(false), 5000);
+        } catch {
+            setErrors({ message: 'Could not send your message. Please try again or call us.' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     /* ─── Helpers ─── */
@@ -113,7 +127,8 @@ export default function ContactClient() {
             label: 'Visit Us',
             primary: c.address || 'Dhaka, Bangladesh',
             secondary: 'Come visit our office',
-            href: '#',
+            href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.address || 'Dhaka, Bangladesh')}`,
+            external: true,
             accent: 'var(--color-secondary)',
         },
     ];
@@ -181,6 +196,8 @@ export default function ContactClient() {
                         <a
                             key={i}
                             href={card.href}
+                            target={(card as any).external ? '_blank' : undefined}
+                            rel={(card as any).external ? 'noopener noreferrer' : undefined}
                             style={{
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -400,8 +417,8 @@ export default function ContactClient() {
                             <div style={{ border: '1.5px solid #e5e7eb', borderRadius: '12px', padding: '16px 18px' }}>
                                 <p style={{ fontSize: '12.5px', fontWeight: 700, color: '#1a1a1a', margin: '0 0 12px' }}>Follow Us</p>
                                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                                    {SOCIALS.map((s: any, i: number) => (
-                                        <a key={i} href={s.url} style={{
+                                    {SOCIALS.filter((s: any) => s.url && s.url !== '#').map((s: any, i: number) => (
+                                        <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{
                                             padding: '6px 12px',
                                             background: `${s.color}12`,
                                             color: s.color,

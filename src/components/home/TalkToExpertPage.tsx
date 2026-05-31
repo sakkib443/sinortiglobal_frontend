@@ -7,6 +7,8 @@ import {
     FiLock, FiCompass, FiBarChart2,
     FiStar, FiChevronLeft, FiChevronRight, FiArrowRight,
 } from 'react-icons/fi';
+import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
+import { toast } from 'react-hot-toast';
 
 const REASONS = [
     'Product Sourcing',
@@ -80,13 +82,30 @@ const TalkToExpertPage: React.FC = () => {
     });
     const [tIdx, setTIdx] = useState(0);
     const [submitted, setSubmitted] = useState(false);
+    const [createInquiry, { isLoading: submitting }] = useCreateInquiryMutation();
 
     const set = (key: string, value: string | boolean) =>
         setForm(prev => ({ ...prev, [key]: value }));
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setSubmitted(true);
+        if (!form.fullName.trim() || !form.email.trim() || !form.phone.trim()) {
+            toast.error('Please fill in your name, email and phone.');
+            return;
+        }
+        try {
+            await createInquiry({
+                name: form.fullName.trim(),
+                email: form.email.trim(),
+                phone: form.phone.trim(),
+                subject: form.reason ? `Talk to Expert: ${form.reason}` : 'Talk to Expert',
+                message: form.message.trim() || form.reason || 'Expert consultation request',
+                type: 'expert',
+            }).unwrap();
+            setSubmitted(true);
+        } catch {
+            toast.error('Could not send your message. Please try again.');
+        }
     };
 
     const prev = () => setTIdx(i => (i - 1 + testimonials.length) % testimonials.length);
@@ -213,9 +232,10 @@ const TalkToExpertPage: React.FC = () => {
                                 </label>
                                 <button
                                     type="submit"
-                                    className="w-full py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm"
+                                    disabled={submitting}
+                                    className="w-full py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
-                                    Send Message
+                                    {submitting ? 'Sending...' : 'Send Message'}
                                 </button>
                             </form>
                         )}
