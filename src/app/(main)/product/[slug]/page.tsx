@@ -29,6 +29,8 @@ export default function ProductDetailsPage() {
     const { isAuthenticated } = useAppSelector((state: any) => state.auth);
     const [createInquiry] = useCreateInquiryMutation();
     const [incrementStat] = useIncrementProductStatMutation();
+    const viewCountedRef = useRef<string | null>(null);
+    const [viewBump, setViewBump] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
     const [isWishlisted, setIsWishlisted] = useState(false);
@@ -91,6 +93,15 @@ export default function ProductDetailsPage() {
 
     const { data: productData, isLoading, isError } = useGetProductBySlugQuery(slug as string, { skip: !slug });
     const product = productData?.data;
+
+    // Count a view once per product visit, and bump the displayed count immediately
+    useEffect(() => {
+        const pid = product?._id;
+        if (!pid || viewCountedRef.current === pid) return;
+        viewCountedRef.current = pid;
+        setViewBump(1);
+        incrementStat({ id: pid, field: 'viewCount' }).catch(() => {});
+    }, [product?._id, incrementStat]);
 
     const { data: relatedData } = useGetRelatedProductsQuery(
         { id: product?._id, categoryId: product?.category?._id },
@@ -687,7 +698,7 @@ export default function ProductDetailsPage() {
 
                                 {/* Views */}
                                 <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                    <FiEye size={13} /> {product.viewCount || 0} views
+                                    <FiEye size={13} /> {(product.viewCount || 0) + viewBump} views
                                 </span>
 
                                 {/* Like */}
