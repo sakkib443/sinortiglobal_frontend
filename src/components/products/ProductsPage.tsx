@@ -3,8 +3,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useGetProductsQuery } from '@/redux/api/productApi';
+import { useAppSelector, useAppDispatch } from '@/redux';
+import { clearImageSearch } from '@/redux/slices/imageSearchSlice';
 import NewProductCard from '@/components/shared/NewProductCard';
-import { FiGrid, FiList, FiChevronDown, FiX, FiSearch, FiFilter } from 'react-icons/fi';
+import { FiGrid, FiList, FiChevronDown, FiX, FiSearch, FiFilter, FiCamera } from 'react-icons/fi';
 
 const LIMIT = 24;
 
@@ -21,6 +23,11 @@ const SORT_OPTIONS = [
 const ProductsPage: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const dispatch = useAppDispatch();
+
+    // Image search results (set from the Header camera search)
+    const imageSearch = useAppSelector((s: any) => s.imageSearch);
+    const imageActive = !!imageSearch?.isActive;
 
     const categoryParam = searchParams.get('category') || '';
     const subcategoryParam = searchParams.get('subcategory') || '';
@@ -82,6 +89,9 @@ const ProductsPage: React.FC = () => {
     const products = data?.data || [];
     const meta = data?.meta || { total: 0, totalPage: 1 };
 
+    // When an image search is active, show those results instead of the catalog
+    const displayProducts = imageActive ? (imageSearch.products || []) : products;
+
     // Central URL builder — only the passed keys change, the rest are preserved
     const pushFilters = (next: { category?: string; subcategory?: string; country?: string; q?: string }) => {
         const category = next.category !== undefined ? next.category : selectedCategory;
@@ -139,9 +149,9 @@ const ProductsPage: React.FC = () => {
                     </div>
                     <div className="flex items-center justify-between">
                         <h1 className="text-2xl font-bold text-gray-900">
-                            {searchParam ? `Results for "${searchParam}"` : activeSubcategoryName || activeCategoryName || 'All Products'}
+                            {imageActive ? 'Image Search Results' : searchParam ? `Results for "${searchParam}"` : activeSubcategoryName || activeCategoryName || 'All Products'}
                         </h1>
-                        <span className="text-sm text-gray-400">{meta.total || products.length} products found</span>
+                        <span className="text-sm text-gray-400">{imageActive ? displayProducts.length : (meta.total || products.length)} products found</span>
                     </div>
                 </div>
             </div>
@@ -301,6 +311,29 @@ const ProductsPage: React.FC = () => {
                     {/* ── Main Content ── */}
                     <div className="flex-1 min-w-0">
 
+                        {/* Image search banner */}
+                        {imageActive && (
+                            <div className="mb-4 flex items-center justify-between gap-3 bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/20 rounded-lg px-4 py-3">
+                                <div className="flex items-center gap-3 min-w-0">
+                                    {imageSearch.previewImage && (
+                                        <img src={imageSearch.previewImage} alt="search" className="w-12 h-12 rounded-lg object-cover border border-gray-200 shrink-0" />
+                                    )}
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-1.5 text-sm font-bold text-gray-800">
+                                            <FiCamera size={15} className="text-[var(--color-primary)]" /> Image Search Results
+                                        </div>
+                                        <p className="text-xs text-gray-500">Found {displayProducts.length} matching products</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => dispatch(clearImageSearch())}
+                                    className="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-red-500 bg-white border border-gray-200 rounded-full px-3 py-1.5 shrink-0"
+                                >
+                                    <FiX size={13} /> Clear
+                                </button>
+                            </div>
+                        )}
+
                         {/* Top Bar - Sort + Filter toggle */}
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
@@ -365,7 +398,7 @@ const ProductsPage: React.FC = () => {
                         </div>
 
                         {/* Product Grid */}
-                        {isFetching && products.length === 0 ? (
+                        {(imageActive ? imageSearch.isSearching : (isFetching && products.length === 0)) ? (
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2">
                                 {[...Array(10)].map((_, i) => (
                                     <div key={i} className="bg-white border border-gray-200 rounded-md overflow-hidden animate-pulse">
@@ -377,7 +410,7 @@ const ProductsPage: React.FC = () => {
                                     </div>
                                 ))}
                             </div>
-                        ) : products.length === 0 ? (
+                        ) : displayProducts.length === 0 ? (
                             <div className="text-center py-20">
                                 <div className="text-6xl mb-4">🔍</div>
                                 <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
@@ -387,8 +420,8 @@ const ProductsPage: React.FC = () => {
                                 </button>
                             </div>
                         ) : (
-                            <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2 transition-opacity ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
-                                {products.map((product: any) => (
+                            <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-2 transition-opacity ${(!imageActive && isFetching) ? 'opacity-60' : 'opacity-100'}`}>
+                                {displayProducts.map((product: any) => (
                                     <NewProductCard
                                         key={product._id}
                                         product={{
@@ -417,7 +450,7 @@ const ProductsPage: React.FC = () => {
                         )}
 
                         {/* Pagination */}
-                        {meta.totalPage > 1 && (
+                        {!imageActive && meta.totalPage > 1 && (
                             <div className="flex items-center justify-center gap-2 mt-8">
                                 <button
                                     disabled={page === 1}

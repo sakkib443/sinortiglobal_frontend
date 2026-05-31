@@ -141,7 +141,7 @@ const Header: React.FC = () => {
                     searchMeta: { ...data.data.searchMeta, colors: analysis.colors },
                     previewImage: imageUrl,
                 }));
-                router.push('/');
+                router.push('/products');
             } else {
                 dispatch(setImageSearching(false));
             }
