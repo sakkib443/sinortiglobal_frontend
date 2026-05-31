@@ -14,6 +14,7 @@ import { useGetProductReviewsQuery, usePublicCreateReviewMutation, useCreateRevi
 import { useAppDispatch, useAppSelector } from '@/redux';
 import { addToCart } from '@/redux/slices/cartSlice';
 import { useCreateInquiryMutation } from '@/redux/api/inquiryApi';
+import { toast } from 'react-hot-toast';
 import NewProductCard, { CommentsPopup } from '@/components/shared/NewProductCard';
 import {
     FaFacebookF, FaFacebookMessenger, FaWhatsapp, FaTelegramPlane,
