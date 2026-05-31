@@ -117,7 +117,7 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                 <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
                     {services.map((service) => {
                         const cardClass =
-                            'flex flex-col items-center justify-center gap-3 bg-white border border-gray-100 rounded-2xl py-6 px-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-[var(--color-primary-border)] transition-all duration-200 group cursor-pointer';
+                            'flex flex-col items-center justify-start gap-3 bg-white border border-gray-100 rounded-2xl py-5 px-2 sm:px-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-[var(--color-primary-border)] transition-all duration-200 group cursor-pointer';
 
                         if (service.label === 'Category') {
                             return (
@@ -129,7 +129,7 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                                     <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-amber-50 group-hover:scale-105 transition-transform duration-200">
                                         {service.emoji}
                                     </div>
-                                    <span className="text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+                                    <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors min-h-[32px] flex items-center justify-center">
                                         {service.label}
                                     </span>
                                 </button>
@@ -144,7 +144,7 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                                 <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:scale-105 transition-transform duration-200">
                                     {service.emoji}
                                 </div>
-                                <span className="text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+                                <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors min-h-[32px] flex items-center justify-center">
                                     {service.label}
                                 </span>
                             </Link>

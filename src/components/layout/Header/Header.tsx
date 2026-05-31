@@ -15,6 +15,7 @@ import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
 import { setImageSearching, setImageSearchResults, clearImageSearch } from '@/redux/slices/imageSearchSlice';
 import { logout } from '@/redux/slices/authSlice';
 import { useTheme } from '@/components/shared/ThemeProvider';
+import { resolveCategoryIcon } from '@/utils/categoryIcon';
 
 interface Category {
     _id: string;
@@ -310,8 +311,12 @@ const Header: React.FC = () => {
                                                 className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
                                                 onClick={() => setIsCategoryHovered(false)}
                                             >
-                                                {category.icon && <span>{category.icon}</span>}
-                                                {category.name}
+                                                {category.image ? (
+                                                    <img src={category.image} alt={category.name} className="w-6 h-6 rounded object-cover shrink-0" />
+                                                ) : (
+                                                    <span className="text-lg">{resolveCategoryIcon(category.name, category.icon)}</span>
+                                                )}
+                                                <span>{category.name}</span>
                                             </Link>
                                         ))
                                     ) : (
@@ -542,8 +547,12 @@ const Header: React.FC = () => {
                                             </Link>
                                             {categories.map((cat) => (
                                                 <Link key={cat._id} href={`/products?category=${cat._id}`} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] rounded-lg text-sm transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
-                                                    {cat.icon && <span>{cat.icon}</span>}
-                                                    {cat.name}
+                                                    {cat.image ? (
+                                                        <img src={cat.image} alt={cat.name} className="w-6 h-6 rounded object-cover shrink-0" />
+                                                    ) : (
+                                                        <span className="text-lg">{resolveCategoryIcon(cat.name, cat.icon)}</span>
+                                                    )}
+                                                    <span>{cat.name}</span>
                                                 </Link>
                                             ))}
                                         </div>

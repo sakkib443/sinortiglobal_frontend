@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { FiX } from 'react-icons/fi';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
+import { resolveCategoryIcon } from '@/utils/categoryIcon';
 
 interface Category {
     _id: string;
@@ -15,46 +16,6 @@ interface Category {
 
 interface CategoryExpertiseProps {
     onClose?: () => void;
-}
-
-// Map category names → emoji icons (first keyword match wins)
-const ICON_MAP: { keywords: string[]; icon: string }[] = [
-    { keywords: ['construction', 'engineering', 'civil', 'architect'],                              icon: '🏗️' },
-    { keywords: ['electrical', 'electronics', 'electric'],                                          icon: '⚡' },
-    { keywords: ['family', 'kids', 'daily care', 'baby', 'child'],                                 icon: '👨‍👩‍👧‍👦' },
-    { keywords: ['fashion', 'personal style', 'clothing', 'apparel', 'garment'],                   icon: '👗' },
-    { keywords: ['home & lifestyle', 'home and lifestyle', 'lifestyle', 'home decor', 'interior', 'furniture'], icon: '🏠' },
-    { keywords: ['industrial', 'manufacturing', 'factory', 'machinery'],                            icon: '🏭' },
-    { keywords: ['agriculture', 'food industry', 'farming', 'agro'],                               icon: '🌾' },
-    { keywords: ['auto', 'vehicle', 'motor', 'car', 'bike', 'truck'],                             icon: '🚗' },
-    { keywords: ['sport', 'fitness', 'gym', 'exercise', 'outdoor'],                               icon: '⚽' },
-    { keywords: ['health', 'beauty', 'cosmetic', 'skincare', 'medical', 'pharma', 'wellness'],    icon: '💊' },
-    { keywords: ['toy', 'game', 'play', 'puzzle'],                                                 icon: '🧸' },
-    { keywords: ['bag', 'luggage', 'backpack', 'suitcase'],                                        icon: '👜' },
-    { keywords: ['shoe', 'footwear', 'sneaker', 'sandal', 'boot'],                                icon: '👟' },
-    { keywords: ['watch', 'jewel', 'accessories', 'sunglass'],                                     icon: '⌚' },
-    { keywords: ['gadget', 'tool', 'hardware', 'equipment'],                                       icon: '🔧' },
-    { keywords: ['book', 'stationery', 'education', 'office', 'school'],                          icon: '📚' },
-    { keywords: ['phone', 'smartphone', 'mobile', 'tablet'],                                       icon: '📱' },
-    { keywords: ['computer', 'laptop', 'pc', 'desktop'],                                           icon: '💻' },
-    { keywords: ['grocery', 'supermarket', 'vegetable', 'fruit'],                                  icon: '🛒' },
-    { keywords: ['pet', 'animal', 'dog', 'cat', 'bird'],                                          icon: '🐾' },
-    { keywords: ['energy', 'solar', 'power', 'oil', 'gas'],                                       icon: '🔋' },
-    { keywords: ['chemical', 'plastic', 'rubber', 'material'],                                     icon: '🧪' },
-    { keywords: ['security', 'safety', 'surveillance', 'cctv'],                                   icon: '🔒' },
-    { keywords: ['textile', 'fabric', 'yarn', 'thread'],                                          icon: '🧵' },
-    { keywords: ['food', 'restaurant', 'catering', 'bakery'],                                     icon: '🍽️' },
-    { keywords: ['printing', 'packaging', 'paper', 'cardboard'],                                  icon: '🖨️' },
-];
-
-function resolveIcon(name: string, dbIcon?: string): string {
-    const lower = name.toLowerCase();
-    for (const entry of ICON_MAP) {
-        if (entry.keywords.some(kw => lower.includes(kw))) {
-            return entry.icon;
-        }
-    }
-    return dbIcon || '📦';
 }
 
 const CategoryExpertise: React.FC<CategoryExpertiseProps> = ({ onClose }) => {
@@ -98,14 +59,14 @@ const CategoryExpertise: React.FC<CategoryExpertiseProps> = ({ onClose }) => {
                                     href={`/products?category=${cat._id}`}
                                     className="category-carousel-item flex flex-col items-center gap-3 group"
                                 >
-                                    <div className="w-[80px] h-[80px] rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-[var(--color-primary)]/30 group-hover:shadow-xl group-hover:scale-110 group-hover:from-[var(--color-primary)]/5 group-hover:to-[var(--color-primary)]/10">
+                                    <div className="w-[64px] h-[64px] sm:w-[80px] sm:h-[80px] rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:border-[var(--color-primary)]/30 group-hover:shadow-xl group-hover:scale-110 group-hover:from-[var(--color-primary)]/5 group-hover:to-[var(--color-primary)]/10 shrink-0">
                                         {cat.image ? (
                                             <img src={cat.image} alt={cat.name} className="w-full h-full object-cover rounded-2xl" />
                                         ) : (
-                                            <span className="text-3xl transition-transform duration-300 group-hover:scale-110">{resolveIcon(cat.name, cat.icon)}</span>
+                                            <span className="text-2xl sm:text-3xl transition-transform duration-300 group-hover:scale-110">{resolveCategoryIcon(cat.name, cat.icon)}</span>
                                         )}
                                     </div>
-                                    <span className="text-[13px] text-gray-600 text-center font-medium group-hover:text-[var(--color-primary)] transition-colors whitespace-nowrap">{cat.name}</span>
+                                    <span className="text-[12px] sm:text-[13px] text-gray-600 text-center font-medium group-hover:text-[var(--color-primary)] transition-colors whitespace-nowrap max-w-[80px] truncate">{cat.name}</span>
                                 </Link>
                             )) : (
                                 [...Array(8)].map((_, i) => (

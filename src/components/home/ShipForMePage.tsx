@@ -147,7 +147,10 @@ const ShipForMePage: React.FC = () => {
                             >
                                 Let&apos;s Ship Now <FiArrowRight />
                             </Link>
-                            <button className="flex items-center gap-2 px-5 py-3 text-gray-700 font-medium hover:text-[var(--color-primary)] transition-colors">
+                            <button
+                                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+                                className="flex items-center gap-2 px-5 py-3 text-gray-700 font-medium hover:text-[var(--color-primary)] transition-colors"
+                            >
                                 <span className="w-9 h-9 flex items-center justify-center rounded-full bg-red-100 text-red-500">
                                     <FiPlay size={14} fill="currentColor" />
                                 </span>
@@ -173,7 +176,7 @@ const ShipForMePage: React.FC = () => {
             </section>
 
             {/* ── How it Works ── */}
-            <section className="w-full py-14 px-4 bg-white">
+            <section id="how-it-works" className="w-full py-14 px-4 bg-white scroll-mt-20">
                 <div className="max-w-6xl mx-auto">
                     <h2 className="text-2xl font-bold text-gray-800 text-center mb-10">How Ship for me Works</h2>
 
