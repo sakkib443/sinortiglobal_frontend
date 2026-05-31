@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '@/redux';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
+import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
 
 import { setImageSearching, setImageSearchResults, clearImageSearch } from '@/redux/slices/imageSearchSlice';
 import { logout } from '@/redux/slices/authSlice';
@@ -44,6 +45,13 @@ const Header: React.FC = () => {
 
     const { data: categoriesData } = useGetCategoriesQuery({});
     const categories: Category[] = categoriesData?.data || [];
+
+    // Dynamic contact info (managed from Admin → Site Content → Contact)
+    const { data: siteContentRes } = useGetSiteContentQuery(undefined);
+    const contact = siteContentRes?.data?.contact || {};
+    const contactPhone: string = contact.phone || '+8809666786000';
+    const contactEmail: string = contact.email || 'support@sinotriglobal.com';
+    const contactAddress: string = contact.address || 'Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216';
 
     // Sticky scroll
     const [scrolled, setScrolled] = useState(false);
@@ -198,25 +206,25 @@ const Header: React.FC = () => {
                             {/* Left — contact info */}
                             <div className="flex items-center gap-5">
                                 <a
-                                    href="tel:+8809666786000"
+                                    href={`tel:${contactPhone.replace(/\s+/g, '')}`}
                                     className="flex items-center gap-1.5 hover:text-white transition-colors"
                                 >
                                     <FiPhone size={12} />
-                                    <span>+8809666786000</span>
+                                    <span>{contactPhone}</span>
                                 </a>
                                 <span className="text-white/30">|</span>
                                 <a
-                                    href="mailto:support@sinotriglobal.com"
+                                    href={`mailto:${contactEmail}`}
                                     className="flex items-center gap-1.5 hover:text-white transition-colors"
                                 >
                                     <FiMail size={12} />
-                                    <span>support@sinotriglobal.com</span>
+                                    <span>{contactEmail}</span>
                                 </a>
                             </div>
                             {/* Right — address */}
                             <div className="flex items-center gap-1.5 text-white/80">
                                 <FiMapPin size={12} className="shrink-0" />
-                                <span>Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216</span>
+                                <span>{contactAddress}</span>
                             </div>
                         </div>
                     </div>
