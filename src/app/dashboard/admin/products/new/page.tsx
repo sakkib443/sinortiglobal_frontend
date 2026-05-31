@@ -64,7 +64,7 @@ const ProductFormInner = () => {
 
     const [formData, setFormData] = useState<any>({
         // Basic
-        name: '', slug: '', sku: '', brand: '',
+        name: '', slug: '', sku: '',
         description: '',
         productType: 'simple',
         // Pricing
@@ -74,25 +74,14 @@ const ProductFormInner = () => {
         // Organization
         category: '', subcategory: '', country: '',
         // Stock
-        stock: 0, unit: 'piece',
+        stock: 0,
         // Status
         status: 'active', visibility: 'visible',
-        isNewProduct: true, isOnSale: false,
         // Visual variants
         colors: [], colorHex: [], sizes: [],
         variants: [],
         // Tags & AI
         tags: [], aiLabels: [],
-        // Specs & Highlights
-        specifications: [], highlights: [],
-        // Physical
-        weight: 0,
-        dimensions: { length: 0, width: 0, height: 0 },
-        // Shipping & Warranty
-        shippingConfig: { freeShipping: false, shippingCost: 0, estimatedDays: 3 },
-        warranty: { hasWarranty: false, duration: 0, durationUnit: 'months', type: 'manufacturer' },
-        // SEO
-        metaTitle: '', metaDescription: '', metaKeywords: [],
     });
 
     // ── Validation Errors State ──
@@ -114,11 +103,6 @@ const ProductFormInner = () => {
                 ...prod,
                 category: prod.category?._id || prod.category || '',
                 subcategory: prod.subcategory?._id || prod.subcategory || '',
-                warranty: prod.warranty || formData.warranty,
-                shippingConfig: prod.shippingConfig || formData.shippingConfig,
-                dimensions: prod.dimensions || formData.dimensions,
-                specifications: prod.specifications || [],
-                highlights: prod.highlights || [],
                 tags: prod.tags || [],
                 colors: prod.colors || [],
                 colorHex: prod.colorHex || [],
@@ -126,7 +110,6 @@ const ProductFormInner = () => {
                 variants: prod.variants || [],
                 aiLabels: prod.aiLabels || [],
                 productType: prod.productType || 'simple',
-                metaKeywords: prod.metaKeywords || [],
                 images: prod.images || [],
             });
         }
@@ -179,29 +162,6 @@ const ProductFormInner = () => {
     const handleImagesChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const urls = e.target.value.split('\n').map(u => u.trim()).filter(u => u !== '');
         setFormData((prev: any) => ({ ...prev, images: urls }));
-    };
-
-    // Specifications
-    const handleSpecChange = (idx: number, field: string, value: string) => {
-        const specs = [...formData.specifications];
-        specs[idx] = { ...specs[idx], [field]: value };
-        setFormData((prev: any) => ({ ...prev, specifications: specs }));
-    };
-    const addSpec = () => setFormData((prev: any) => ({ ...prev, specifications: [...prev.specifications, { key: '', value: '' }] }));
-    const removeSpec = (idx: number) => {
-        const specs = [...formData.specifications]; specs.splice(idx, 1);
-        setFormData((prev: any) => ({ ...prev, specifications: specs }));
-    };
-
-    // Highlights
-    const handleHighlightChange = (idx: number, value: string) => {
-        const hl = [...formData.highlights]; hl[idx] = value;
-        setFormData((prev: any) => ({ ...prev, highlights: hl }));
-    };
-    const addHighlight = () => setFormData((prev: any) => ({ ...prev, highlights: [...prev.highlights, ''] }));
-    const removeHighlight = (idx: number) => {
-        const hl = [...formData.highlights]; hl.splice(idx, 1);
-        setFormData((prev: any) => ({ ...prev, highlights: hl }));
     };
 
     // ── Validation ──
@@ -280,8 +240,19 @@ const ProductFormInner = () => {
         }
 
         try {
-            const payload = { ...formData };
+            // Strip server-managed / virtual fields so PATCH never sends them back
+            const {
+                _id, __v, createdAt, updatedAt, discountedPrice, soldCount,
+                rating, reviewCount, totalSold, viewCount, likeCount,
+                commentCount, shareCount, wishlistCount, isDeleted,
+                ...clean
+            } = formData;
+            const payload: any = { ...clean };
             if (!payload.subcategory) delete payload.subcategory;
+            // Strip subdocument _id from variants (let Mongoose manage them)
+            if (Array.isArray(payload.variants)) {
+                payload.variants = payload.variants.map(({ _id, discount, ...v }: any) => v);
+            }
 
             if (isEditing) {
                 await updateProduct({ id: productId, data: payload }).unwrap();
@@ -292,6 +263,18 @@ const ProductFormInner = () => {
             }
             router.push('/dashboard/admin/products');
         } catch (error: any) {
+            // Map server-side validation errors back to their specific fields
+            const serverErrs = error?.data?.errorMessages;
+            if (Array.isArray(serverErrs) && serverErrs.length > 0) {
+                const mapped: Record<string, string> = {};
+                serverErrs.forEach((er: any) => { if (er?.path) mapped[er.path] = er.message; });
+                if (Object.keys(mapped).length > 0) {
+                    setErrors(prev => ({ ...prev, ...mapped }));
+                    const firstField = Object.keys(mapped)[0];
+                    document.querySelector(`[name="${firstField}"], [data-field="${firstField}"]`)
+                        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
             toast.error(error?.data?.message || 'Something went wrong');
         }
     };
@@ -353,10 +336,9 @@ const ProductFormInner = () => {
 
                         <Input label="Product Name" name="name" required type="text" placeholder="e.g. 250L Piston Type Industrial Air Compressor" value={formData.name} onChange={handleChange} error={errors.name} />
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Input label="Slug" name="slug" type="text" placeholder="auto-generated" value={formData.slug} onChange={handleChange} />
                             <Input label="SKU / Model" name="sku" type="text" placeholder="e.g. IND-1001" value={formData.sku} onChange={handleChange} />
-                            <Input label="Brand" name="brand" type="text" placeholder="e.g. Lishan Group" value={formData.brand} onChange={handleChange} />
                         </div>
 
                         <div className="space-y-1.5" data-field="description">
@@ -417,19 +399,6 @@ const ProductFormInner = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <Input label="Current Stock" name="stock" type="number" placeholder="0" value={formData.stock} onChange={handleChange} />
-                            <div className="space-y-2">
-                                <label className="text-sm font-semibold text-gray-700">Unit</label>
-                                <select name="unit" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)] cursor-pointer" value={formData.unit} onChange={handleChange}>
-                                    <option value="piece">Piece</option>
-                                    <option value="kg">Kg</option>
-                                    <option value="liter">Liter</option>
-                                    <option value="meter">Meter</option>
-                                    <option value="set">Set</option>
-                                    <option value="pair">Pair</option>
-                                    <option value="box">Box</option>
-                                </select>
-                            </div>
-                            <Input label="Weight (grams)" name="weight" type="number" placeholder="0" value={formData.weight} onChange={handleChange} />
                         </div>
                     </div>
 
@@ -744,19 +713,6 @@ const ProductFormInner = () => {
                     </div>
 
 
-                    {/* ── 7. SEO ─────────────────────────────────────── */}
-                    <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-5">
-                        <SectionHeader icon={<FiGlobe size={20} />} title="SEO Optimization" color="bg-orange-50 text-orange-600" />
-                        <Input label="Meta Title" name="metaTitle" type="text" placeholder="SEO title for search engines" value={formData.metaTitle} onChange={handleChange} />
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">Meta Description</label>
-                            <textarea name="metaDescription" rows={3} placeholder="SEO description for better search ranking..." className="w-full px-4 py-3 bg-white border border-gray-200 rounded-md outline-none focus:border-orange-400 transition-all text-sm" value={formData.metaDescription} onChange={handleChange}></textarea>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">Meta Keywords <span className="text-xs text-gray-400">(comma-separated)</span></label>
-                            <input type="text" placeholder="e.g. air compressor, industrial" className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-orange-400" value={formData.metaKeywords.join(', ')} onChange={(e) => handleArrayChange('metaKeywords', e.target.value)} />
-                        </div>
-                    </div>
                 </div>
 
                 {/* ══ RIGHT COLUMN (4 cols) ════════════════════════ */}
@@ -845,10 +801,6 @@ const ProductFormInner = () => {
                     {/* ── Visibility & Promotion ────────────────────── */}
                     <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-4">
                         <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiSettings className="text-orange-500" /> Visibility & Status</h3>
-                        <div className="space-y-2">
-                            <Toggle label="On Sale" name="isOnSale" checked={formData.isOnSale} onChange={handleChange} color="bg-rose-500" />
-                            <Toggle label="New Arrival" name="isNewProduct" checked={formData.isNewProduct} onChange={handleChange} color="bg-emerald-500" />
-                        </div>
                         <div className="pt-2">
                             <label className="text-xs font-bold text-gray-400 uppercase block mb-2">Status</label>
                             <div className="grid grid-cols-3 gap-1.5">
@@ -862,61 +814,6 @@ const ProductFormInner = () => {
                         </div>
                     </div>
 
-                    {/* ── Shipping & Warranty ───────────────────────── */}
-                    <div className="bg-white p-6 rounded-md border border-gray-200 shadow-sm space-y-4">
-                        <h3 className="font-bold text-gray-800 flex items-center gap-2"><FiShield className="text-emerald-500" /> Shipping & Warranty</h3>
-
-                        <div className="space-y-3 p-4 bg-gray-50 rounded-md border border-gray-100">
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="shippingConfig.freeShipping" className="w-4 h-4 accent-emerald-500" checked={formData.shippingConfig.freeShipping} onChange={handleChange} />
-                                <span className="text-sm font-bold text-gray-700">Free Shipping</span>
-                            </label>
-                            {!formData.shippingConfig.freeShipping && (
-                                <div className="grid grid-cols-2 gap-3 pt-1">
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-gray-400">Shipping Cost (৳)</label>
-                                        <input type="number" name="shippingConfig.shippingCost" placeholder="0" className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-emerald-300" value={formData.shippingConfig.shippingCost} onChange={handleChange} />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <label className="text-[10px] font-bold text-gray-400">Est. Days</label>
-                                        <input type="number" name="shippingConfig.estimatedDays" placeholder="3" className="w-full px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-emerald-300" value={formData.shippingConfig.estimatedDays} onChange={handleChange} />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="space-y-3 p-4 bg-gray-50 rounded-md border border-gray-100">
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input type="checkbox" name="warranty.hasWarranty" className="w-4 h-4 accent-[var(--color-primary)]" checked={formData.warranty.hasWarranty} onChange={handleChange} />
-                                <span className="text-sm font-bold text-gray-700">Has Warranty</span>
-                            </label>
-                            {formData.warranty.hasWarranty && (
-                                <div className="grid grid-cols-3 gap-2 pt-1">
-                                    <input type="number" name="warranty.duration" placeholder="12" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-blue-300" value={formData.warranty.duration} onChange={handleChange} />
-                                    <select name="warranty.durationUnit" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-blue-300" value={formData.warranty.durationUnit} onChange={handleChange}>
-                                        <option value="days">Days</option>
-                                        <option value="months">Months</option>
-                                        <option value="years">Years</option>
-                                    </select>
-                                    <select name="warranty.type" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-blue-300" value={formData.warranty.type} onChange={handleChange}>
-                                        <option value="manufacturer">Manufacturer</option>
-                                        <option value="seller">Seller</option>
-                                        <option value="brand">Brand</option>
-                                    </select>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Dimensions */}
-                        <div className="space-y-2 pt-2">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Dimensions (cm)</label>
-                            <div className="grid grid-cols-3 gap-2">
-                                <input type="number" name="dimensions.length" placeholder="L" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.dimensions.length} onChange={handleChange} />
-                                <input type="number" name="dimensions.width" placeholder="W" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.dimensions.width} onChange={handleChange} />
-                                <input type="number" name="dimensions.height" placeholder="H" className="px-3 py-2 bg-white border border-gray-200 rounded-md text-sm outline-none focus:border-[var(--color-primary)]" value={formData.dimensions.height} onChange={handleChange} />
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
