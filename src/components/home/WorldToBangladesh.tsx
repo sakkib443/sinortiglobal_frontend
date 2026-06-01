@@ -2,26 +2,39 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
+import { geoEquirectangular } from 'd3-geo';
 
 /* ════════════════════════════════════════════════════════════════
    FROM THE WORLD TO BANGLADESH
-   A clean world map that simply marks the countries products are
-   sourced from, with light routes converging into Bangladesh.
-   Markers are placed using real lat/long on a full-extent
-   equirectangular map, so they land on the correct countries.
+   A plain, flat world map. Land is a soft grey; the countries we
+   operate in are filled with the brand highlight colour and carry a
+   planted flag. Light dashed routes converge into Bangladesh.
+
+   The country shapes are drawn by react-simple-maps from a bundled
+   world TopoJSON. The flags + routes are overlaid with the SAME
+   equirectangular projection, so every flag lands on its country at
+   any screen size.
 ═══════════════════════════════════════════════════════════════════ */
 
-// Equirectangular projection. Longitude is full (-180..180); the map image is
-// cropped vertically to latitude +84..-56 (polar ice strips removed), so the
-// vertical mapping uses that range to keep markers on the right countries.
-const px = (lon: number) => ((lon + 180) / 360) * 100; // % from left
-const py = (lat: number) => ((64 - lat) / 120) * 100;   // % from top (lat 64..-56)
-// SVG space is 200 x 100 (matches the 2:1 box → uniform scaling)
-const sx = (lon: number) => px(lon) * 2;
-const sy = (lat: number) => py(lat);
+// Map canvas (viewBox units). Equirectangular, cropped to the inhabited
+// latitude band (+83..-56) so the poles/Antarctica are trimmed.
+const MAP_W = 800;
+const MAP_H = 309;
+const PROJ_SCALE = 127.3;
+const PROJ_CENTER: [number, number] = [0, 13.5];
 
-// `code` = ISO-3166 alpha-2, used to load the real flag image
-// (emoji flags don't render on Windows, so we use PNGs).
+// One projection instance, reused for flag + route placement. Its scale,
+// center and translate match what we pass to <ComposableMap> below.
+const projection = geoEquirectangular()
+    .scale(PROJ_SCALE)
+    .center(PROJ_CENTER)
+    .translate([MAP_W / 2, MAP_H / 2]);
+
+const project = (lon: number, lat: number): [number, number] =>
+    (projection([lon, lat]) as [number, number]) || [0, 0];
+
+// `code` = ISO-3166 alpha-2, used to load the real flag PNG.
 const HUB = { name: 'Bangladesh', code: 'bd', lon: 90.4, lat: 23.7 };
 
 const SOURCES = [
@@ -34,57 +47,81 @@ const SOURCES = [
     { name: 'Australia', code: 'au', lon: 134, lat: -25 },
 ];
 
+// Country names exactly as they appear in world-atlas countries-110m.json.
+const HIGHLIGHT = new Set([
+    'Bangladesh',
+    'China',
+    'United States of America',
+    'United Kingdom',
+    'Pakistan',
+    'United Arab Emirates',
+    'Philippines',
+    'Australia',
+]);
+
+// Palette — plain grey land, warm highlight for our countries.
+const LAND_FILL = '#E6E8EB';
+const LAND_STROKE = '#FFFFFF';
+const HILITE_FILL = '#E8843C';
+const HILITE_STROKE = '#CE7029';
+
+// Quadratic arc (in viewBox units) from a source country into the hub.
 function arcPath(lon: number, lat: number): string {
-    const x1 = sx(lon), y1 = sy(lat);
-    const x2 = sx(HUB.lon), y2 = sy(HUB.lat);
-    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-    const lift = Math.min(Math.hypot(x2 - x1, y2 - y1) * 0.16, 22);
+    const [x1, y1] = project(lon, lat);
+    const [x2, y2] = project(HUB.lon, HUB.lat);
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    const lift = Math.min(Math.hypot(x2 - x1, y2 - y1) * 0.18, 34);
     return `M ${x1.toFixed(2)} ${y1.toFixed(2)} Q ${mx.toFixed(2)} ${(my - lift).toFixed(2)} ${x2.toFixed(2)} ${y2.toFixed(2)}`;
 }
 
-// A planted flag-on-a-pole. The anchor dot is centred on the country point;
-// the pole + flag rise from it, and the hub label drops below it.
-function Marker({ lon, lat, code, name, hub = false }: {
+// A small arrowhead near the hub end of a route, oriented along the flow
+// (toward Bangladesh). Returns viewBox-space position + rotation in degrees.
+function arrowMark(lon: number, lat: number, t = 0.7): { bx: number; by: number; ang: number } {
+    const [x0, y0] = project(lon, lat);
+    const [x2, y2] = project(HUB.lon, HUB.lat);
+    const cx = (x0 + x2) / 2;
+    const cy = (y0 + y2) / 2 - Math.min(Math.hypot(x2 - x0, y2 - y0) * 0.18, 34);
+    const u = 1 - t;
+    const bx = u * u * x0 + 2 * u * t * cx + t * t * x2;
+    const by = u * u * y0 + 2 * u * t * cy + t * t * y2;
+    const dx = 2 * u * (cx - x0) + 2 * t * (x2 - cx);
+    const dy = 2 * u * (cy - y0) + 2 * t * (y2 - cy);
+    return { bx, by, ang: (Math.atan2(dy, dx) * 180) / Math.PI };
+}
+
+// A planted flag-on-a-pole, positioned by % so it tracks the map at any size.
+function FlagMarker({ lon, lat, code, name, hub = false }: {
     lon: number; lat: number; code: string; name: string; hub?: boolean;
 }) {
+    const [x, y] = project(lon, lat);
+    const left = (x / MAP_W) * 100;
+    const top = (y / MAP_H) * 100;
     return (
         <div
             className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
-            style={{ left: `${px(lon)}%`, top: `${py(lat)}%` }}
+            style={{ left: `${left}%`, top: `${top}%` }}
             title={name}
         >
             {/* Flag + pole rising from the point */}
             <div className="absolute left-1/2 bottom-full -translate-x-1/2 flex flex-col items-center">
-                <div
-                    className={`bg-white rounded-[3px] shadow-lg p-1 ${hub
-                        ? 'ring-2 ring-[var(--color-secondary)]'
-                        : 'ring-1 ring-black/20'}`}
-                >
+                <div className={`bg-white rounded-[3px] shadow-md p-[3px] ${hub ? 'ring-2 ring-[var(--color-secondary)]' : 'ring-1 ring-black/15'}`}>
                     <img
                         src={`/images/flags/${code}.png`}
                         alt={name}
                         className="block rounded-[1px]"
-                        style={{ width: hub ? 40 : 30, height: 'auto', maxWidth: 'none' }}
+                        style={{ width: hub ? 'clamp(18px, 4vw, 34px)' : 'clamp(13px, 3vw, 26px)', height: 'auto', maxWidth: 'none' }}
                         draggable={false}
                     />
                 </div>
-                <div className={`bg-gradient-to-b from-gray-300 to-gray-500 ${hub ? 'w-[3px] h-6 md:h-7' : 'w-[2.5px] h-5 md:h-6'}`} />
+                <div
+                    className={`bg-gradient-to-b from-gray-300 to-gray-500 ${hub ? 'w-[3px]' : 'w-[2px]'}`}
+                    style={{ height: hub ? 'clamp(14px, 3vw, 24px)' : 'clamp(11px, 2.4vw, 20px)' }}
+                />
             </div>
 
-            {/* Pulse ring (hub only) */}
-            {hub && (
-                <span
-                    className="absolute left-1/2 top-1/2 w-6 h-6 rounded-full"
-                    style={{ background: 'var(--color-secondary)', opacity: 0.35, animation: 'wbPing 2s ease-out infinite' }}
-                />
-            )}
-
             {/* Anchor dot on the exact country point */}
-            <span
-                className={`relative block rounded-full ring-2 ring-white shadow ${hub
-                    ? 'w-2.5 h-2.5 bg-[var(--color-secondary)]'
-                    : 'w-1.5 h-1.5 bg-[var(--color-primary)]'}`}
-            />
+            <span className={`relative block rounded-full ring-2 ring-white shadow ${hub ? 'w-2.5 h-2.5 bg-[var(--color-secondary)]' : 'w-1.5 h-1.5 bg-[#E8843C]'}`} />
 
             {/* Hub label below the point */}
             {hub && (
@@ -98,62 +135,84 @@ function Marker({ lon, lat, code, name, hub = false }: {
 
 const WorldToBangladesh: React.FC = () => {
     return (
-        <section className="w-full">
+        <section className="w-full bg-white overflow-x-hidden">
             <style>{`
-                @keyframes wbDash { to { stroke-dashoffset: -40; } }
-                @keyframes wbPing { 0% { transform: translate(-50%,-50%) scale(0.5); opacity: 0.5; } 100% { transform: translate(-50%,-50%) scale(2.6); opacity: 0; } }
-                .wb-route { animation: wbDash 3s linear infinite; }
-                @media (prefers-reduced-motion: reduce) { .wb-route, .wb-dot { animation: none !important; } }
+                @keyframes wbDash { to { stroke-dashoffset: -32; } }
+                .wb-route { animation: wbDash 4s linear infinite; }
+                @media (prefers-reduced-motion: reduce) { .wb-route { animation: none !important; } }
             `}</style>
 
-            {/* Map — real satellite Earth, full-bleed (edge to edge), keeps the
-                natural 2:1 proportion so it never looks squished */}
-            <div
-                className="relative w-full overflow-hidden"
-                style={{ aspectRatio: '1500 / 500' }}
-            >
-                    <img
-                        src="/images/world-earth.jpg"
-                        alt="World map"
-                        className="absolute inset-0 w-full h-full object-fill select-none pointer-events-none"
-                        style={{ filter: 'saturate(1.05) brightness(1.12)' }}
-                        draggable={false}
-                    />
-                    {/* Light veil — gives the soft, natural look (less harsh) */}
-                    <div
-                        className="absolute inset-0 pointer-events-none"
-                        style={{ background: 'rgba(255,255,255,0.24)' }}
-                    />
+            {/* Map — plain flat world, full-bleed (edge to edge) */}
+            <div className="relative w-full overflow-hidden">
+                <ComposableMap
+                    projection="geoEquirectangular"
+                    projectionConfig={{ scale: PROJ_SCALE, center: PROJ_CENTER }}
+                    width={MAP_W}
+                    height={MAP_H}
+                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                >
+                    <Geographies geography="/data/countries-110m.json">
+                        {({ geographies }: { geographies: any[] }) =>
+                            geographies.map((geo) => {
+                                const on = HIGHLIGHT.has(geo.properties?.name);
+                                return (
+                                    <Geography
+                                        key={geo.rsmKey}
+                                        geography={geo}
+                                        fill={on ? HILITE_FILL : LAND_FILL}
+                                        stroke={on ? HILITE_STROKE : LAND_STROKE}
+                                        strokeWidth={0.4}
+                                        style={{
+                                            default: { outline: 'none' },
+                                            hover: { outline: 'none', fill: on ? HILITE_FILL : LAND_FILL },
+                                            pressed: { outline: 'none' },
+                                        }}
+                                    />
+                                );
+                            })
+                        }
+                    </Geographies>
+                </ComposableMap>
 
-                    {/* Light routes converging into Bangladesh */}
-                    <svg
-                        className="absolute inset-0 w-full h-full z-10 pointer-events-none"
-                        viewBox="0 0 200 100"
-                        preserveAspectRatio="none"
-                        aria-hidden
-                    >
-                        {SOURCES.map((c, i) => {
-                            const d = arcPath(c.lon, c.lat);
-                            return (
-                                <g key={c.name}>
-                                    {/* thin dark underlay for contrast over bright ocean */}
-                                    <path d={d} fill="none" stroke="rgba(3,12,24,0.35)" strokeWidth={0.45} strokeLinecap="round" />
-                                    {/* thin white flight-path dashes flowing slowly toward the hub */}
-                                    <path d={d} fill="none" stroke="rgba(255,255,255,0.9)" strokeWidth={0.3} strokeLinecap="round" strokeDasharray="1.2 3" className="wb-route" style={{ animationDelay: `${i * 0.2}s` }} />
-                                    {/* travelling parcel dot */}
-                                    <circle r={0.85} fill="#ffd24a" stroke="rgba(0,0,0,0.25)" strokeWidth={0.12} className="wb-dot">
-                                        <animateMotion dur="5.5s" repeatCount="indefinite" path={d} begin={`${i * 0.7}s`} />
-                                    </circle>
-                                </g>
-                            );
-                        })}
-                    </svg>
-
-                    {/* Country markers */}
-                    {SOURCES.map((c) => (
-                        <Marker key={c.name} lon={c.lon} lat={c.lat} code={c.code} name={c.name} />
+                {/* Dashed routes converging into Bangladesh */}
+                <svg
+                    className="absolute inset-0 w-full h-full z-10 pointer-events-none"
+                    viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+                    preserveAspectRatio="none"
+                    aria-hidden
+                >
+                    {SOURCES.map((c, i) => (
+                        <path
+                            key={c.name}
+                            d={arcPath(c.lon, c.lat)}
+                            fill="none"
+                            stroke="rgba(120,130,140,0.55)"
+                            strokeWidth={0.6}
+                            strokeLinecap="round"
+                            strokeDasharray="1.6 3"
+                            className="wb-route"
+                            style={{ animationDelay: `${i * 0.25}s` }}
+                        />
                     ))}
-                    <Marker lon={HUB.lon} lat={HUB.lat} code={HUB.code} name={HUB.name} hub />
+                    {/* Subtle arrowheads showing the flow into Bangladesh */}
+                    {SOURCES.map((c) => {
+                        const a = arrowMark(c.lon, c.lat);
+                        return (
+                            <path
+                                key={`${c.name}-arrow`}
+                                d="M 0 0 L -4.8 -2.6 L -3.1 0 L -4.8 2.6 Z"
+                                transform={`translate(${a.bx.toFixed(2)} ${a.by.toFixed(2)}) rotate(${a.ang.toFixed(1)})`}
+                                fill="rgba(88,99,112,0.88)"
+                            />
+                        );
+                    })}
+                </svg>
+
+                {/* Flags */}
+                {SOURCES.map((c) => (
+                    <FlagMarker key={c.name} lon={c.lon} lat={c.lat} code={c.code} name={c.name} />
+                ))}
+                <FlagMarker lon={HUB.lon} lat={HUB.lat} code={HUB.code} name={HUB.name} hub />
             </div>
 
             {/* Short content — placed below so the map stays clear */}
