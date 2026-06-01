@@ -45,6 +45,9 @@ const NewFooter: React.FC = () => {
     const waNumber = waDigits.startsWith('880') ? waDigits : waDigits.startsWith('0') ? '88' + waDigits : '880' + waDigits;
     const whatsappLink = `https://wa.me/${waNumber}`;
 
+    // Support phone — dynamic from admin / site-content (same source as header)
+    const contactPhone: string = siteRes?.data?.contact?.phone || '+8809666786000';
+
     const handleLogout = () => {
         dispatch(logout());
         localStorage.removeItem('token');
@@ -111,8 +114,8 @@ const NewFooter: React.FC = () => {
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Support</h4>
                         <ul className="space-y-2.5">
                             <li>
-                                <a href="tel:+8809666786000" className="flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline">
-                                    <FiPhone size={14} /> +8809666786000
+                                <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className="flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline">
+                                    <FiPhone size={14} /> {contactPhone}
                                 </a>
                             </li>
                             <li><a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Live Chat (WhatsApp)</a></li>
