@@ -34,7 +34,7 @@ const NewFooter: React.FC = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const { logoUrl } = useTheme();
-    const { data: siteRes } = useGetSiteContentQuery({});
+    const { data: siteRes } = useGetSiteContentQuery(undefined);
 
     // Social links from DB (admin → site-content). Only show ones with a real URL.
     const socials: { label: string; url: string }[] = (siteRes?.data?.contact?.socials || [])
@@ -45,8 +45,10 @@ const NewFooter: React.FC = () => {
     const waNumber = waDigits.startsWith('880') ? waDigits : waDigits.startsWith('0') ? '88' + waDigits : '880' + waDigits;
     const whatsappLink = `https://wa.me/${waNumber}`;
 
-    // Support phone — dynamic from admin / site-content (same source as header)
+    // Contact info — dynamic from admin / site-content (same source as header)
     const contactPhone: string = siteRes?.data?.contact?.phone || '+8809666786000';
+    const contactEmail: string = siteRes?.data?.contact?.email || 'support@sinotriglobal.com';
+    const contactAddress: string = siteRes?.data?.contact?.address || 'Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216';
 
     const handleLogout = () => {
         dispatch(logout());
@@ -69,11 +71,11 @@ const NewFooter: React.FC = () => {
                         <div className="space-y-2.5">
                             <div className="flex items-start gap-2.5">
                                 <FiMapPin size={14} className="text-gray-400 mt-0.5 shrink-0" />
-                                <p className="text-sm text-gray-500">Plot 1020, Road 9, Avenue 9, Mirpur DOHS, Dhaka 1216</p>
+                                <p className="text-sm text-gray-500">{contactAddress}</p>
                             </div>
                             <div className="flex items-center gap-2.5">
                                 <FiMail size={14} className="text-gray-400 shrink-0" />
-                                <a href="mailto:support@sinotriglobal.com" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">support@sinotriglobal.com</a>
+                                <a href={`mailto:${contactEmail}`} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">{contactEmail}</a>
                             </div>
                         </div>
                         {/* Social Icons — dynamic from admin / site-content */}
