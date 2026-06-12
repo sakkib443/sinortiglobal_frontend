@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { FiTruck } from 'react-icons/fi';
+import { APP_DATA_READY_EVENT, isAppDataReady } from '@/utils/appReady';
 
 const Preloader: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -11,11 +12,21 @@ const Preloader: React.FC = () => {
     const pageLoadedRef = useRef(false);
     const finishedRef = useRef(false);
     const progressRef = useRef(0);
+    const dataReadyRef = useRef(false);
 
     useEffect(() => {
+        // Only gate completion on backend data for routes that fetch critical
+        // above-the-fold data (the homepage). Other pages keep the old, quick
+        // behaviour so they never sit waiting for a signal that won't come.
+        const waitForData = window.location.pathname === '/';
+
         const markLoaded = () => { pageLoadedRef.current = true; };
         if (document.readyState === 'complete') pageLoadedRef.current = true;
         else window.addEventListener('load', markLoaded);
+
+        const markDataReady = () => { dataReadyRef.current = true; };
+        if (!waitForData || isAppDataReady()) dataReadyRef.current = true;
+        else window.addEventListener(APP_DATA_READY_EVENT, markDataReady);
 
         const finish = () => {
             if (finishedRef.current) return;
@@ -42,7 +53,10 @@ const Preloader: React.FC = () => {
         let raf = 0;
         const loop = (now: number) => {
             if (finishedRef.current) return;
-            const ready = pageLoadedRef.current && (now - start) >= MIN_DURATION;
+            const ready =
+                pageLoadedRef.current &&
+                dataReadyRef.current &&
+                (now - start) >= MIN_DURATION;
 
             let next: number;
             if (ready) {
@@ -61,12 +75,16 @@ const Preloader: React.FC = () => {
             raf = requestAnimationFrame(loop);
         };
         raf = requestAnimationFrame(loop);
-        const safety = setTimeout(() => { pageLoadedRef.current = true; }, 8000);
+        const safety = setTimeout(() => {
+            pageLoadedRef.current = true;
+            dataReadyRef.current = true;
+        }, 8000);
 
         return () => {
             cancelAnimationFrame(raf);
             clearTimeout(safety);
             window.removeEventListener('load', markLoaded);
+            window.removeEventListener(APP_DATA_READY_EVENT, markDataReady);
         };
     }, []);
 

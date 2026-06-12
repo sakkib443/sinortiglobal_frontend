@@ -8,6 +8,7 @@ import { useGetProductsQuery } from '@/redux/api/productApi';
 import { useGetCategoriesQuery } from '@/redux/api/categoryApi';
 import { useAppSelector, useAppDispatch } from '@/redux';
 import { clearImageSearch, loadSearchHistoryFromStorage } from '@/redux/slices/imageSearchSlice';
+import { signalAppDataReady } from '@/utils/appReady';
 import { FiX, FiCamera } from 'react-icons/fi';
 import { FiSearch } from 'react-icons/fi';
 import HeroSection from './HeroSection';
@@ -63,6 +64,12 @@ const NewHomePage: React.FC = () => {
     const meta = productsData?.meta;
     const totalPages = meta?.totalPages || 1;
     const categories = categoriesData?.data || [];
+
+    // Tell the Preloader the homepage's critical data has settled so it can run
+    // to 100% — instead of finishing before the products grid is ready.
+    useEffect(() => {
+        if (!isLoading) signalAppDataReady();
+    }, [isLoading]);
 
     // Accumulate products when new data arrives
     useEffect(() => {
