@@ -162,7 +162,7 @@ const ThemeEditor: React.FC = () => {
                             </button>
                             <button
                                 onClick={() => {
-                                    localStorage.setItem('megashop-theme', JSON.stringify(theme));
+                                    localStorage.setItem('sinotri-theme', JSON.stringify(theme));
                                     alert('Theme saved successfully!');
                                 }}
                                 className="px-6 py-3 bgp text-white rounded-md font-medium hover:opacity-90 transition-opacity"

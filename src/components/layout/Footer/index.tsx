@@ -120,7 +120,7 @@ const Footer: React.FC = () => {
                             </li>
                             <li className="flex gap-4">
                                 <AiOutlineMail className="text-[var(--color-primary)] flex-shrink-0" size={24} />
-                                <span className="text-sm">support@megashop.com</span>
+                                <span className="text-sm">support@sinotriglobal.com</span>
                             </li>
                         </ul>
                         <div className="mt-8">
