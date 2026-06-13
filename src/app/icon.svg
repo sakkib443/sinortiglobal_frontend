@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Sinotri Global">
+  <defs>
+    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0B4222" />
+      <stop offset="100%" stop-color="#18764a" />
+    </linearGradient>
+  </defs>
+  <circle cx="24" cy="24" r="22" fill="url(#sg)" />
+  <ellipse cx="24" cy="24" rx="12" ry="22" fill="none" stroke="#ffffff" stroke-width="1" opacity="0.25" />
+  <line x1="2" y1="24" x2="46" y2="24" stroke="#ffffff" stroke-width="0.9" opacity="0.25" />
+  <text x="24" y="33" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-weight="800" font-size="27" fill="#ffffff">S</text>
+  <circle cx="41" cy="7" r="4.5" fill="#22c55e" />
+</svg>
