@@ -107,11 +107,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     <div className='absolute top-3 right-3 flex flex-col gap-2 transform translate-x-12 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500'>
                         <button
                             onClick={handleAddToWishlist}
-                            className='w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-100 rounded-md shadow-sm flex items-center justify-center text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-all'
+                            className='w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-100 rounded-md shadow-sm flex items-center justify-center text-gray-700 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-all'
                         >
                             <FiHeart size={18} />
                         </button>
-                        <button className='w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-100 rounded-md shadow-sm flex items-center justify-center text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-all'>
+                        <button className='w-10 h-10 bg-white/90 backdrop-blur-sm border border-gray-100 rounded-md shadow-sm flex items-center justify-center text-gray-700 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-all'>
                             <FiEye size={18} />
                         </button>
                     </div>
@@ -120,7 +120,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 {/* Product Info */}
                 <div className='p-5 pt-4 flex flex-col flex-1 border-t border-gray-50'>
                     <div className='mb-3'>
-                        <h3 className='text-gray-900 font-bold text-sm group-hover:text-[var(--color-primary)] transition-colors line-clamp-1 mb-1.5'>
+                        <h3 className='text-gray-900 font-bold text-sm group-hover:text-[var(--color-text-primary)] transition-colors line-clamp-1 mb-1.5'>
                             {product.name}
                         </h3>
                         <div className='flex items-center gap-2'>
@@ -146,7 +146,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                         <div className='relative flex flex-col items-end'>
                             <button
                                 onClick={handleAddToCart}
-                                className='w-10 h-10 bg-[var(--color-primary)]/30 text-[var(--color-primary)] rounded-full flex items-center justify-center hover:bg-[var(--color-primary)]/40 transition-all active:scale-95 group/btn'
+                                className='w-10 h-10 bg-[var(--color-primary)]/30 text-[var(--color-text-primary)] rounded-full flex items-center justify-center hover:bg-[var(--color-primary)]/40 transition-all active:scale-95 group/btn'
                             >
                                 <FiShoppingCart size={18} className='group-hover/btn:scale-110 transition-transform' />
                             </button>

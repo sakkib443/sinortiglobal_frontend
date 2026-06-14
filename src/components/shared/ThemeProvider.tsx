@@ -5,6 +5,7 @@ import { useGetSiteContentQuery } from '@/redux/api/siteContentApi';
 
 interface ThemeContextType {
     primaryColor: string;
+    primaryForeground: string;
     secondaryColor: string;
     logoUrl: string;
     faviconUrl: string;
@@ -15,6 +16,7 @@ const DEFAULT_LOGO = 'https://res.cloudinary.com/dkdp9sjty/image/upload/v1779572
 
 const defaultTheme: ThemeContextType = {
     primaryColor: '#003B88',
+    primaryForeground: '#ffffff',
     secondaryColor: '#E4525C',
     logoUrl: DEFAULT_LOGO,
     faviconUrl: '',
@@ -57,6 +59,36 @@ function lighten(hex: string, factor: number): string {
     );
 }
 
+// WCAG relative luminance (0 = black … 1 = white)
+function luminance(hex: string): number {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return 0;
+    const ch = (c: number) => {
+        const s = c / 255;
+        return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+    };
+    return 0.2126 * ch(rgb.r) + 0.7152 * ch(rgb.g) + 0.0722 * ch(rgb.b);
+}
+
+const FG_LIGHT = '#ffffff';
+const FG_DARK = '#111111';
+
+// Most readable text color on top of the given background, by contrast ratio.
+function readableText(hex: string): string {
+    const L = luminance(hex);
+    const contrastWhite = 1.05 / (L + 0.05);   // ratio vs white
+    const contrastBlack = (L + 0.05) / 0.05;   // ratio vs black
+    return contrastBlack >= contrastWhite ? FG_DARK : FG_LIGHT;
+}
+
+// Resolve the foreground for the primary color, honoring the admin override.
+// 'auto' → computed from brightness | 'light' → white | 'dark' → near-black
+export function resolvePrimaryForeground(hex: string, mode?: string): string {
+    if (mode === 'light') return FG_LIGHT;
+    if (mode === 'dark') return FG_DARK;
+    return readableText(hex);
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const { data: res } = useGetSiteContentQuery({});
     const [themeData, setThemeData] = useState<ThemeContextType>(defaultTheme);
@@ -73,6 +105,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             const primaryLightest = lighten(primary, 0.93);    // very light bg
             const primaryBorder = lighten(primary, 0.7);       // border color
             const primarySurface = lighten(primary, 0.96);     // surface bg
+            // Readable text color on top of the primary (auto / light / dark)
+            const primaryForeground = resolvePrimaryForeground(primary, t.primaryTextMode);
 
             // Apply all to CSS variables
             const root = document.documentElement;
@@ -82,10 +116,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             root.style.setProperty('--color-primary-lightest', primaryLightest);
             root.style.setProperty('--color-primary-border', primaryBorder);
             root.style.setProperty('--color-primary-surface', primarySurface);
+            root.style.setProperty('--color-primary-foreground', primaryForeground);
             root.style.setProperty('--color-secondary', secondary);
 
             setThemeData({
                 primaryColor: primary,
+                primaryForeground,
                 secondaryColor: secondary,
                 logoUrl: t.logoUrl || DEFAULT_LOGO,
                 faviconUrl: t.faviconUrl || '',

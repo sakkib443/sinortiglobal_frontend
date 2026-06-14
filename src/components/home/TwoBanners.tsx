@@ -13,7 +13,7 @@ const TwoBanners: React.FC = () => {
                     style={{ backgroundImage: 'url(https://portotheme.com/html/wolmart/assets/images/demos/demo1/categories/3-1.jpg)' }}
                 >
                     <div className='absolute inset-0 flex flex-col justify-center px-8'>
-                        <p className='text-[var(--color-primary)] text-xs font-semibold uppercase tracking-wider mb-1'>Natural Process</p>
+                        <p className='text-[var(--color-text-primary)] text-xs font-semibold uppercase tracking-wider mb-1'>Natural Process</p>
                         <h3 className='text-white text-2xl md:text-3xl font-bold leading-tight mb-4'>
                             Cosmetic Makeup<br />Professional
                         </h3>

@@ -36,7 +36,7 @@ const CategoryExpertise: React.FC<CategoryExpertiseProps> = ({ onClose }) => {
                             <h3 className="text-lg font-bold text-gray-800">Top Categories</h3>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium">
+                            <Link href="/products" className="text-sm text-[var(--color-text-primary)] hover:underline font-medium">
                                 View All →
                             </Link>
                             {onClose && (
@@ -66,7 +66,7 @@ const CategoryExpertise: React.FC<CategoryExpertiseProps> = ({ onClose }) => {
                                             <span className="text-2xl sm:text-3xl transition-transform duration-300 group-hover:scale-110">{resolveCategoryIcon(cat.name, cat.icon)}</span>
                                         )}
                                     </div>
-                                    <span className="text-[12px] sm:text-[13px] text-gray-600 text-center font-medium group-hover:text-[var(--color-primary)] transition-colors whitespace-nowrap max-w-[80px] truncate">{cat.name}</span>
+                                    <span className="text-[12px] sm:text-[13px] text-gray-600 text-center font-medium group-hover:text-[var(--color-text-primary)] transition-colors whitespace-nowrap max-w-[80px] truncate">{cat.name}</span>
                                 </Link>
                             )) : (
                                 [...Array(8)].map((_, i) => (

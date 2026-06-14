@@ -73,7 +73,7 @@ export default function MyOrdersPage() {
                     </div>
                     <Link
                         href="/"
-                        className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
+                        className="px-5 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
                     >
                         <FiShoppingBag size={16} />
                         Continue Shopping
@@ -91,7 +91,7 @@ export default function MyOrdersPage() {
                             onClick={() => { setStatusFilter(tab.id); setPage(1); }}
                             className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
                                 statusFilter === tab.id
-                                    ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
+                                    ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-md shadow-[var(--color-primary)]/20'
                                     : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
                             }`}
                         >
@@ -193,8 +193,8 @@ export default function MyOrdersPage() {
                                         </span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <p className="text-lg font-bold text-[var(--color-primary)]">৳{order.total?.toLocaleString()}</p>
-                                        <FiChevronRight size={16} className="text-gray-300 group-hover:text-[var(--color-primary)] group-hover:translate-x-1 transition-all" />
+                                        <p className="text-lg font-bold text-[var(--color-text-primary)]">৳{order.total?.toLocaleString()}</p>
+                                        <FiChevronRight size={16} className="text-gray-300 group-hover:text-[var(--color-text-primary)] group-hover:translate-x-1 transition-all" />
                                     </div>
                                 </div>
                             </div>

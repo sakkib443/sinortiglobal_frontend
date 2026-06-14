@@ -131,19 +131,19 @@ const ProductsPage: React.FC = () => {
             <div className="bg-white border-b border-gray-200">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
-                        <a href="/" className="hover:text-[var(--color-primary)]">Home</a>
+                        <a href="/" className="hover:text-[var(--color-text-primary)]">Home</a>
                         <span>/</span>
                         <span className="text-gray-700 font-medium">Products</span>
                         {activeCategoryName && (
                             <>
                                 <span>/</span>
-                                <span className={activeSubcategoryName ? 'hover:text-[var(--color-primary)] cursor-pointer' : 'text-[var(--color-primary)] font-medium'} onClick={() => activeSubcategoryName && handleCategorySelect(selectedCategory)}>{activeCategoryName}</span>
+                                <span className={activeSubcategoryName ? 'hover:text-[var(--color-text-primary)] cursor-pointer' : 'text-[var(--color-text-primary)] font-medium'} onClick={() => activeSubcategoryName && handleCategorySelect(selectedCategory)}>{activeCategoryName}</span>
                             </>
                         )}
                         {activeSubcategoryName && (
                             <>
                                 <span>/</span>
-                                <span className="text-[var(--color-primary)] font-medium">{activeSubcategoryName}</span>
+                                <span className="text-[var(--color-text-primary)] font-medium">{activeSubcategoryName}</span>
                             </>
                         )}
                     </div>
@@ -183,13 +183,13 @@ const ProductsPage: React.FC = () => {
                                 <ul className="space-y-1.5">
                                     <li>
                                         <label
-                                            className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${!selectedCategory ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                            className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${!selectedCategory ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
                                         >
                                             <input
                                                 type="checkbox"
                                                 checked={!selectedCategory}
                                                 onChange={() => handleCategorySelect('')}
-                                                className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] accent-[var(--color-primary)]"
+                                                className="w-4 h-4 rounded border-gray-300 text-[var(--color-text-primary)] focus:ring-[var(--color-primary)] accent-[var(--color-primary)]"
                                             />
                                             All Categories
                                         </label>
@@ -200,13 +200,13 @@ const ProductsPage: React.FC = () => {
                                         return (
                                             <li key={cat._id}>
                                                 <label
-                                                    className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${isOpen ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                                    className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${isOpen ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
                                                 >
                                                     <input
                                                         type="checkbox"
                                                         checked={isOpen}
                                                         onChange={() => handleCategorySelect(cat._id)}
-                                                        className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)] accent-[var(--color-primary)]"
+                                                        className="w-4 h-4 rounded border-gray-300 text-[var(--color-text-primary)] focus:ring-[var(--color-primary)] accent-[var(--color-primary)]"
                                                     />
                                                     {catIcon(cat)}
                                                     <span className="flex-1">{cat.name}</span>
@@ -219,7 +219,7 @@ const ProductsPage: React.FC = () => {
                                                 {isOpen && subs.length > 0 && (
                                                     <ul className="mt-1 ml-4 pl-2 border-l border-gray-200 space-y-1">
                                                         <li>
-                                                            <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${!selectedSubcategory ? 'text-[var(--color-primary)] font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                                            <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${!selectedSubcategory ? 'text-[var(--color-text-primary)] font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
                                                                 <input
                                                                     type="checkbox"
                                                                     checked={!selectedSubcategory}
@@ -231,7 +231,7 @@ const ProductsPage: React.FC = () => {
                                                         </li>
                                                         {subs.map((sub: any) => (
                                                             <li key={sub._id}>
-                                                                <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${selectedSubcategory === sub._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
+                                                                <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${selectedSubcategory === sub._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-500 hover:bg-gray-50'}`}>
                                                                     <input
                                                                         type="checkbox"
                                                                         checked={selectedSubcategory === sub._id}
@@ -262,7 +262,7 @@ const ProductsPage: React.FC = () => {
                                         const isActive = country === 'All' ? !selectedCountry || selectedCountry === 'All' : selectedCountry === country;
                                         return (
                                             <li key={country}>
-                                                <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}>
+                                                <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer transition-colors ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-600 hover:bg-gray-50'}`}>
                                                     <input
                                                         type="checkbox"
                                                         checked={isActive}
@@ -320,7 +320,7 @@ const ProductsPage: React.FC = () => {
                                     )}
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-1.5 text-sm font-bold text-gray-800">
-                                            <FiCamera size={15} className="text-[var(--color-primary)]" /> Image Search Results
+                                            <FiCamera size={15} className="text-[var(--color-text-primary)]" /> Image Search Results
                                         </div>
                                         <p className="text-xs text-gray-500">Found {displayProducts.length} matching products</p>
                                     </div>
@@ -347,7 +347,7 @@ const ProductsPage: React.FC = () => {
 
                                 {/* Active filters */}
                                 {activeCategoryName && (
-                                    <span className="hidden sm:flex items-center gap-1 text-xs bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-2.5 py-1 rounded-full font-medium">
+                                    <span className="hidden sm:flex items-center gap-1 text-xs bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] px-2.5 py-1 rounded-full font-medium">
                                         {activeCategoryName}
                                         <button onClick={() => handleCategorySelect('')}><FiX size={12} /></button>
                                     </span>
@@ -387,7 +387,7 @@ const ProductsPage: React.FC = () => {
                                             <button
                                                 key={opt.value}
                                                 onClick={() => { setSortBy(opt.value); setShowSortDropdown(false); }}
-                                                className={`w-full text-left text-sm px-4 py-2 hover:bg-gray-50 ${sortBy === opt.value ? 'text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}
+                                                className={`w-full text-left text-sm px-4 py-2 hover:bg-gray-50 ${sortBy === opt.value ? 'text-[var(--color-text-primary)] font-medium' : 'text-gray-600'}`}
                                             >
                                                 {opt.label}
                                             </button>
@@ -415,7 +415,7 @@ const ProductsPage: React.FC = () => {
                                 <div className="text-6xl mb-4">🔍</div>
                                 <h3 className="text-xl font-semibold text-gray-700 mb-2">No products found</h3>
                                 <p className="text-gray-500 mb-6">Try different keywords or browse categories</p>
-                                <button onClick={clearFilters} className="text-sm text-[var(--color-primary)] hover:underline font-medium">
+                                <button onClick={clearFilters} className="text-sm text-[var(--color-text-primary)] hover:underline font-medium">
                                     Clear all filters
                                 </button>
                             </div>
@@ -465,7 +465,7 @@ const ProductsPage: React.FC = () => {
                                         <button
                                             key={pageNum}
                                             onClick={() => setPage(pageNum)}
-                                            className={`w-10 h-10 text-sm rounded-lg border transition-colors ${page === pageNum ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]' : 'border-gray-200 hover:border-[var(--color-primary)]/30 bg-white text-gray-600'}`}
+                                            className={`w-10 h-10 text-sm rounded-lg border transition-colors ${page === pageNum ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] border-[var(--color-primary)]' : 'border-gray-200 hover:border-[var(--color-primary)]/30 bg-white text-gray-600'}`}
                                         >
                                             {pageNum}
                                         </button>
@@ -506,7 +506,7 @@ const ProductsPage: React.FC = () => {
                         <h4 className="text-sm font-bold text-gray-900 mb-3">Categories</h4>
                         <ul className="space-y-1.5 mb-5">
                             <li>
-                                <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${!selectedCategory ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}>
+                                <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${!selectedCategory ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-600'}`}>
                                     <input type="checkbox" checked={!selectedCategory} onChange={() => handleCategorySelect('')} className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]" />
                                     All
                                 </label>
@@ -516,7 +516,7 @@ const ProductsPage: React.FC = () => {
                                 const isOpen = selectedCategory === cat._id;
                                 return (
                                     <li key={cat._id}>
-                                        <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${isOpen ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}>
+                                        <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${isOpen ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-600'}`}>
                                             <input type="checkbox" checked={isOpen} onChange={() => handleCategorySelect(cat._id)} className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]" />
                                             {catIcon(cat)}
                                             {cat.name}
@@ -524,14 +524,14 @@ const ProductsPage: React.FC = () => {
                                         {isOpen && subs.length > 0 && (
                                             <ul className="mt-1 ml-4 pl-2 border-l border-gray-200 space-y-1">
                                                 <li>
-                                                    <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer ${!selectedSubcategory ? 'text-[var(--color-primary)] font-medium' : 'text-gray-500'}`}>
+                                                    <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer ${!selectedSubcategory ? 'text-[var(--color-text-primary)] font-medium' : 'text-gray-500'}`}>
                                                         <input type="checkbox" checked={!selectedSubcategory} onChange={() => handleCategorySelect(cat._id)} className="w-3.5 h-3.5 rounded border-gray-300 accent-[var(--color-primary)]" />
                                                         All {cat.name}
                                                     </label>
                                                 </li>
                                                 {subs.map((sub: any) => (
                                                     <li key={sub._id}>
-                                                        <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer ${selectedSubcategory === sub._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-500'}`}>
+                                                        <label className={`flex items-center gap-2 text-xs px-2.5 py-1.5 rounded-md cursor-pointer ${selectedSubcategory === sub._id ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-500'}`}>
                                                             <input type="checkbox" checked={selectedSubcategory === sub._id} onChange={() => handleSubcategorySelect(cat._id, sub._id)} className="w-3.5 h-3.5 rounded border-gray-300 accent-[var(--color-primary)]" />
                                                             {catIcon(sub)}
                                                             {sub.name}
@@ -552,7 +552,7 @@ const ProductsPage: React.FC = () => {
                                 const isActive = country === 'All' ? !selectedCountry || selectedCountry === 'All' : selectedCountry === country;
                                 return (
                                     <li key={country}>
-                                        <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-medium' : 'text-gray-600'}`}>
+                                        <label className={`flex items-center gap-2.5 text-sm px-3 py-2 rounded-md cursor-pointer ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] font-medium' : 'text-gray-600'}`}>
                                             <input type="checkbox" checked={isActive} onChange={() => handleCountrySelect(country)} className="w-4 h-4 rounded border-gray-300 accent-[var(--color-primary)]" />
                                             {country}
                                         </label>
@@ -568,7 +568,7 @@ const ProductsPage: React.FC = () => {
                             <input type="number" placeholder="Max" value={priceRange.max} onChange={(e) => setPriceRange(p => ({ ...p, max: e.target.value }))} className="w-full text-sm border border-gray-200 rounded-md px-2 py-2 bg-gray-50" />
                         </div>
 
-                        <button onClick={clearFilters} className="w-full text-sm py-2.5 bg-[var(--color-primary)] text-white rounded-lg font-medium">Apply & Close</button>
+                        <button onClick={clearFilters} className="w-full text-sm py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg font-medium">Apply & Close</button>
                     </div>
                 </div>
             )}

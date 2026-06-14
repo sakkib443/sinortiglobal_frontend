@@ -14,11 +14,15 @@
   --color-primary-lightest: #edf1f7;
   --color-primary-border: #b3c4db;
   --color-primary-surface: #f5f7fa;
+  /* Readable text color on top of the primary color. Auto-computed at runtime
+     by ThemeProvider from the chosen primary; white here is the default for the
+     dark default primary (#003B88). */
+  --color-primary-foreground: #ffffff;
   --color-secondary: #E4525C;
   --color-accent: #FF6B6B;
   --color-background: #FFFFFF;
   --color-surface: #F8FAFC;
-  --color-text-primary: #1E293B;
+  --color-text-primary: #111111;
   --color-text-secondary: #4B5966;
   --color-text-muted: #94A3B8;
   --color-success: #22C55E;

@@ -26,7 +26,7 @@ export default function MyQuotationsPage() {
                     </div>
                     <Link
                         href="/quotations"
-                        className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
+                        className="px-5 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
                     >
                         <FiFileText size={16} />
                         New Quote Request
@@ -50,7 +50,7 @@ export default function MyQuotationsPage() {
                     <FiFileText size={48} className="mx-auto text-gray-200 mb-4" />
                     <h3 className="text-lg font-bold text-gray-600 mb-1">No quotations yet</h3>
                     <p className="text-sm text-gray-400 mb-5">Request a quote and our team will send you the best price.</p>
-                    <Link href="/quotations" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all">
+                    <Link href="/quotations" className="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all">
                         <FiFileText size={16} /> Request a Quote
                     </Link>
                 </div>
@@ -66,7 +66,7 @@ export default function MyQuotationsPage() {
                                     <div className="flex items-start justify-between gap-3 mb-3">
                                         <div className="min-w-0">
                                             <div className="flex items-center gap-2">
-                                                {q.type === 'rfq' && <span className="px-1.5 py-0.5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] rounded text-[10px] font-bold">RFQ</span>}
+                                                {q.type === 'rfq' && <span className="px-1.5 py-0.5 bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] rounded text-[10px] font-bold">RFQ</span>}
                                                 <p className="text-sm font-bold text-gray-800 truncate">
                                                     {q.product?.name || q.subject || 'Quotation Request'}
                                                 </p>
@@ -105,10 +105,10 @@ export default function MyQuotationsPage() {
                                             <h4 className="text-xs font-bold text-emerald-700 uppercase">Our Quotation</h4>
                                         </div>
                                         {q.quotedPrice != null && (
-                                            <p className="text-2xl font-bold text-[var(--color-primary)] mb-1">৳{Number(q.quotedPrice).toLocaleString()}</p>
+                                            <p className="text-2xl font-bold text-[var(--color-text-primary)] mb-1">৳{Number(q.quotedPrice).toLocaleString()}</p>
                                         )}
                                         {q.adminReply && <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{q.adminReply}</p>}
-                                        <Link href="/" className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold text-[var(--color-primary)] hover:underline">
+                                        <Link href="/" className="inline-flex items-center gap-1.5 mt-3 text-sm font-semibold text-[var(--color-text-primary)] hover:underline">
                                             Proceed to order <FiArrowRight size={14} />
                                         </Link>
                                     </div>

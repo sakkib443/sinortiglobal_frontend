@@ -31,7 +31,7 @@ export default function SettingsPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${activeTab === tab.id
-                                        ? 'bg-[var(--color-primary)] text-white'
+                                        ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)]'
                                         : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                             >
@@ -236,7 +236,7 @@ export default function SettingsPage() {
                                             <p className="font-medium text-gray-800">Two-Factor Authentication</p>
                                             <p className="text-sm text-gray-500">Add extra security to your account</p>
                                         </div>
-                                        <button className="px-4 py-2 border border-[var(--color-primary)] text-[var(--color-primary)] rounded-lg font-medium hover:bg-[var(--color-primary)] hover:text-white transition-colors">
+                                        <button className="px-4 py-2 border border-[var(--color-primary)] text-[var(--color-text-primary)] rounded-lg font-medium hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors">
                                             Enable
                                         </button>
                                     </div>
@@ -246,7 +246,7 @@ export default function SettingsPage() {
 
                         {/* Save Button */}
                         <div className="mt-8 pt-6 border-t flex justify-end">
-                            <button className="flex items-center gap-2 px-6 py-2 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:opacity-90">
+                            <button className="flex items-center gap-2 px-6 py-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg font-medium hover:opacity-90">
                                 <FiSave size={18} />
                                 Save Changes
                             </button>

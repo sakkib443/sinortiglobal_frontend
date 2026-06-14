@@ -38,7 +38,7 @@ const Collection: React.FC = () => {
                             {collection.title} <br />{collection.subtitle}
                         </h3>
                         <Link href="/">
-                            <button className='btn shadow-none bg-[var(--color-primary)] mt-4 text-white border-none'>
+                            <button className='btn shadow-none bg-[var(--color-primary)] mt-4 text-[var(--color-primary-foreground)] border-none'>
                                 Shop Now
                             </button>
                         </Link>

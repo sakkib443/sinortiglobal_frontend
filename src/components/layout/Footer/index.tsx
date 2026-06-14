@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
                                 className="w-full bg-[#2a2a2a] border border-gray-700 rounded-md py-3 px-4 outline-none focus:border-[var(--color-primary)] transition-all"
                             />
                         </div>
-                        <button className="bg-[var(--color-primary)] text-white px-8 py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+                        <button className="bg-[var(--color-primary)] text-[var(--color-primary-foreground)] px-8 py-3 rounded-md font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all">
                             SUBSCRIBE <FiSend />
                         </button>
                     </div>
@@ -61,7 +61,7 @@ const Footer: React.FC = () => {
                     {/* Column 1: About */}
                     <div>
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-md bg-[var(--color-primary)] flex items-center justify-center text-white font-bold text-xl">
+                            <div className="w-10 h-10 rounded-md bg-[var(--color-primary)] flex items-center justify-center text-[var(--color-primary-foreground)] font-bold text-xl">
                                 M
                             </div>
                             <span className="text-2xl font-semibold text-white">Sinotri Global</span>
@@ -71,7 +71,7 @@ const Footer: React.FC = () => {
                         </p>
                         <div className="flex gap-4">
                             {[FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram].map((Icon, i) => (
-                                <Link key={i} href="#" className="w-10 h-10 rounded-md bg-[#2a2a2a] flex items-center justify-center hover:bg-[var(--color-primary)] hover:text-white transition-all duration-300">
+                                <Link key={i} href="#" className="w-10 h-10 rounded-md bg-[#2a2a2a] flex items-center justify-center hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-all duration-300">
                                     <Icon size={16} />
                                 </Link>
                             ))}
@@ -84,7 +84,7 @@ const Footer: React.FC = () => {
                         <ul className="space-y-4">
                             {categories.map((item, i) => (
                                 <li key={i}>
-                                    <Link href="/" className="hover:text-[var(--color-primary)] hover:translate-x-1 inline-block transition-all duration-300">
+                                    <Link href="/" className="hover:text-[var(--color-text-primary)] hover:translate-x-1 inline-block transition-all duration-300">
                                         {item}
                                     </Link>
                                 </li>
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
                         <ul className="space-y-4">
                             {quickLinks.map((item, i) => (
                                 <li key={i}>
-                                    <Link href={item.href} className="hover:text-[var(--color-primary)] hover:translate-x-1 inline-block transition-all duration-300">
+                                    <Link href={item.href} className="hover:text-[var(--color-text-primary)] hover:translate-x-1 inline-block transition-all duration-300">
                                         {item.label}
                                     </Link>
                                 </li>
@@ -111,15 +111,15 @@ const Footer: React.FC = () => {
                         <h3 className="text-lg font-semibold text-white mb-6 uppercase tracking-wider">Contact Info</h3>
                         <ul className="space-y-5">
                             <li className="flex gap-4">
-                                <HiOutlineLocationMarker className="text-[var(--color-primary)] flex-shrink-0" size={24} />
+                                <HiOutlineLocationMarker className="text-[var(--color-text-primary)] flex-shrink-0" size={24} />
                                 <span className="text-sm">123 Street, Dhaka, Bangladesh</span>
                             </li>
                             <li className="flex gap-4">
-                                <AiOutlinePhone className="text-[var(--color-primary)] flex-shrink-0" size={24} />
+                                <AiOutlinePhone className="text-[var(--color-text-primary)] flex-shrink-0" size={24} />
                                 <span className="text-sm">+880 1234 567 890</span>
                             </li>
                             <li className="flex gap-4">
-                                <AiOutlineMail className="text-[var(--color-primary)] flex-shrink-0" size={24} />
+                                <AiOutlineMail className="text-[var(--color-text-primary)] flex-shrink-0" size={24} />
                                 <span className="text-sm">support@sinotriglobal.com</span>
                             </li>
                         </ul>

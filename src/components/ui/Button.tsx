@@ -33,9 +33,9 @@ const Button: React.FC<ButtonProps> = ({
   `;
 
     const variantStyles = {
-        primary: 'bg-[var(--color-primary)] text-white hover:brightness-110',
+        primary: 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:brightness-110',
         secondary: 'bg-[var(--color-secondary)] text-white hover:brightness-110',
-        outline: 'bg-transparent border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white',
+        outline: 'bg-transparent border-2 border-[var(--color-primary)] text-[var(--color-text-primary)] hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)]',
         ghost: 'bg-transparent text-[var(--color-text-primary)] hover:bg-[var(--color-surface)]',
         accent: 'bg-[var(--color-accent)] text-white hover:brightness-110',
     };

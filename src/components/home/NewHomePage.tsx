@@ -254,11 +254,11 @@ const NewHomePage: React.FC = () => {
                                 )}
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <FiCamera className="text-[var(--color-primary)]" size={16} />
+                                        <FiCamera className="text-[var(--color-text-primary)]" size={16} />
                                         <h3 className="text-lg font-bold text-gray-800">Image Search Results</h3>
                                     </div>
                                     <p className="text-sm text-gray-500">
-                                        Found <span className="font-bold text-[var(--color-primary)]">{imageSearch.products.length}</span> matching products
+                                        Found <span className="font-bold text-[var(--color-text-primary)]">{imageSearch.products.length}</span> matching products
                                         {(imageSearch.searchMeta?.labels?.length ?? 0) > 0 && (
                                             <span> — detected: <span className="font-medium">{imageSearch.searchMeta!.labels.slice(0, 5).join(', ')}</span></span>
                                         )}
@@ -305,14 +305,14 @@ const NewHomePage: React.FC = () => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center flex-shrink-0">
-                                    <FiSearch className="text-[var(--color-primary)]" size={18} />
+                                    <FiSearch className="text-[var(--color-text-primary)]" size={18} />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-800">
-                                        Search results for &quot;<span className="text-[var(--color-primary)]">{searchTerm}</span>&quot;
+                                        Search results for &quot;<span className="text-[var(--color-text-primary)]">{searchTerm}</span>&quot;
                                     </h3>
                                     <p className="text-sm text-gray-500">
-                                        Found <span className="font-bold text-[var(--color-primary)]">{meta?.total || displayProducts.length}</span> products
+                                        Found <span className="font-bold text-[var(--color-text-primary)]">{meta?.total || displayProducts.length}</span> products
                                     </p>
                                 </div>
                             </div>
@@ -335,7 +335,7 @@ const NewHomePage: React.FC = () => {
                         </div>
                         <button
                             onClick={() => handleCategoryChange('')}
-                            className="mt-4 text-[var(--color-primary)] hover:underline"
+                            className="mt-4 text-[var(--color-text-primary)] hover:underline"
                         >
                             View all products
                         </button>
@@ -348,7 +348,7 @@ const NewHomePage: React.FC = () => {
                         <h3 className="text-xl font-bold text-gray-900">Popular Products</h3>
                         <p className="text-[13px] text-gray-400 mt-0.5">Trending items loved by our customers worldwide</p>
                     </div>
-                    <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium whitespace-nowrap">
+                    <Link href="/products" className="text-sm text-[var(--color-text-primary)] hover:underline font-medium whitespace-nowrap">
                         View All →
                     </Link>
                 </div>
@@ -390,7 +390,7 @@ const NewHomePage: React.FC = () => {
                         <h3 className="text-xl font-bold text-gray-900">New Arrivals</h3>
                         <p className="text-[13px] text-gray-400 mt-0.5">Freshly added products you don't want to miss</p>
                     </div>
-                    <Link href="/products" className="text-sm text-[var(--color-primary)] hover:underline font-medium whitespace-nowrap">
+                    <Link href="/products" className="text-sm text-[var(--color-text-primary)] hover:underline font-medium whitespace-nowrap">
                         View All →
                     </Link>
                 </div>
@@ -432,7 +432,7 @@ const NewHomePage: React.FC = () => {
                         <p className="text-gray-500 mb-6">Try browsing another category</p>
                         <button
                             onClick={() => handleCategoryChange('')}
-                            className="px-8 py-3 bg-[var(--color-primary)] text-white rounded-full font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
+                            className="px-8 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-full font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
                         >
                             View All Products
                         </button>
@@ -445,7 +445,7 @@ const NewHomePage: React.FC = () => {
                         <button
                             onClick={handleLoadMore}
                             disabled={isLoadingMore || isFetching}
-                            className="group relative px-10 py-3.5 bg-[var(--color-primary)] text-white rounded-full font-bold text-sm tracking-wide hover:bg-[var(--color-primary-dark)] transition-all shadow-md hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden"
+                            className="group relative px-10 py-3.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-full font-bold text-sm tracking-wide hover:bg-[var(--color-primary-dark)] transition-all shadow-md hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed overflow-hidden"
                         >
                             {/* Shiny effect on hover */}
                             <div className="absolute top-0 left-0 w-full h-full">
