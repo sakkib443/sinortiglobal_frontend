@@ -84,7 +84,7 @@ export default function ProfilePage() {
                         <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[#1a6b3c] flex items-center justify-center text-white text-3xl font-bold shadow-lg shadow-[var(--color-primary)]/20">
                             {user?.name?.charAt(0) || 'U'}
                         </div>
-                        <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-white border-2 border-gray-100 rounded-xl flex items-center justify-center text-gray-400 hover:text-[var(--color-primary)] hover:border-[var(--color-primary)] transition-all shadow-sm">
+                        <button className="absolute -bottom-1 -right-1 w-8 h-8 bg-white border-2 border-gray-100 rounded-xl flex items-center justify-center text-gray-400 hover:text-[var(--color-text-primary)] hover:border-[var(--color-primary)] transition-all shadow-sm">
                             <FiCamera size={14} />
                         </button>
                     </div>
@@ -152,7 +152,7 @@ export default function ProfilePage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 disabled:opacity-50 flex items-center gap-2"
+                        className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 disabled:opacity-50 flex items-center gap-2"
                     >
                         <FiSave size={16} />
                         {isLoading ? 'Saving...' : 'Save Changes'}

@@ -279,7 +279,7 @@ const ProductFormInner = () => {
         }
     };
 
-    if (isEditing && isFetching) return <div className="p-20 text-center text-[var(--color-primary)] font-bold animate-pulse">Loading product data...</div>;
+    if (isEditing && isFetching) return <div className="p-20 text-center text-[var(--color-text-primary)] font-bold animate-pulse">Loading product data...</div>;
 
     const categories = categoriesData?.data || [];
     // Top-level categories for the main dropdown; subcategories filtered by the chosen parent
@@ -307,7 +307,7 @@ const ProductFormInner = () => {
                     <button onClick={() => router.push('/dashboard/admin/products')} className="flex-1 sm:flex-none px-6 py-2.5 border border-gray-200 rounded-md font-semibold text-gray-600 hover:bg-gray-50 transition-all text-sm">
                         Cancel
                     </button>
-                    <button onClick={handleSubmit} disabled={isCreating || isUpdating} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 bg-[var(--color-primary)] text-white rounded-md font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50 text-sm">
+                    <button onClick={handleSubmit} disabled={isCreating || isUpdating} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-8 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50 text-sm">
                         <FiSave size={18} />
                         {isCreating || isUpdating ? 'Saving...' : (isEditing ? 'Update Product' : 'Publish Product')}
                     </button>
@@ -488,7 +488,7 @@ const ProductFormInner = () => {
                                         colorHex: [...prev.colorHex, hexEl.value],
                                     }));
                                     nameEl.value = '';
-                                }} className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] shrink-0">+ Add</button>
+                                }} className="px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] shrink-0">+ Add</button>
                             </div>
                         </div>
                         )}
@@ -528,7 +528,7 @@ const ProductFormInner = () => {
                                         setFormData((prev: any) => ({ ...prev, sizes: [...prev.sizes, val] }));
                                     }
                                     el.value = '';
-                                }} className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] shrink-0">+ Add</button>
+                                }} className="px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] shrink-0">+ Add</button>
                             </div>
                         </div>
                         )}
@@ -561,7 +561,7 @@ const ProductFormInner = () => {
                                 }
                                 if (newVars.length > 0) setFormData((prev: any) => ({ ...prev, variants: [...(prev.variants || []), ...newVars] }));
                             }} className={`flex items-center gap-2 px-5 py-2.5 rounded-md text-sm font-bold transition-all ${
-                                (formData.colors.length === 0 && formData.sizes.length === 0) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] shadow-md'
+                                (formData.colors.length === 0 && formData.sizes.length === 0) ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:bg-[var(--color-primary-dark)] shadow-md'
                             }`}>
                                 🔄 Generate Variants {formData.colors.length > 0 && formData.sizes.length > 0 && `(${formData.colors.length} × ${formData.sizes.length} = ${formData.colors.length * formData.sizes.length})`}
                             </button>
@@ -806,7 +806,7 @@ const ProductFormInner = () => {
                             <div className="grid grid-cols-3 gap-1.5">
                                 {['active', 'draft', 'out-of-stock'].map(s => (
                                     <button key={s} type="button" onClick={() => setFormData((prev: any) => ({ ...prev, status: s }))}
-                                        className={`py-2 rounded-md text-xs font-bold uppercase transition-all ${formData.status === s ? 'bg-[var(--color-primary)] text-white shadow-md' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
+                                        className={`py-2 rounded-md text-xs font-bold uppercase transition-all ${formData.status === s ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-md' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
                                         {s === 'out-of-stock' ? 'Out' : s}
                                     </button>
                                 ))}
@@ -821,7 +821,7 @@ const ProductFormInner = () => {
 };
 
 const ProductForm = () => (
-    <Suspense fallback={<div className="p-20 text-center text-[var(--color-primary)] font-bold animate-pulse">Loading Product Form...</div>}>
+    <Suspense fallback={<div className="p-20 text-center text-[var(--color-text-primary)] font-bold animate-pulse">Loading Product Form...</div>}>
         <ProductFormInner />
     </Suspense>
 );

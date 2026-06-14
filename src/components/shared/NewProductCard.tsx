@@ -176,7 +176,7 @@ const NewProductCard: React.FC<NewProductCardProps> = ({ product }) => {
                         {/* Flag + Product Name */}
                         <div className='flex items-start gap-1.5 mb-1'>
                             <span className='text-sm leading-none mt-0.5'>🇧🇩</span>
-                            <h3 className='text-[13px] text-gray-800 font-medium line-clamp-2 leading-[1.3] group-hover:text-[var(--color-primary)] transition-colors'>
+                            <h3 className='text-[13px] text-gray-800 font-medium line-clamp-2 leading-[1.3] group-hover:text-[var(--color-text-primary)] transition-colors'>
                                 {product.name}
                             </h3>
                         </div>
@@ -454,7 +454,7 @@ const CommentsPopup: React.FC<{
                                                         <button
                                                             onClick={() => handleSubmitReply(reviewId)}
                                                             disabled={!replyText.trim() || isReplying}
-                                                            className='text-[var(--color-primary)] font-semibold text-[11px] ml-2 disabled:opacity-30 flex items-center gap-1'
+                                                            className='text-[var(--color-text-primary)] font-semibold text-[11px] ml-2 disabled:opacity-30 flex items-center gap-1'
                                                         >
                                                             {isReplying ? (
                                                                 <div className='w-3 h-3 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin' />
@@ -522,7 +522,7 @@ const CommentsPopup: React.FC<{
                                 <button
                                     onClick={handleSubmitComment}
                                     disabled={!newComment.trim() || isSubmitting}
-                                    className='text-[var(--color-primary)] font-semibold text-[13px] hover:text-[var(--color-primary-dark)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1'
+                                    className='text-[var(--color-text-primary)] font-semibold text-[13px] hover:text-[var(--color-primary-dark)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1'
                                 >
                                     {isSubmitting ? (
                                         <div className='w-4 h-4 border-2 border-gray-300 border-t-[var(--color-primary)] rounded-full animate-spin' />

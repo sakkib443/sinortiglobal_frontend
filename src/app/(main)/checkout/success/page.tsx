@@ -14,7 +14,7 @@ function SuccessContent() {
         <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-16">
             <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center">
                 <div className="w-20 h-20 bg-[var(--color-primary-lightest)] rounded-full flex items-center justify-center mx-auto mb-6">
-                    <FiCheckCircle className="text-[var(--color-primary)]" size={44} />
+                    <FiCheckCircle className="text-[var(--color-text-primary)]" size={44} />
                 </div>
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">Order Placed Successfully!</h1>
                 <p className="text-gray-500 mb-6">
@@ -24,7 +24,7 @@ function SuccessContent() {
                 {trackingId && (
                     <div className="bg-gray-50 rounded-xl p-4 mb-6">
                         <p className="text-sm text-gray-500">Order Tracking ID</p>
-                        <p className="text-lg font-bold text-[var(--color-primary)]">
+                        <p className="text-lg font-bold text-[var(--color-text-primary)]">
                             #{trackingId}
                         </p>
                     </div>
@@ -32,7 +32,7 @@ function SuccessContent() {
                 <div className="space-y-3">
                     <Link
                         href="/dashboard/user/orders"
-                        className="w-full flex items-center justify-center gap-2 bg-[var(--color-primary)] text-white py-3 rounded-xl font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
+                        className="w-full flex items-center justify-center gap-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] py-3 rounded-xl font-semibold hover:bg-[var(--color-primary-dark)] transition-colors"
                     >
                         <FiShoppingBag size={18} /> View My Orders
                     </Link>

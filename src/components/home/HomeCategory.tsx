@@ -40,7 +40,7 @@ const HomeCategory: React.FC = () => {
                 </div>
                 <Link
                     href="/"
-                    className='text-[var(--color-primary)] font-bold text-sm flex items-center gap-2 hover:opacity-80 transition-all border-b-2 border-transparent hover:border-[var(--color-primary)] pb-1 w-fit'
+                    className='text-[var(--color-text-primary)] font-bold text-sm flex items-center gap-2 hover:opacity-80 transition-all border-b-2 border-transparent hover:border-[var(--color-primary)] pb-1 w-fit'
                 >
                     View All Categories <HiArrowNarrowRight size={18} />
                 </Link>
@@ -67,7 +67,7 @@ const HomeCategory: React.FC = () => {
 
                             {/* Text - Left Side */}
                             <div className="z-10">
-                                <h3 className='font-bold text-gray-800 text-[15px] mb-0.5 group-hover:text-[var(--color-primary)] transition-colors'>
+                                <h3 className='font-bold text-gray-800 text-[15px] mb-0.5 group-hover:text-[var(--color-text-primary)] transition-colors'>
                                     {category.name}
                                 </h3>
                                 <p className='text-[12px] font-semibold text-gray-400 uppercase tracking-tight'>

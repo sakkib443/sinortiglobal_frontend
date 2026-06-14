@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fi';
 import { useGetSiteContentQuery, useUpdateSiteContentMutation } from '@/redux/api/siteContentApi';
 import { SingleImageUploader } from '@/components/ui/ImageUploader';
+import { resolvePrimaryForeground } from '@/components/shared/ThemeProvider';
 import toast from 'react-hot-toast';
 
 /* ─── Reusable Components ─── */
@@ -15,7 +16,7 @@ const SettingSection = ({ icon: Icon, title, description, children }: any) => (
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
             <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center">
-                    <Icon size={18} className="text-[var(--color-primary)]" />
+                    <Icon size={18} className="text-[var(--color-text-primary)]" />
                 </div>
                 <div>
                     <h3 className="font-bold text-gray-800 text-sm">{title}</h3>
@@ -97,6 +98,7 @@ export default function SettingsPage() {
                     secondaryColor: 'var(--color-secondary)',
                     logoUrl: '',
                     faviconUrl: '',
+                    primaryTextMode: 'auto',
                 },
             });
         }
@@ -134,6 +136,8 @@ export default function SettingsPage() {
     const g = formData.general || {};
     const seo = formData.seo || {};
     const theme = formData.theme || {};
+    // Foreground that will sit on top of the primary color, given the chosen mode
+    const previewFg = resolvePrimaryForeground(theme.primaryColor || '#003B88', theme.primaryTextMode);
 
     return (
         <div className="space-y-6 max-w-5xl">
@@ -146,7 +150,7 @@ export default function SettingsPage() {
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-lg text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all shadow-md flex items-center gap-2 disabled:opacity-50"
                 >
                     {isSaving ? <FiRefreshCw size={16} className="animate-spin" /> : saveSuccess ? <FiCheckCircle size={16} /> : <FiSave size={16} />}
                     {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Changes'}
@@ -189,6 +193,33 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
+                    {/* Text on Primary */}
+                    <div>
+                        <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wide mb-3">Text on Primary Color</h4>
+                        <div className="flex flex-wrap items-center gap-2">
+                            {([
+                                { v: 'auto', label: 'Auto', hint: 'From brightness' },
+                                { v: 'light', label: 'White', hint: 'Always white' },
+                                { v: 'dark', label: 'Black', hint: 'Always black' },
+                            ] as const).map(opt => {
+                                const active = (theme.primaryTextMode || 'auto') === opt.v;
+                                return (
+                                    <button
+                                        key={opt.v}
+                                        type="button"
+                                        onClick={() => updateTheme('primaryTextMode', opt.v)}
+                                        className={`px-4 py-2 rounded-lg text-xs font-bold border transition-all ${active ? 'border-transparent shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                                        style={active ? { background: theme.primaryColor || 'var(--color-primary)', color: previewFg } : undefined}
+                                    >
+                                        {opt.label}
+                                        <span className="block text-[9px] font-medium opacity-70">{opt.hint}</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <p className="text-[10px] text-gray-400 mt-2 italic">Color of text/icons shown on the primary color (buttons, top bar, badges). "Auto" picks black or white from the color brightness.</p>
+                    </div>
+
                     {/* Live Preview */}
                     <div>
                         <h4 className="text-xs font-bold text-gray-800 uppercase tracking-wide mb-3">Live Preview</h4>
@@ -197,19 +228,19 @@ export default function SettingsPage() {
                                 {theme.logoUrl ? (
                                     <img src={theme.logoUrl} alt="Logo" className="h-8 object-contain" />
                                 ) : (
-                                    <div className="h-8 px-4 rounded-md flex items-center text-white font-bold text-sm" style={{ background: theme.primaryColor || 'var(--color-primary)' }}>
+                                    <div className="h-8 px-4 rounded-md flex items-center font-bold text-sm" style={{ background: theme.primaryColor || 'var(--color-primary)', color: previewFg }}>
                                         {g.storeName || 'Sinotri Global'}
                                     </div>
                                 )}
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.primaryColor || 'var(--color-primary)' }}>
+                                <button className="px-5 py-2 rounded-lg text-xs font-bold" style={{ background: theme.primaryColor || 'var(--color-primary)', color: previewFg }}>
                                     Buy Now
                                 </button>
                                 <button className="px-5 py-2 rounded-lg text-white text-xs font-bold" style={{ background: theme.secondaryColor || 'var(--color-secondary)' }}>
                                     Sale 50% Off
                                 </button>
-                                <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.primaryColor || 'var(--color-primary)' }}>
+                                <span className="px-3 py-1.5 rounded-full text-[10px] font-bold" style={{ background: theme.primaryColor || 'var(--color-primary)', color: previewFg }}>
                                     New Arrival
                                 </span>
                                 <span className="px-3 py-1.5 rounded-full text-white text-[10px] font-bold" style={{ background: theme.secondaryColor || 'var(--color-secondary)' }}>

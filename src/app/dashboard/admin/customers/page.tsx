@@ -158,7 +158,7 @@ export default function CustomersPage() {
                     </button>
                     <button
                         onClick={() => setShowCreateAdmin(true)}
-                        className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-md"
+                        className="px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-md"
                     >
                         <FiUserPlus size={16} /> Create User
                     </button>
@@ -283,7 +283,7 @@ export default function CustomersPage() {
                                                 <div className="flex items-center gap-2">
                                                     <RoleBadge role={user.role} />
                                                     <button onClick={() => setEditingRole(user._id)}
-                                                        className="p-1 text-gray-300 hover:text-[var(--color-primary)] transition-colors" title="Change role">
+                                                        className="p-1 text-gray-300 hover:text-[var(--color-text-primary)] transition-colors" title="Change role">
                                                         <FiEdit3 size={12} />
                                                     </button>
                                                 </div>
@@ -298,7 +298,7 @@ export default function CustomersPage() {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link href={`/dashboard/admin/customers/${user._id}`}
-                                                    className="p-2 bg-gray-50 hover:bg-white text-gray-500 hover:text-[var(--color-primary)] border border-gray-100 hover:border-[var(--color-primary)]/30 rounded-md transition-all shadow-sm" title="View">
+                                                    className="p-2 bg-gray-50 hover:bg-white text-gray-500 hover:text-[var(--color-text-primary)] border border-gray-100 hover:border-[var(--color-primary)]/30 rounded-md transition-all shadow-sm" title="View">
                                                     <FiEye size={18} />
                                                 </Link>
                                             </div>
@@ -365,7 +365,7 @@ export default function CustomersPage() {
                                     type="button"
                                     onClick={() => setCreateForm({ ...createForm, role: r })}
                                     className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold border transition-colors ${createForm.role === r
-                                        ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
+                                        ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] border-[var(--color-primary)]'
                                         : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                                 >
                                     {r === 'admin' ? <FiShield size={15} /> : <FiUsers size={15} />}
@@ -405,7 +405,7 @@ export default function CustomersPage() {
                         </div>
 
                         <button onClick={handleCreateAdmin} disabled={isCreating}
-                            className="w-full mt-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-60 shadow-md">
+                            className="w-full mt-6 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-60 shadow-md">
                             {isCreating ? 'Creating...' : <><FiUserPlus size={16} /> Create {createForm.role === 'admin' ? 'Admin' : 'User'} Account</>}
                         </button>
                     </div>

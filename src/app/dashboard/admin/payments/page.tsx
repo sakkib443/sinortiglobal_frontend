@@ -89,7 +89,7 @@ export default function PaymentsPage() {
                             onClick={() => { setPaymentFilter(status); setPage(1); }}
                             className={`px-3 py-2 rounded-md text-xs font-bold uppercase transition-all border ${
                                 paymentFilter === status
-                                    ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md'
+                                    ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] border-[var(--color-primary)] shadow-md'
                                     : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
                             }`}
                         >
@@ -151,7 +151,7 @@ export default function PaymentsPage() {
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
-                                                <p className="text-sm font-bold text-[var(--color-primary)]">{formatCurrency(order.total)}</p>
+                                                <p className="text-sm font-bold text-[var(--color-text-primary)]">{formatCurrency(order.total)}</p>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold capitalize ${ps.bg} ${ps.text}`}>

@@ -190,7 +190,7 @@ export default function ReportAnalysisPage() {
                 )}
                 <div className="ml-auto flex items-center gap-2">
                     <button onClick={exportSummary}
-                        className="px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)] transition">
+                        className="px-3 py-1.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)] transition">
                         <FiDownload size={12} /> Summary
                     </button>
                     <button onClick={exportOrders}
@@ -208,7 +208,7 @@ export default function ReportAnalysisPage() {
             <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
                 {tabs.map(tab => (
                     <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.key ? 'bg-white text-[var(--color-primary)] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                        className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.key ? 'bg-white text-[var(--color-text-primary)] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
                         <tab.icon size={15} /> {tab.label}
                     </button>
                 ))}
@@ -274,7 +274,7 @@ export default function ReportAnalysisPage() {
                             Orders Report <span className="text-sm font-normal text-gray-400 ml-2">({filteredOrders.length} records)</span>
                         </h2>
                         <button onClick={exportOrders}
-                            className="px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)]">
+                            className="px-3 py-1.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)]">
                             <FiDownload size={12} /> Download Excel
                         </button>
                     </div>
@@ -303,7 +303,7 @@ export default function ReportAnalysisPage() {
                                             <td className="px-4 py-2.5">
                                                 <span className="text-[10px] font-bold px-2 py-0.5 rounded capitalize" style={{ color: sc.color, background: sc.bg }}>{order.status}</span>
                                             </td>
-                                            <td className="px-4 py-2.5 text-right font-bold text-[var(--color-primary)]">{formatCurrency(order.total)}</td>
+                                            <td className="px-4 py-2.5 text-right font-bold text-[var(--color-text-primary)]">{formatCurrency(order.total)}</td>
                                             <td className="px-4 py-2.5 text-gray-400 text-xs">{order.createdAt ? formatDate(order.createdAt) : '—'}</td>
                                         </tr>
                                     );
@@ -324,7 +324,7 @@ export default function ReportAnalysisPage() {
                             Products Report <span className="text-sm font-normal text-gray-400 ml-2">({topProducts.length} products)</span>
                         </h2>
                         <button onClick={exportProducts}
-                            className="px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)]">
+                            className="px-3 py-1.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-[var(--color-primary-dark)]">
                             <FiDownload size={12} /> Download Excel
                         </button>
                     </div>
@@ -354,7 +354,7 @@ export default function ReportAnalysisPage() {
                                                 <span className="font-semibold text-gray-700 truncate max-w-[200px]">{product.name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-2.5 text-right font-semibold text-[var(--color-primary)]">{formatCurrency(product.price)}</td>
+                                        <td className="px-4 py-2.5 text-right font-semibold text-[var(--color-text-primary)]">{formatCurrency(product.price)}</td>
                                         <td className="px-4 py-2.5 text-right text-gray-600">{product.totalSold || 0}</td>
                                         <td className="px-4 py-2.5 text-right">
                                             <span className={`font-semibold ${(product.stock || 0) > 0 ? 'text-green-600' : 'text-red-500'}`}>{product.stock || 0}</span>

@@ -12,16 +12,16 @@ const CollectionBanners: React.FC = () => {
                     {/* Left Banner - Large */}
                     <div className="relative group overflow-hidden rounded-md bg-[var(--color-primary)] p-8 md:p-12 h-80 md:h-96">
                         <div className="relative z-10 h-full flex flex-col justify-center">
-                            <span className="text-white/80 text-sm font-medium mb-2">New Arrival</span>
-                            <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                            <span className="text-[var(--color-primary-foreground)] opacity-80 text-sm font-medium mb-2">New Arrival</span>
+                            <h3 className="text-3xl md:text-4xl font-bold text-[var(--color-primary-foreground)] mb-4">
                                 Winter Collection<br />2026
                             </h3>
-                            <p className="text-white/80 mb-6 max-w-sm">
+                            <p className="text-[var(--color-primary-foreground)] opacity-80 mb-6 max-w-sm">
                                 Discover the latest trends in winter fashion with up to 50% off
                             </p>
                             <Link
                                 href="/?collection=winter"
-                                className="inline-flex items-center gap-2 bg-white text-[var(--color-primary)] px-6 py-3 rounded-md font-medium w-fit group-hover:shadow-lg transition-all"
+                                className="inline-flex items-center gap-2 bg-white text-[var(--color-text-primary)] px-6 py-3 rounded-md font-medium w-fit group-hover:shadow-lg transition-all"
                             >
                                 Shop Now <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
                             </Link>

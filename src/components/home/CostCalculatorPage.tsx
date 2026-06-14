@@ -258,7 +258,7 @@ const CostCalculatorPage: React.FC = () => {
 
                         <button
                             onClick={calculate}
-                            className="px-7 py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm text-sm"
+                            className="px-7 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm text-sm"
                         >
                             Get Shipping Rate
                         </button>
@@ -268,12 +268,12 @@ const CostCalculatorPage: React.FC = () => {
                     {result && (
                         <div className="border-t border-gray-100 bg-[var(--color-primary-lightest)] px-8 py-6">
                             <h2 className="text-base font-bold text-gray-800 mb-1 flex items-center gap-2">
-                                <FiPackage className="text-[var(--color-primary)]" />
+                                <FiPackage className="text-[var(--color-text-primary)]" />
                                 Estimated Shipping Cost
                             </h2>
                             <p className="text-xs text-gray-500 mb-4">
                                 Service:{' '}
-                                <span className="font-semibold text-[var(--color-primary)]">
+                                <span className="font-semibold text-[var(--color-text-primary)]">
                                     {result.orderType === 'buy-ship' ? 'Buy And Ship For Me' : 'Only Ship For Me'}
                                 </span>
                             </p>
@@ -296,7 +296,7 @@ const CostCalculatorPage: React.FC = () => {
                                         <p className="text-sm font-semibold text-gray-600">✈️ By Air</p>
                                         <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-semibold">Faster</span>
                                     </div>
-                                    <p className="text-2xl font-extrabold text-[var(--color-primary)]">
+                                    <p className="text-2xl font-extrabold text-[var(--color-text-primary)]">
                                         ৳{toBDT(result.airCost).toLocaleString()}
                                     </p>
                                     <p className="text-xs text-gray-400 mt-0.5">≈ ${result.airCost.toFixed(2)} USD · Est. 7–14 business days</p>
@@ -328,18 +328,18 @@ const CostCalculatorPage: React.FC = () => {
                         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                             <div className="flex-1">
                                 <h2 className="text-2xl font-extrabold text-gray-900 mb-1">Get the Best Shipping Deals</h2>
-                                <p className="text-lg font-bold text-[var(--color-primary)] mb-5">Fast, Secure &amp; Budget-Friendly</p>
+                                <p className="text-lg font-bold text-[var(--color-text-primary)] mb-5">Fast, Secure &amp; Budget-Friendly</p>
                                 <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 font-medium">
                                     <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-full px-3 py-1.5">
-                                        <FiUser size={14} className="text-[var(--color-primary)]" /> Seller
+                                        <FiUser size={14} className="text-[var(--color-text-primary)]" /> Seller
                                     </span>
                                     <FiArrowRight size={14} className="text-gray-300" />
                                     <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-full px-3 py-1.5">
-                                        <FiHome size={14} className="text-[var(--color-primary)]" /> Source Warehouse
+                                        <FiHome size={14} className="text-[var(--color-text-primary)]" /> Source Warehouse
                                     </span>
                                     <FiArrowRight size={14} className="text-gray-300" />
                                     <span className="flex items-center gap-1.5 bg-gray-50 border border-gray-100 rounded-full px-3 py-1.5">
-                                        <FiMapPin size={14} className="text-[var(--color-primary)]" /> Doorstep Delivery
+                                        <FiMapPin size={14} className="text-[var(--color-text-primary)]" /> Doorstep Delivery
                                     </span>
                                 </div>
                             </div>

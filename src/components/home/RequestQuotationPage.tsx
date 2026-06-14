@@ -176,14 +176,14 @@ const RequestQuotationPage: React.FC = () => {
             <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-20">
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 max-w-md w-full text-center">
                     <div className="w-16 h-16 rounded-full bg-[var(--color-primary-lightest)] flex items-center justify-center mx-auto mb-5">
-                        <FiCheckCircle className="text-[var(--color-primary)]" size={34} />
+                        <FiCheckCircle className="text-[var(--color-text-primary)]" size={34} />
                     </div>
                     <h1 className="text-xl font-bold text-gray-800 mb-2">Request Submitted!</h1>
                     <p className="text-sm text-gray-500 mb-7">
                         Thank you. Our sourcing team has received your RFQ and will send you quotations soon.
                     </p>
                     <div className="flex items-center justify-center gap-3">
-                        <Link href="/" className="px-6 py-2.5 rounded-lg bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors">
+                        <Link href="/" className="px-6 py-2.5 rounded-lg bg-[var(--color-primary)] text-[var(--color-primary-foreground)] text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors">
                             Back to Home
                         </Link>
                         <button
@@ -203,7 +203,7 @@ const RequestQuotationPage: React.FC = () => {
             {/* Back + steps header */}
             <div className="bg-white border-b border-gray-100 px-4 py-4">
                 <div className="max-w-6xl mx-auto">
-                    <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[var(--color-primary)] mb-4 transition-colors">
+                    <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[var(--color-text-primary)] mb-4 transition-colors">
                         <FiArrowLeft size={16} /> Back
                     </Link>
                     <h1 className="text-xl font-bold text-gray-800 mb-4">Request for Quotation (RFQ)</h1>
@@ -214,7 +214,7 @@ const RequestQuotationPage: React.FC = () => {
                             'Choose the best quotation!',
                         ].map((s, i) => (
                             <div key={i} className="flex items-center gap-2">
-                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white
+                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-[var(--color-primary-foreground)]
                                     ${i === 0 ? 'bg-[var(--color-primary)]' : 'bg-gray-300'}`}>
                                     {i + 1}
                                 </span>
@@ -341,7 +341,7 @@ const RequestQuotationPage: React.FC = () => {
                                 <FiUpload size={28} className="text-green-500 mb-2" />
                                 <p className="text-sm text-gray-500">
                                     Drag &amp; drop image here or{' '}
-                                    <span className="text-[var(--color-primary)] font-medium underline">Choose files</span>
+                                    <span className="text-[var(--color-text-primary)] font-medium underline">Choose files</span>
                                 </p>
                                 <p className="text-xs text-gray-400 mt-1">All image formats, PDF, XLSX, CSV. Max 3 files, 20 MB each.</p>
                                 {form.photos.length > 0 && (
@@ -436,7 +436,7 @@ const RequestQuotationPage: React.FC = () => {
                                 type="button"
                                 onClick={handleSubmit}
                                 disabled={submitting || uploading}
-                                className="px-8 py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                className="px-8 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                                 {uploading ? 'Uploading photos...' : submitting ? 'Submitting...' : 'Request Quotes'}
                             </button>

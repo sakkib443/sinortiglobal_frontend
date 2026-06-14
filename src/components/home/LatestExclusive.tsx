@@ -23,7 +23,7 @@ const LatestExclusive: React.FC<LatestExclusiveProps> = ({ bgImage }) => {
                         Summer Collection
                     </h3>
                     <Link href="/">
-                        <button className='bg-[var(--color-primary)] px-5 py-2 rounded-md text-white hover:scale-105 transition-all'>
+                        <button className='bg-[var(--color-primary)] px-5 py-2 rounded-md text-[var(--color-primary-foreground)] hover:scale-105 transition-all'>
                             Shop Now
                         </button>
                     </Link>

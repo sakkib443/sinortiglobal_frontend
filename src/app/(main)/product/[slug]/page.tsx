@@ -266,7 +266,7 @@ export default function ProductDetailsPage() {
                 <div style={{ textAlign: 'center', padding: '5rem 1rem', background: '#fff', borderRadius: '16px', maxWidth: '400px', margin: '0 auto', border: '1px solid #eee' }}>
                     <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>😕</div>
                     <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', marginBottom: '0.5rem' }}>Product Not Found</h2>
-                    <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '14px' }}>This product may have been removed or is no longer available.</p>
+                    <p style={{ color: '#1a1a1a', marginBottom: '1.5rem', fontSize: '14px' }}>This product may have been removed or is no longer available.</p>
                     <Link href="/products" style={{ padding: '0.75rem 2rem', background: 'var(--color-primary)', color: '#fff', borderRadius: '8px', fontWeight: 600, textDecoration: 'none', fontSize: '14px' }}>Browse Products</Link>
                 </div>
             </div>
@@ -462,7 +462,8 @@ export default function ProductDetailsPage() {
 
     return (
         <>
-            <div className="bg-gray-50" style={{ minHeight: '100vh' }}>
+            {/* Product page: force secondary/muted text dark for maximum-black readability */}
+            <div className="bg-gray-50 [--color-text-secondary:#1a1a1a] [--color-text-muted:#404040]" style={{ minHeight: '100vh' }}>
                 <div className="container mx-auto px-4">
                     {/* ── Fullscreen Image Modal ── */}
                     {isFullscreen && (
@@ -639,18 +640,18 @@ export default function ProductDetailsPage() {
                     {/* ═══ BREADCRUMB + PRODUCT TITLE BAR ═══ */}
                     <div className="pd-title-bar" style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', marginTop: '16px', padding: '16px 20px 12px' }}>
                             {/* Breadcrumb */}
-                            <div className="pd-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#999', marginBottom: '10px', flexWrap: 'nowrap', overflowX: 'auto', whiteSpace: 'nowrap' }}>
-                                <a href="/" style={{ color: '#888', textDecoration: 'none', flexShrink: 0 }}>Home</a>
+                            <div className="pd-breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: '#3a3a3a', marginBottom: '10px', flexWrap: 'nowrap', overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                                <a href="/" style={{ color: '#3a3a3a', textDecoration: 'none', flexShrink: 0 }}>Home</a>
                                 <span style={{ flexShrink: 0 }}>/</span>
-                                <a href="/products" style={{ color: '#888', textDecoration: 'none', flexShrink: 0 }}>Products</a>
+                                <a href="/products" style={{ color: '#3a3a3a', textDecoration: 'none', flexShrink: 0 }}>Products</a>
                                 {product.category?.name && (
                                     <>
                                         <span style={{ flexShrink: 0 }}>/</span>
-                                        <a href={`/products?category=${product.category._id}`} style={{ color: '#888', textDecoration: 'none', flexShrink: 0 }}>{product.category.name}</a>
+                                        <a href={`/products?category=${product.category._id}`} style={{ color: '#3a3a3a', textDecoration: 'none', flexShrink: 0 }}>{product.category.name}</a>
                                     </>
                                 )}
                                 <span style={{ flexShrink: 0 }}>/</span>
-                                <span style={{ color: '#555', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{product.name?.slice(0, 30)}...</span>
+                                <span style={{ color: '#1a1a1a', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0 }}>{product.name?.slice(0, 30)}...</span>
                             </div>
 
                             {/* Product Name */}
@@ -663,13 +664,13 @@ export default function ProductDetailsPage() {
 
                             {/* Tagline */}
                             {product.tagline && (
-                                <p style={{ fontSize: '13px', color: 'var(--color-primary)', fontWeight: 500, margin: '4px 0 0' }}>{product.tagline}</p>
+                                <p style={{ fontSize: '13px', color: '#1a1a1a', fontWeight: 500, margin: '4px 0 0' }}>{product.tagline}</p>
                             )}
 
                             {/* Stats Row */}
                             <div className="pd-stats-row" style={{
                                 display: 'flex', alignItems: 'center', gap: '20px',
-                                flexWrap: 'wrap', fontSize: '13px', color: '#888',
+                                flexWrap: 'wrap', fontSize: '13px', color: '#3a3a3a',
                                 marginTop: '12px', paddingBottom: '8px',
                             }}>
                                 {/* Rating */}
@@ -678,13 +679,13 @@ export default function ProductDetailsPage() {
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: '4px',
                                         background: 'none', border: 'none', cursor: 'pointer',
-                                        color: '#888', fontSize: '13px', padding: 0,
+                                        color: '#3a3a3a', fontSize: '13px', padding: 0,
                                     }}
                                 >
                                     <div style={{ display: 'flex', gap: '1px' }}>
                                         {[1,2,3,4,5].map(s => <FiStar key={s} size={13} style={{ color: '#f59e0b', fill: s <= Math.round(product.rating || 0) ? '#f59e0b' : 'none' }} />)}
                                     </div>
-                                    <span style={{ fontWeight: 600, color: '#333' }}>{product.rating?.toFixed(1) || '0.0'}</span>
+                                    <span style={{ fontWeight: 600, color: '#1a1a1a' }}>{product.rating?.toFixed(1) || '0.0'}</span>
                                     <span>({product.reviewCount || 0})</span>
                                 </button>
 
@@ -711,7 +712,7 @@ export default function ProductDetailsPage() {
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: '4px',
                                         background: 'none', border: 'none', cursor: 'pointer',
-                                        color: isLiked ? '#ef4444' : '#888', fontSize: '13px', padding: 0, marginLeft: 'auto',
+                                        color: isLiked ? '#ef4444' : '#3a3a3a', fontSize: '13px', padding: 0, marginLeft: 'auto',
                                     }}
                                 >
                                     <FiHeart size={14} style={{ fill: isLiked ? '#ef4444' : 'none' }} />
@@ -724,7 +725,7 @@ export default function ProductDetailsPage() {
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: '4px',
                                         background: 'none', border: 'none', cursor: 'pointer',
-                                        color: '#888', fontSize: '13px', padding: 0,
+                                        color: '#3a3a3a', fontSize: '13px', padding: 0,
                                     }}
                                 >
                                     <FiShare2 size={14} />
@@ -743,7 +744,7 @@ export default function ProductDetailsPage() {
                                     style={{
                                         display: 'flex', alignItems: 'center', gap: '4px',
                                         background: 'none', border: 'none', cursor: 'pointer',
-                                        color: linkCopied ? 'var(--color-primary)' : '#888', fontSize: '13px', padding: 0,
+                                        color: linkCopied ? '#1a1a1a' : '#3a3a3a', fontSize: '13px', padding: 0,
                                     }}
                                 >
                                     <FiCopy size={13} />
@@ -779,7 +780,7 @@ export default function ProductDetailsPage() {
                                         flexShrink: 0, gap: '4px',
                                     }}>
                                         {/* Label */}
-                                        <span style={{ fontSize: '11px', fontWeight: 400, color: '#555', textTransform: 'capitalize', letterSpacing: '0.5px' }}>Image</span>
+                                        <span style={{ fontSize: '11px', fontWeight: 400, color: '#1a1a1a', textTransform: 'capitalize', letterSpacing: '0.5px' }}>Image</span>
 
                                         {/* Image Thumbnails */}
                                         <div
@@ -814,10 +815,10 @@ export default function ProductDetailsPage() {
 
                                         {/* Up & Down Arrows */}
                                         <div style={{ display: 'flex', gap: '4px' }}>
-                                            <button onClick={() => scrollList(colorSwatchRef, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <button onClick={() => scrollList(colorSwatchRef, 'up')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <FiChevronUp size={18} />
                                             </button>
-                                            <button onClick={() => scrollList(colorSwatchRef, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <button onClick={() => scrollList(colorSwatchRef, 'down')} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px', color: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 <FiChevronDown size={18} />
                                             </button>
                                         </div>
@@ -947,7 +948,7 @@ export default function ProductDetailsPage() {
                                     {/* Price Section */}
                                     <div style={{ marginBottom: '18px', padding: '16px 20px', background: 'linear-gradient(135deg, #fafafa, #f5f5f5)', borderRadius: '12px', border: '1px solid #eaeaea' }}>
                                         <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', flexWrap: 'wrap' }}>
-                                            <span style={{ fontSize: '30px', fontWeight: 800, color: 'var(--color-primary)', letterSpacing: '-0.5px' }}>
+                                            <span style={{ fontSize: '30px', fontWeight: 800, color: '#1a1a1a', letterSpacing: '-0.5px' }}>
                                                 ৳{discountedPrice.toLocaleString()}
                                             </span>
                                             {product.originalPrice && product.originalPrice > discountedPrice && (
@@ -969,14 +970,14 @@ export default function ProductDetailsPage() {
                                             display: 'inline-flex', alignItems: 'center', gap: '6px',
                                             padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600,
                                             background: displayStock > 5 ? 'var(--color-primary-lightest)' : displayStock > 0 ? '#fffbeb' : '#fef2f2',
-                                            color: displayStock > 5 ? 'var(--color-primary)' : displayStock > 0 ? '#d97706' : '#dc2626',
+                                            color: displayStock > 5 ? '#1a1a1a' : displayStock > 0 ? '#d97706' : '#dc2626',
                                             border: `1px solid ${displayStock > 5 ? 'var(--color-primary-border)' : displayStock > 0 ? '#fde68a' : '#fecaca'}`,
                                         }}>
                                             <div style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'currentColor' }} />
                                             {displayStock > 5 ? 'In Stock' : displayStock > 0 ? `Only ${displayStock} left` : 'Out of Stock'}
                                         </div>
                                         {product.sku && (
-                                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, background: '#f3f4f6', color: '#555' }}>
+                                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 500, background: '#f3f4f6', color: '#1a1a1a' }}>
                                                 SKU: {product.sku}
                                             </div>
                                         )}
@@ -987,8 +988,8 @@ export default function ProductDetailsPage() {
                                     {colorSwatches.length > 0 && (
                                         <div style={{ marginBottom: '14px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>{product.productType === 'multi-color' ? 'Multi Color' : 'Color'}:</span>
-                                                {selectedColor && <span style={{ fontSize: '12px', color: 'var(--color-primary)', fontWeight: 600 }}>{selectedColor}</span>}
+                                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a1a' }}>{product.productType === 'multi-color' ? 'Multi Color' : 'Color'}:</span>
+                                                {selectedColor && <span style={{ fontSize: '12px', color: '#1a1a1a', fontWeight: 600 }}>{selectedColor}</span>}
                                             </div>
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                                 {colorSwatches.map((color: any, idx: number) => {
@@ -1032,8 +1033,8 @@ export default function ProductDetailsPage() {
                                     {sizeList.length > 0 && (
                                         <div style={{ marginBottom: '14px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#555' }}>Size:</span>
-                                                {selectedSize && <span style={{ fontSize: '12px', color: 'var(--color-primary)', fontWeight: 600 }}>{selectedSize}</span>}
+                                                <span style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a1a' }}>Size:</span>
+                                                {selectedSize && <span style={{ fontSize: '12px', color: '#1a1a1a', fontWeight: 600 }}>{selectedSize}</span>}
                                             </div>
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                                 {sizeList.map((size: string, idx: number) => {
@@ -1048,7 +1049,7 @@ export default function ProductDetailsPage() {
                                                                 minWidth: '36px', height: '32px', flexShrink: 0,
                                                                 padding: '0 10px',
                                                                 background: isSelected ? 'var(--color-primary)' : !isAvailable ? '#f3f4f6' : '#fff',
-                                                                color: isSelected ? '#fff' : !isAvailable ? '#ccc' : '#333',
+                                                                color: isSelected ? '#fff' : !isAvailable ? '#ccc' : '#1a1a1a',
                                                                 border: isSelected ? '2px solid var(--color-primary)' : !isAvailable ? '1.5px solid #e8e8e8' : '1.5px solid #e0e0e0',
                                                                 borderRadius: '6px',
                                                                 cursor: !isAvailable ? 'not-allowed' : 'pointer',
@@ -1071,15 +1072,15 @@ export default function ProductDetailsPage() {
                                     {/* Specifications Table */}
                                     {productDetails.length > 0 && (
                                         <div style={{ marginBottom: '18px' }}>
-                                            <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                            <h4 style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                 <span style={{ width: '3px', height: '14px', background: 'var(--color-primary)', borderRadius: '2px', display: 'inline-block' }} />
                                                 Specifications
                                             </h4>
                                             <div style={{ border: '1px solid #eaeaea', borderRadius: '10px', overflow: 'hidden' }}>
                                                 {productDetails.map((d, i) => (
                                                     <div key={i} style={{ display: 'flex', fontSize: '13px', borderBottom: i < productDetails.length - 1 ? '1px solid #f3f3f3' : 'none' }}>
-                                                        <span style={{ flex: '0 0 38%', padding: '9px 14px', background: '#f8f9fa', fontWeight: 600, color: '#555', borderRight: '1px solid #f0f0f0' }}>{d.key}</span>
-                                                        <span style={{ flex: 1, padding: '9px 14px', color: '#333' }}>{d.value}</span>
+                                                        <span style={{ flex: '0 0 38%', padding: '9px 14px', background: '#f8f9fa', fontWeight: 600, color: '#1a1a1a', borderRight: '1px solid #f0f0f0' }}>{d.key}</span>
+                                                        <span style={{ flex: 1, padding: '9px 14px', color: '#1a1a1a' }}>{d.value}</span>
                                                     </div>
                                                 ))}
                                             </div>
@@ -1088,13 +1089,13 @@ export default function ProductDetailsPage() {
 
                                     {/* Short Description */}
                                     <div style={{ marginBottom: '18px' }}>
-                                        <h4 style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <h4 style={{ fontSize: '12px', fontWeight: 700, color: '#1a1a1a', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                                             <span style={{ width: '3px', height: '14px', background: 'var(--color-primary)', borderRadius: '2px', display: 'inline-block' }} />
                                             Short Description
                                         </h4>
                                         {product.description && (
                                             <div
-                                                style={{ fontSize: '13px', color: '#555', lineHeight: 1.8 }}
+                                                style={{ fontSize: '13px', color: '#1a1a1a', lineHeight: 1.8 }}
                                                 dangerouslySetInnerHTML={{ __html: product.description }}
                                             />
                                         )}
@@ -1108,11 +1109,11 @@ export default function ProductDetailsPage() {
                                     }}>
                                         {/* Quantity */}
                                         <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #e5e7eb', borderRadius: '10px', overflow: 'hidden', flexShrink: 0 }}>
-                                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: '34px', height: '40px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
+                                            <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ width: '34px', height: '40px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1a1a1a' }}>
                                                 <FiMinus size={14} />
                                             </button>
                                             <span style={{ width: '36px', textAlign: 'center', fontSize: '14px', fontWeight: 700, color: '#111' }}>{quantity}</span>
-                                            <button onClick={() => setQuantity(quantity + 1)} style={{ width: '34px', height: '40px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}>
+                                            <button onClick={() => setQuantity(quantity + 1)} style={{ width: '34px', height: '40px', background: '#f9fafb', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1a1a1a' }}>
                                                 <FiPlus size={14} />
                                             </button>
                                         </div>
@@ -1121,7 +1122,7 @@ export default function ProductDetailsPage() {
                                             onClick={handleAddToCart}
                                             style={{
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                                background: '#fff', border: '2px solid var(--color-primary)', color: 'var(--color-primary)',
+                                                background: '#fff', border: '2px solid var(--color-primary)', color: '#1a1a1a',
                                                 fontWeight: 700, fontSize: '12px', cursor: 'pointer',
                                                 padding: '10px 12px', letterSpacing: '0.3px',
                                                 textTransform: 'uppercase', whiteSpace: 'nowrap', flex: 1,
@@ -1168,7 +1169,7 @@ export default function ProductDetailsPage() {
                                 <button key={tab.key} onClick={() => setActiveInfoPanel(tab.key)} style={{
                                     background: activeInfoPanel === tab.key ? 'var(--color-primary-lightest)' : 'transparent',
                                     border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-                                    color: activeInfoPanel === tab.key ? 'var(--color-primary)' : '#666',
+                                    color: activeInfoPanel === tab.key ? '#1a1a1a' : '#3a3a3a',
                                     flex: 1, height: '100%', transition: 'all 0.2s ease',
                                     borderRight: idx < 2 ? '1px solid #f0f0f0' : 'none',
                                     borderBottom: activeInfoPanel === tab.key ? '2.5px solid var(--color-primary)' : '2.5px solid transparent',
@@ -1182,9 +1183,9 @@ export default function ProductDetailsPage() {
                             {activeInfoPanel === 'description' && (
                                 <div>
                                     {product.description ? (
-                                        <div style={{ fontSize: '14px', color: '#444', lineHeight: 1.8 }} dangerouslySetInnerHTML={{ __html: product.description }} />
+                                        <div style={{ fontSize: '14px', color: '#1a1a1a', lineHeight: 1.8 }} dangerouslySetInnerHTML={{ __html: product.description }} />
                                     ) : (
-                                        <p style={{ fontSize: '13px', color: '#888' }}>No description available.</p>
+                                        <p style={{ fontSize: '13px', color: '#3a3a3a' }}>No description available.</p>
                                     )}
                                 </div>
                             )}
@@ -1192,13 +1193,13 @@ export default function ProductDetailsPage() {
                                 <div>
                                     {/* ── Write Review Form ── */}
                                     <div style={{ marginBottom: '24px', padding: '20px', background: 'var(--color-primary-surface)', borderRadius: '12px', border: '1px solid var(--color-primary-light)' }}>
-                                        <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#1a1a1a', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                             ✍️ Write a Review
                                         </h4>
                                         {isAuthenticated ? (
                                             <div>
                                                 <div style={{ marginBottom: '12px' }}>
-                                                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#666', display: 'block', marginBottom: '6px' }}>Your Rating</label>
+                                                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a1a', display: 'block', marginBottom: '6px' }}>Your Rating</label>
                                                     <div style={{ display: 'flex', gap: '4px' }}>
                                                         {[1,2,3,4,5].map(star => (
                                                             <button key={star} type="button" onClick={() => setCmtRating(star)} onMouseEnter={() => setCmtHoverRating(star)} onMouseLeave={() => setCmtHoverRating(0)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}>
@@ -1210,7 +1211,7 @@ export default function ProductDetailsPage() {
                                                 </div>
                                                 <textarea value={cmtText} onChange={(e) => setCmtText(e.target.value)} placeholder="Share your experience with this product..." rows={3} style={{ width: '100%', padding: '12px 14px', border: '1px solid #ddd', borderRadius: '8px', fontSize: '13px', outline: 'none', resize: 'vertical', background: '#fff', transition: 'border-color 0.2s' }} onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'} onBlur={(e) => e.target.style.borderColor = '#ddd'} />
                                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
-                                                    <span style={{ fontSize: '11px', color: '#999' }}>{cmtSuccess ? '✅ Review submitted successfully!' : 'Your review will be visible immediately'}</span>
+                                                    <span style={{ fontSize: '11px', color: '#3a3a3a' }}>{cmtSuccess ? '✅ Review submitted successfully!' : 'Your review will be visible immediately'}</span>
                                                     <button onClick={async () => { if (!cmtText.trim()) return; setCmtSubmitting(true); try { await createReviewMutation({ product: product._id, rating: cmtRating, comment: cmtText.trim() }).unwrap(); setCmtText(''); setCmtRating(5); setCmtSuccess(true); setTimeout(() => setCmtSuccess(false), 3000); } catch (err: any) { alert(err?.data?.message || 'Failed to submit review'); } setCmtSubmitting(false); }} disabled={cmtSubmitting || !cmtText.trim()} style={{ padding: '8px 24px', borderRadius: '8px', border: 'none', background: cmtSubmitting || !cmtText.trim() ? '#ccc' : 'var(--color-primary)', color: '#fff', fontSize: '13px', fontWeight: 700, cursor: cmtSubmitting ? 'wait' : 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
                                                         <FiSend size={14} />
                                                         {cmtSubmitting ? 'Submitting...' : 'Submit Review'}
@@ -1219,8 +1220,8 @@ export default function ProductDetailsPage() {
                                             </div>
                                         ) : (
                                             <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                                                <p style={{ fontSize: '13px', color: '#666', marginBottom: '10px' }}>Please login to write a review</p>
-                                                <button onClick={() => router.push('/login')} style={{ padding: '8px 28px', borderRadius: '8px', border: '2px solid var(--color-primary)', background: 'transparent', color: 'var(--color-primary)', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-primary)'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-primary)'; }}>
+                                                <p style={{ fontSize: '13px', color: '#1a1a1a', marginBottom: '10px' }}>Please login to write a review</p>
+                                                <button onClick={() => router.push('/login')} style={{ padding: '8px 28px', borderRadius: '8px', border: '2px solid var(--color-primary)', background: 'transparent', color: '#1a1a1a', fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-primary)'; e.currentTarget.style.color = '#fff'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--color-primary)'; }}>
                                                     Login to Review
                                                 </button>
                                             </div>
@@ -1232,13 +1233,13 @@ export default function ProductDetailsPage() {
                                         return (
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px', padding: '16px 20px', background: '#f8f9fa', borderRadius: '10px' }}>
                                                 <div style={{ textAlign: 'center' }}>
-                                                    <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--color-primary)', lineHeight: 1 }}>{avg.toFixed(1)}</div>
+                                                    <div style={{ fontSize: '36px', fontWeight: 800, color: '#1a1a1a', lineHeight: 1 }}>{avg.toFixed(1)}</div>
                                                     <div style={{ display: 'flex', gap: '2px', marginTop: '6px', justifyContent: 'center' }}>
                                                         {[1,2,3,4,5].map(s => (
                                                             <FiStar key={s} size={14} style={{ color: s <= Math.round(avg) ? '#F59E0B' : '#ddd', fill: s <= Math.round(avg) ? '#F59E0B' : 'none' }} />
                                                         ))}
                                                     </div>
-                                                    <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>{reviews.length} review{reviews.length > 1 ? 's' : ''}</div>
+                                                    <div style={{ fontSize: '11px', color: '#3a3a3a', marginTop: '4px' }}>{reviews.length} review{reviews.length > 1 ? 's' : ''}</div>
                                                 </div>
                                                 <div style={{ width: '1px', height: '50px', background: '#e5e7eb' }} />
                                                 <div style={{ flex: 1 }}>
@@ -1247,12 +1248,12 @@ export default function ProductDetailsPage() {
                                                         const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                                                         return (
                                                             <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
-                                                                <span style={{ fontSize: '11px', color: '#888', width: '12px' }}>{star}</span>
+                                                                <span style={{ fontSize: '11px', color: '#3a3a3a', width: '12px' }}>{star}</span>
                                                                 <FiStar size={11} style={{ color: '#F59E0B', fill: '#F59E0B', flexShrink: 0 }} />
                                                                 <div style={{ flex: 1, height: '6px', background: '#eee', borderRadius: '3px', overflow: 'hidden' }}>
                                                                     <div style={{ width: `${pct}%`, height: '100%', background: '#F59E0B', borderRadius: '3px', transition: 'width 0.3s' }} />
                                                                 </div>
-                                                                <span style={{ fontSize: '11px', color: '#aaa', width: '24px', textAlign: 'right' }}>{count}</span>
+                                                                <span style={{ fontSize: '11px', color: '#3a3a3a', width: '24px', textAlign: 'right' }}>{count}</span>
                                                             </div>
                                                         );
                                                     })}
@@ -1272,7 +1273,7 @@ export default function ProductDetailsPage() {
                                                                 {(r.userName || r.user?.firstName || 'A').charAt(0).toUpperCase()}
                                                             </div>
                                                             <div>
-                                                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#333' }}>{r.userName || `${r.user?.firstName || ''} ${r.user?.lastName || ''}`.trim() || 'Anonymous'}</span>
+                                                                <span style={{ fontSize: '13px', fontWeight: 700, color: '#1a1a1a' }}>{r.userName || `${r.user?.firstName || ''} ${r.user?.lastName || ''}`.trim() || 'Anonymous'}</span>
                                                                 <div style={{ display: 'flex', gap: '2px', marginTop: '2px' }}>
                                                                     {[1,2,3,4,5].map(s => (
                                                                         <FiStar key={s} size={11} style={{ color: s <= r.rating ? '#F59E0B' : '#ddd', fill: s <= r.rating ? '#F59E0B' : 'none' }} />
@@ -1280,17 +1281,17 @@ export default function ProductDetailsPage() {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <span style={{ fontSize: '11px', color: '#aaa' }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</span>
+                                                        <span style={{ fontSize: '11px', color: '#3a3a3a' }}>{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</span>
                                                     </div>
-                                                    {r.comment && <p style={{ fontSize: '13px', color: '#555', lineHeight: 1.6, margin: 0 }}>{r.comment}</p>}
+                                                    {r.comment && <p style={{ fontSize: '13px', color: '#1a1a1a', lineHeight: 1.6, margin: 0 }}>{r.comment}</p>}
                                                 </div>
                                             ))}
                                         </div>
                                     ) : (
                                         <div style={{ textAlign: 'center', padding: '30px 0' }}>
                                             <FiStar size={32} style={{ color: '#ddd', margin: '0 auto 10px' }} />
-                                            <p style={{ fontSize: '14px', color: '#888', fontWeight: 500 }}>No reviews yet</p>
-                                            <p style={{ fontSize: '12px', color: '#aaa' }}>Be the first to review this product</p>
+                                            <p style={{ fontSize: '14px', color: '#3a3a3a', fontWeight: 500 }}>No reviews yet</p>
+                                            <p style={{ fontSize: '12px', color: '#3a3a3a' }}>Be the first to review this product</p>
                                         </div>
                                     )}
                                 </div>
@@ -1300,49 +1301,49 @@ export default function ProductDetailsPage() {
                                     <div className="pd-others-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                                         {product.category?.name && (
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</span>
-                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.category.name}</p>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Category</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a', margin: '4px 0 0' }}>{product.category.name}</p>
                                             </div>
                                         )}
                                         {product.brand && (
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Brand</span>
-                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.brand}</p>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Brand</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a', margin: '4px 0 0' }}>{product.brand}</p>
                                             </div>
                                         )}
                                         {product.sku && (
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>SKU</span>
-                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.sku}</p>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>SKU</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a', margin: '4px 0 0' }}>{product.sku}</p>
                                             </div>
                                         )}
                                         {product.origin && (
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Origin</span>
-                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.origin}</p>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Origin</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a', margin: '4px 0 0' }}>{product.origin}</p>
                                             </div>
                                         )}
                                         {product.weight && (
                                             <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Weight</span>
-                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.weight}</p>
+                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Weight</span>
+                                                <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a', margin: '4px 0 0' }}>{product.weight}</p>
                                             </div>
                                         )}
                                         <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Sold</span>
-                                            <p style={{ fontSize: '14px', fontWeight: 600, color: '#333', margin: '4px 0 0' }}>{product.totalSold || 0} pcs</p>
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Sold</span>
+                                            <p style={{ fontSize: '14px', fontWeight: 600, color: '#1a1a1a', margin: '4px 0 0' }}>{product.totalSold || 0} pcs</p>
                                         </div>
                                         <div style={{ padding: '12px 16px', background: '#f8f9fa', borderRadius: '8px' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stock</span>
-                                            <p style={{ fontSize: '14px', fontWeight: 600, color: product.stock > 0 ? 'var(--color-primary)' : '#dc2626', margin: '4px 0 0' }}>{product.stock > 0 ? `${product.stock} available` : 'Out of Stock'}</p>
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stock</span>
+                                            <p style={{ fontSize: '14px', fontWeight: 600, color: product.stock > 0 ? '#1a1a1a' : '#dc2626', margin: '4px 0 0' }}>{product.stock > 0 ? `${product.stock} available` : 'Out of Stock'}</p>
                                         </div>
                                     </div>
                                     {product.tags?.length > 0 && (
                                         <div style={{ marginTop: '16px' }}>
-                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tags</span>
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#3a3a3a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tags</span>
                                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '8px' }}>
                                                 {product.tags.map((tag: string, i: number) => (
-                                                    <span key={i} style={{ fontSize: '12px', padding: '4px 12px', background: 'var(--color-primary-light)', color: 'var(--color-primary)', borderRadius: '20px', fontWeight: 500 }}>{tag}</span>
+                                                    <span key={i} style={{ fontSize: '12px', padding: '4px 12px', background: 'var(--color-primary-light)', color: '#1a1a1a', borderRadius: '20px', fontWeight: 500 }}>{tag}</span>
                                                 ))}
                                             </div>
                                         </div>
@@ -1362,8 +1363,8 @@ export default function ProductDetailsPage() {
                                     <div>
                                         <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#111', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Related Products</h2>
                                         {product?.category?.name && (
-                                            <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '4px' }}>
-                                                More from <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>{product.category.name}</span>
+                                            <p style={{ fontSize: '0.875rem', color: '#1a1a1a', marginTop: '4px' }}>
+                                                More from <span style={{ color: '#1a1a1a', fontWeight: 600 }}>{product.category.name}</span>
                                             </p>
                                         )}
                                     </div>
@@ -1372,7 +1373,7 @@ export default function ProductDetailsPage() {
                                             href={`/products?category=${product.category._id}`}
                                             style={{
                                                 display: 'flex', alignItems: 'center', gap: '4px',
-                                                fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-primary)',
+                                                fontSize: '0.875rem', fontWeight: 600, color: '#1a1a1a',
                                                 background: 'var(--color-primary-lightest)', padding: '0.5rem 1rem',
                                                 borderRadius: '9999px', textDecoration: 'none',
                                                 transition: 'all 0.2s ease'
@@ -1464,7 +1465,7 @@ export default function ProductDetailsPage() {
                                                 }} />
                                             ))}
                                         </div>
-                                        <div style={{ fontSize: '12px', color: '#888', marginTop: '4px' }}>
+                                        <div style={{ fontSize: '12px', color: '#3a3a3a', marginTop: '4px' }}>
                                             {product.reviewCount || 0} ratings
                                         </div>
                                     </div>
@@ -1477,12 +1478,12 @@ export default function ProductDetailsPage() {
                                             const percentage = Math.round((count / total) * 100);
                                             return (
                                                 <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px' }}>
-                                                    <span style={{ width: '12px', fontWeight: 600, color: '#555' }}>{star}</span>
+                                                    <span style={{ width: '12px', fontWeight: 600, color: '#1a1a1a' }}>{star}</span>
                                                     <FiStar size={10} style={{ color: '#f59e0b', fill: '#f59e0b' }} />
                                                     <div style={{ flex: 1, height: '8px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
                                                         <div style={{ width: `${percentage}%`, height: '100%', background: '#f59e0b', borderRadius: '4px', transition: 'width 0.3s ease' }} />
                                                     </div>
-                                                    <span style={{ width: '30px', textAlign: 'right', color: '#888', fontSize: '11px' }}>{count}</span>
+                                                    <span style={{ width: '30px', textAlign: 'right', color: '#3a3a3a', fontSize: '11px' }}>{count}</span>
                                                 </div>
                                             );
                                         })}
@@ -1503,14 +1504,14 @@ export default function ProductDetailsPage() {
                                                     ))}
                                                 </div>
                                                 {review.comment && (
-                                                    <p style={{ fontSize: '12px', color: '#555', margin: 0, lineHeight: 1.6 }}>
+                                                    <p style={{ fontSize: '12px', color: '#1a1a1a', margin: 0, lineHeight: 1.6 }}>
                                                         {review.comment}
                                                     </p>
                                                 )}
                                             </div>
                                         ))
                                     ) : (
-                                        <div style={{ textAlign: 'center', padding: '20px', color: '#888', fontSize: '13px' }}>
+                                        <div style={{ textAlign: 'center', padding: '20px', color: '#3a3a3a', fontSize: '13px' }}>
                                             No reviews yet. Be the first to review this product!
                                         </div>
                                     )}
@@ -1762,7 +1763,7 @@ export default function ProductDetailsPage() {
                                             <input type='text' value={productUrl} readOnly className='flex-1 bg-transparent text-xs text-gray-600 outline-none px-3 py-2.5 truncate' />
                                             <button
                                                 onClick={() => { navigator.clipboard.writeText(productUrl); setShareLinkCopied(true); setTimeout(() => setShareLinkCopied(false), 2000); }}
-                                                className='px-4 py-2.5 bg-[var(--color-primary)] text-white text-xs font-semibold hover:bg-[var(--color-primary-dark)] transition-colors flex items-center gap-1.5 whitespace-nowrap'
+                                                className='px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] text-xs font-semibold hover:bg-[var(--color-primary-dark)] transition-colors flex items-center gap-1.5 whitespace-nowrap'
                                             >
                                                 {shareLinkCopied ? <><FiCheckCircle size={12} /> Copied!</> : <><FiCopy size={12} /> Copy</>}
                                             </button>
@@ -1886,15 +1887,15 @@ export default function ProductDetailsPage() {
                                     <img src={product.thumbnail} alt={product.name} style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '6px' }} />
                                     <div>
                                         <p style={{ fontSize: '13px', fontWeight: 600, color: '#1a1a1a', margin: '0 0 4px 0', lineHeight: 1.3 }}>{product.name}</p>
-                                        <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-primary)', margin: 0 }}>Tk.{discountedPrice.toLocaleString()}</p>
+                                        <p style={{ fontSize: '14px', fontWeight: 700, color: '#1a1a1a', margin: 0 }}>Tk.{discountedPrice.toLocaleString()}</p>
                                     </div>
                                 </div>
 
                                 {inquirySuccess ? (
                                     <div style={{ textAlign: 'center', padding: '30px 0' }}>
                                         <FiCheckCircle size={48} color="var(--color-primary)" />
-                                        <p style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-primary)', marginTop: '12px' }}>Inquiry Sent!</p>
-                                        <p style={{ fontSize: '13px', color: '#666', marginTop: '4px' }}>We'll get back to you soon.</p>
+                                        <p style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a1a', marginTop: '12px' }}>Inquiry Sent!</p>
+                                        <p style={{ fontSize: '13px', color: '#1a1a1a', marginTop: '4px' }}>We'll get back to you soon.</p>
                                     </div>
                                 ) : (
                                     <form onSubmit={async (e) => {
@@ -1922,7 +1923,7 @@ export default function ProductDetailsPage() {
                                     }}>
                                         {/* Name */}
                                         <div style={{ marginBottom: '12px' }}>
-                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Your Name *</label>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a1a', display: 'block', marginBottom: '4px' }}>Your Name *</label>
                                             <input
                                                 value={inquiryName}
                                                 onChange={(e) => setInquiryName(e.target.value)}
@@ -1940,7 +1941,7 @@ export default function ProductDetailsPage() {
 
                                         {/* Email Address */}
                                         <div style={{ marginBottom: '12px' }}>
-                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Email Address *</label>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a1a', display: 'block', marginBottom: '4px' }}>Email Address *</label>
                                             <input
                                                 value={inquiryContact}
                                                 onChange={(e) => setInquiryContact(e.target.value)}
@@ -1959,7 +1960,7 @@ export default function ProductDetailsPage() {
 
                                         {/* Phone Number */}
                                         <div style={{ marginBottom: '12px' }}>
-                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Phone Number *</label>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a1a', display: 'block', marginBottom: '4px' }}>Phone Number *</label>
                                             <input
                                                 value={inquiryPhone || ''}
                                                 onChange={(e) => setInquiryPhone(e.target.value)}
@@ -1978,7 +1979,7 @@ export default function ProductDetailsPage() {
 
                                         {/* Message */}
                                         <div style={{ marginBottom: '16px' }}>
-                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#555', display: 'block', marginBottom: '4px' }}>Your Query *</label>
+                                            <label style={{ fontSize: '12px', fontWeight: 600, color: '#1a1a1a', display: 'block', marginBottom: '4px' }}>Your Query *</label>
                                             <textarea
                                                 value={inquiryMessage}
                                                 onChange={(e) => setInquiryMessage(e.target.value)}

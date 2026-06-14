@@ -44,9 +44,9 @@ export default function ProductDetailsPage() {
             {/* Breadcrumb */}
             <div className="bg-gray-50 border-b border-gray-100 py-3">
                 <div className="container mx-auto px-4 sm:px-8 md:px-12 lg:px-16 flex items-center gap-2 text-[13px] text-gray-400 font-medium">
-                    <a href="/" className="hover:text-[var(--color-primary)]">Home</a>
+                    <a href="/" className="hover:text-[var(--color-text-primary)]">Home</a>
                     <span>/</span>
-                    <a href="/" className="hover:text-[var(--color-primary)]">Shop</a>
+                    <a href="/" className="hover:text-[var(--color-text-primary)]">Shop</a>
                     <span>/</span>
                     <span className="text-gray-900">{product.name}</span>
                 </div>
@@ -83,7 +83,7 @@ export default function ProductDetailsPage() {
                     {/* RIGHT: Product Info */}
                     <div className="flex-1">
                         <div className="pb-8 border-b border-gray-100">
-                            <p className="text-[var(--color-primary)] font-bold text-sm uppercase tracking-widest mb-3">{product.category}</p>
+                            <p className="text-[var(--color-text-primary)] font-bold text-sm uppercase tracking-widest mb-3">{product.category}</p>
                             <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">{product.name}</h1>
 
                             <div className="flex items-center gap-6 mb-6">
@@ -100,7 +100,7 @@ export default function ProductDetailsPage() {
                             </div>
 
                             <div className="flex items-center gap-4 mb-4">
-                                <span className="text-3xl font-black text-[var(--color-primary)]">${product.price.toFixed(2)}</span>
+                                <span className="text-3xl font-black text-[var(--color-text-primary)]">${product.price.toFixed(2)}</span>
                                 <span className="text-xl text-gray-400 line-through font-medium">${product.originalPrice?.toFixed(2)}</span>
                                 <span className="bg-red-50 text-red-500 text-xs font-bold px-2 py-1 rounded">20% SAVE</span>
                             </div>
@@ -134,7 +134,7 @@ export default function ProductDetailsPage() {
                                         <FiPlus size={18} />
                                     </button>
                                 </div>
-                                <button className="flex-1 h-14 bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-[var(--color-primary)] transition-all shadow-xl shadow-gray-200">
+                                <button className="flex-1 h-14 bg-gray-900 text-white rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-all shadow-xl shadow-gray-200">
                                     <FiShoppingCart size={20} />
                                     ADD TO CART
                                 </button>
@@ -144,7 +144,7 @@ export default function ProductDetailsPage() {
                             </div>
 
                             {/* Buy Now */}
-                            <button className="w-full h-14 border-2 border-[var(--color-primary)] text-[var(--color-primary)] rounded-xl font-black hover:bg-[var(--color-primary)] hover:text-white transition-all">
+                            <button className="w-full h-14 border-2 border-[var(--color-primary)] text-[var(--color-text-primary)] rounded-xl font-black hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-all">
                                 BUY NOW
                             </button>
 
@@ -161,7 +161,7 @@ export default function ProductDetailsPage() {
                                 <div className="flex gap-10">
                                     <p className="text-xs font-black text-gray-400 uppercase w-16">TAGS:</p>
                                     <div className="flex gap-2">
-                                        {product.tags.map(tag => <span key={tag} className="text-xs font-bold text-gray-700 hover:text-[var(--color-primary)] cursor-pointer">#{tag}</span>)}
+                                        {product.tags.map(tag => <span key={tag} className="text-xs font-bold text-gray-700 hover:text-[var(--color-text-primary)] cursor-pointer">#{tag}</span>)}
                                     </div>
                                 </div>
                             </div>
@@ -186,7 +186,7 @@ export default function ProductDetailsPage() {
                                 { icon: FiCheckCircle, title: "100% Secure", sub: "Safe Payments" }
                             ].map((item, i) => (
                                 <div key={i} className="bg-gray-50 rounded-xl p-4 text-center group hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-gray-100">
-                                    <item.icon className="mx-auto mb-2 text-[var(--color-primary)] group-hover:scale-110 transition-transform" size={24} />
+                                    <item.icon className="mx-auto mb-2 text-[var(--color-text-primary)] group-hover:scale-110 transition-transform" size={24} />
                                     <p className="text-[11px] font-black text-gray-900 uppercase mb-1">{item.title}</p>
                                     <p className="text-[10px] font-medium text-gray-400">{item.sub}</p>
                                 </div>
