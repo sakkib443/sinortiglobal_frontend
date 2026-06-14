@@ -16,7 +16,7 @@ const Badge: React.FC<BadgeProps> = ({
     className = '',
 }) => {
     const variantStyles = {
-        primary: 'bg-[rgba(92,175,144,0.1)] text-[var(--color-primary)]',
+        primary: 'bg-[rgba(92,175,144,0.1)] text-[var(--color-text-primary)]',
         secondary: 'bg-[rgba(75,89,102,0.1)] text-[var(--color-secondary)]',
         accent: 'bg-[rgba(255,107,107,0.1)] text-[var(--color-accent)]',
         success: 'bg-[rgba(34,197,94,0.1)] text-[var(--color-success)]',

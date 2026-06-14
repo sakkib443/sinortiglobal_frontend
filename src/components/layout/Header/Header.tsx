@@ -226,27 +226,27 @@ const Header: React.FC = () => {
                 {/* ═══ TOP BAR ═══ */}
                 <div className="bg-[var(--color-primary)] hidden md:block">
                     <div className="container mx-auto px-2">
-                        <div className="flex items-center justify-between h-[34px] text-[12px] text-white/90">
+                        <div className="flex items-center justify-between h-[34px] text-[12px] text-[var(--color-primary-foreground)]">
                             {/* Left — contact info */}
                             <div className="flex items-center gap-5">
                                 <a
                                     href={`tel:${contactPhone.replace(/\s+/g, '')}`}
-                                    className="flex items-center gap-1.5 hover:text-white transition-colors"
+                                    className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
                                 >
                                     <FiPhone size={12} />
                                     <span>{contactPhone}</span>
                                 </a>
-                                <span className="text-white/30">|</span>
+                                <span className="opacity-30">|</span>
                                 <a
                                     href={`mailto:${contactEmail}`}
-                                    className="flex items-center gap-1.5 hover:text-white transition-colors"
+                                    className="flex items-center gap-1.5 hover:opacity-70 transition-opacity"
                                 >
                                     <FiMail size={12} />
                                     <span>{contactEmail}</span>
                                 </a>
                             </div>
                             {/* Right — address */}
-                            <div className="flex items-center gap-1.5 text-white/80">
+                            <div className="flex items-center gap-1.5 opacity-90">
                                 <FiMapPin size={12} className="shrink-0" />
                                 <span>{contactAddress}</span>
                             </div>
@@ -261,7 +261,7 @@ const Header: React.FC = () => {
 
                             {/* Mobile Menu Button */}
                             <button
-                                className="lg:hidden text-gray-700 hover:text-[var(--color-primary)] p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                className="lg:hidden text-gray-700 hover:text-[var(--color-text-primary)] p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             >
                                 {isMobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
@@ -280,7 +280,7 @@ const Header: React.FC = () => {
                             >
                                 <button
                                     onClick={() => setIsCategoryHovered(v => !v)}
-                                    className="flex items-center gap-2 bg-[var(--color-primary)] text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-[#093a1d] transition-colors"
+                                    className="flex items-center gap-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] px-4 py-2.5 rounded-md text-sm font-medium hover:bg-[#093a1d] transition-colors"
                                 >
                                     <span>Categories</span>
                                     <FiChevronDown
@@ -299,7 +299,7 @@ const Header: React.FC = () => {
                                 >
                                     <Link
                                         href="/products"
-                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-[var(--color-primary)] hover:text-white transition-colors border-b border-gray-50 font-medium"
+                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors border-b border-gray-50 font-medium"
                                         onClick={() => { setIsCategoryHovered(false); }}
                                     >
                                         <span>🛒</span> All Products
@@ -309,7 +309,7 @@ const Header: React.FC = () => {
                                             <Link
                                                 key={category._id}
                                                 href={`/products?category=${category._id}`}
-                                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors"
                                                 onClick={() => setIsCategoryHovered(false)}
                                             >
                                                 {category.image ? (
@@ -359,7 +359,7 @@ const Header: React.FC = () => {
                                                     key={c.value}
                                                     type="button"
                                                     onClick={() => { setSelectedCountry(c.value); setIsCountryOpen(false); }}
-                                                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${selectedCountry === c.value ? 'bg-[var(--color-primary)] text-white font-semibold' : 'text-gray-700 hover:bg-gray-50'}`}
+                                                    className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${selectedCountry === c.value ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-semibold' : 'text-gray-700 hover:bg-gray-50'}`}
                                                 >
                                                     {c.code ? (
                                                         // eslint-disable-next-line @next/next/no-img-element
@@ -389,7 +389,7 @@ const Header: React.FC = () => {
                                 {/* Search Button */}
                                 <button
                                     onClick={handleSearch}
-                                    className="h-[42px] px-5 bg-[var(--color-primary)] text-white rounded-r-md hover:bg-[#093a1d] transition-colors flex items-center justify-center"
+                                    className="h-[42px] px-5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-r-md hover:bg-[#093a1d] transition-colors flex items-center justify-center"
                                     title="Search"
                                 >
                                     {isSearching
@@ -402,12 +402,12 @@ const Header: React.FC = () => {
                             <div className="flex items-center gap-1 lg:gap-2 shrink-0">
 
                                 {/* Products Link */}
-                                <Link href="/products" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-primary)] transition-colors">
+                                <Link href="/products" className="hidden lg:flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-text-primary)] transition-colors">
                                     Products
                                 </Link>
 
                                 {/* Cart */}
-                                <Link href="/cart" className="relative flex items-center justify-center w-9 h-9 text-gray-600 hover:text-[var(--color-primary)] transition-colors">
+                                <Link href="/cart" className="relative flex items-center justify-center w-9 h-9 text-gray-600 hover:text-[var(--color-text-primary)] transition-colors">
                                     <FiShoppingCart size={20} />
                                     {cartItems.length > 0 && (
                                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold">
@@ -429,7 +429,7 @@ const Header: React.FC = () => {
                                             {user.avatar ? (
                                                 <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full object-cover border-2 border-[var(--color-primary)]" />
                                             ) : (
-                                                <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-sm font-bold">
+                                                <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-[var(--color-primary-foreground)] flex items-center justify-center text-sm font-bold">
                                                     {(user.name || user.email || 'U').charAt(0).toUpperCase()}
                                                 </div>
                                             )}
@@ -454,7 +454,7 @@ const Header: React.FC = () => {
                                                 <div className="py-1">
                                                     <Link
                                                         href={user.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'}
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -462,7 +462,7 @@ const Header: React.FC = () => {
                                                     </Link>
                                                     <Link
                                                         href="/dashboard/user/orders"
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
@@ -470,7 +470,7 @@ const Header: React.FC = () => {
                                                     </Link>
                                                     <Link
                                                         href="/dashboard/user/wishlist"
-                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-white transition-colors"
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors"
                                                         onClick={() => setIsProfileOpen(false)}
                                                     >
                                                         <FiHeart size={15} />
@@ -491,7 +491,7 @@ const Header: React.FC = () => {
                                         )}
                                     </div>
                                 ) : (
-                                    <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-primary)] transition-colors">
+                                    <Link href="/login" className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[var(--color-text-primary)] transition-colors">
                                         <FiUser size={18} />
                                         <span className="hidden lg:inline">Sign In/ Register</span>
                                     </Link>
@@ -524,7 +524,7 @@ const Header: React.FC = () => {
                                         className="w-full bg-white border border-gray-300 py-2.5 pl-4 pr-4 text-gray-700 placeholder-gray-400 focus:outline-none text-sm"
                                     />
                                 </div>
-                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[var(--color-primary)] text-white flex items-center rounded-r-md">
+                                <button onClick={handleSearch} className="h-[42px] px-4 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] flex items-center rounded-r-md">
                                     <FiSearch size={16} />
                                 </button>
                             </div>
@@ -543,11 +543,11 @@ const Header: React.FC = () => {
                                     </button>
                                     {isMobileCategoryOpen && (
                                         <div className="pl-2 space-y-1">
-                                            <Link href="/products" className="block px-4 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm" onClick={() => { setIsMobileMenuOpen(false); }}>
+                                            <Link href="/products" className="block px-4 py-2 text-gray-600 hover:text-[var(--color-text-primary)] text-sm" onClick={() => { setIsMobileMenuOpen(false); }}>
                                                 All Products
                                             </Link>
                                             {categories.map((cat) => (
-                                                <Link key={cat._id} href={`/products?category=${cat._id}`} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-[var(--color-primary)] rounded-lg text-sm transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                                                <Link key={cat._id} href={`/products?category=${cat._id}`} className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-gray-50 hover:text-[var(--color-text-primary)] rounded-lg text-sm transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                                                     {cat.image ? (
                                                         <img src={cat.image} alt={cat.name} className="w-6 h-6 rounded object-cover shrink-0" />
                                                     ) : (
@@ -558,9 +558,9 @@ const Header: React.FC = () => {
                                             ))}
                                         </div>
                                     )}
-                                    <Link href="/products" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Products</Link>
-                                    <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Support</Link>
-                                    <Link href="/dashboard/user/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-primary)] text-sm font-semibold">Wishlist</Link>
+                                    <Link href="/products" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-text-primary)] text-sm font-semibold">Products</Link>
+                                    <Link href="/contact" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-text-primary)] text-sm font-semibold">Support</Link>
+                                    <Link href="/dashboard/user/wishlist" className="block px-3 py-2 text-gray-600 hover:text-[var(--color-text-primary)] text-sm font-semibold">Wishlist</Link>
                                 </div>
                             </div>
                         )}

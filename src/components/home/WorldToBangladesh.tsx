@@ -226,7 +226,7 @@ const WorldToBangladesh: React.FC = () => {
                 </p>
                 <Link
                     href="/quotations"
-                    className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[var(--color-primary)] text-white text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm"
+                    className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-md bg-[var(--color-primary)] text-[var(--color-primary-foreground)] text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm"
                 >
                     Start Sourcing
                     <span aria-hidden>→</span>

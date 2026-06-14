@@ -138,7 +138,7 @@ const Preloader: React.FC = () => {
                     style={{ background: 'radial-gradient(circle, var(--color-primary-light) 0%, transparent 70%)', filter: 'blur(100px)', opacity: 0.25, animation: 'plAurora 20s ease-in-out infinite reverse' }}
                 />
                 {/* dotted texture + dark vignette for depth */}
-                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '46px 46px' }} />
+                <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: 'radial-gradient(circle, var(--color-primary-foreground) 1px, transparent 1px)', backgroundSize: '46px 46px' }} />
                 <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(0,0,0,0.35) 100%)' }} />
             </div>
 
@@ -147,15 +147,15 @@ const Preloader: React.FC = () => {
 
                 {/* Logo / wordmark on top */}
                 <div className="relative overflow-hidden" style={{ animation: 'plPop 0.7s cubic-bezier(0.22,1,0.36,1) both' }}>
-                    <h1 className="text-[20px] sm:text-[26px] font-light tracking-[0.4em] text-white select-none">
+                    <h1 className="text-[20px] sm:text-[26px] font-light tracking-[0.4em] text-[var(--color-primary-foreground)] select-none">
                         SINOTRI<span className="font-semibold">&nbsp;GLOBAL</span>
                     </h1>
-                    <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)', animation: 'plShimmer 2.6s ease-in-out infinite' }} />
+                    <div className="pl-anim absolute top-0 left-0 h-full w-1/3" style={{ background: 'linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-primary-foreground) 50%, transparent), transparent)', animation: 'plShimmer 2.6s ease-in-out infinite' }} />
                 </div>
 
                 {/* Tagline */}
                 <p
-                    className="mt-2 text-[9.5px] sm:text-[10px] font-medium uppercase tracking-[0.42em] text-white/55"
+                    className="mt-2 text-[9.5px] sm:text-[10px] font-medium uppercase tracking-[0.42em] text-[var(--color-primary-foreground)] opacity-60"
                     style={{ animation: 'plFadeUp 0.7s ease-out 0.2s both' }}
                 >
                     Sourcing the world to you
@@ -170,34 +170,34 @@ const Preloader: React.FC = () => {
                     >
                         <div style={{ animation: 'plDrop 0.9s cubic-bezier(0.34,1.56,0.64,1) both' }}>
                             <div className="pl-anim" style={{ animation: 'plBob 0.55s ease-in-out infinite' }}>
-                                <FiTruck size={30} className="text-white" style={{ filter: 'drop-shadow(0 4px 7px rgba(0,0,0,0.35))' }} />
+                                <FiTruck size={30} className="text-[var(--color-primary-foreground)]" style={{ filter: 'drop-shadow(0 4px 7px rgba(0,0,0,0.35))' }} />
                             </div>
                         </div>
                     </div>
 
                     {/* Road */}
-                    <div className="relative h-[3px] w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.15)' }}>
+                    <div className="relative h-[3px] w-full rounded-full overflow-hidden" style={{ background: 'color-mix(in srgb, var(--color-primary-foreground) 18%, transparent)' }}>
                         {/* moving road dashes */}
-                        <div className="pl-anim absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.7) 0 8px, transparent 8px 16px)', animation: 'plRoad 0.5s linear infinite' }} />
+                        <div className="pl-anim absolute inset-0 opacity-40" style={{ backgroundImage: 'repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-primary-foreground) 70%, transparent) 0 8px, transparent 8px 16px)', animation: 'plRoad 0.5s linear infinite' }} />
                         {/* progress fill */}
-                        <div className="absolute inset-y-0 left-0 rounded-full bg-white" style={{ width: `${pct}%`, boxShadow: '0 0 12px rgba(255,255,255,0.85)', transition: 'width 0.2s linear' }} />
+                        <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: `${pct}%`, background: 'var(--color-primary-foreground)', boxShadow: '0 0 12px color-mix(in srgb, var(--color-primary-foreground) 85%, transparent)', transition: 'width 0.2s linear' }} />
                     </div>
 
                     {/* end markers */}
-                    <div className="flex justify-between mt-2 text-[9px] font-medium tracking-widest text-white/35 select-none">
+                    <div className="flex justify-between mt-2 text-[9px] font-medium tracking-widest text-[var(--color-primary-foreground)] opacity-40 select-none">
                         <span>0%</span><span>100%</span>
                     </div>
                 </div>
 
                 {/* Percent counter below */}
                 <div className="mt-4 flex items-center gap-2" style={{ animation: 'plFadeUp 0.7s ease-out 0.4s both' }}>
-                    <span className="text-2xl sm:text-3xl font-extralight text-white tabular-nums tracking-tight select-none">
-                        {rounded}<span className="text-sm align-super text-white/50 ml-0.5">%</span>
+                    <span className="text-2xl sm:text-3xl font-extralight text-[var(--color-primary-foreground)] tabular-nums tracking-tight select-none">
+                        {rounded}<span className="text-sm align-super opacity-50 ml-0.5">%</span>
                     </span>
                     <span className="flex gap-1 ml-1">
-                        <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out infinite' }} />
-                        <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.2s infinite' }} />
-                        <span className="pl-anim w-1 h-1 rounded-full bg-white" style={{ animation: 'plDot 1.2s ease-in-out 0.4s infinite' }} />
+                        <span className="pl-anim w-1 h-1 rounded-full" style={{ background: 'var(--color-primary-foreground)', animation: 'plDot 1.2s ease-in-out infinite' }} />
+                        <span className="pl-anim w-1 h-1 rounded-full" style={{ background: 'var(--color-primary-foreground)', animation: 'plDot 1.2s ease-in-out 0.2s infinite' }} />
+                        <span className="pl-anim w-1 h-1 rounded-full" style={{ background: 'var(--color-primary-foreground)', animation: 'plDot 1.2s ease-in-out 0.4s infinite' }} />
                     </span>
                 </div>
             </div>

@@ -30,7 +30,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
             </p>
             <Link
                 href={buttonLink}
-                className="inline-flex items-center justify-center px-8 py-3 bg-[var(--color-primary)] text-white font-bold rounded-md hover:scale-105 transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
+                className="inline-flex items-center justify-center px-8 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-bold rounded-md hover:scale-105 transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
             >
                 {buttonText}
             </Link>

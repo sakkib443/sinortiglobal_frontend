@@ -197,7 +197,7 @@ const InquiriesPage = () => {
                                                 {inq.status}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-[var(--color-primary)] font-medium truncate mt-0.5 flex items-center gap-1.5">
+                                        <p className="text-xs text-[var(--color-text-primary)] font-medium truncate mt-0.5 flex items-center gap-1.5">
                                             {inq.type === 'rfq'
                                                 ? <span className="px-1.5 py-0.5 bg-[var(--color-primary)]/10 rounded text-[9px] font-bold">RFQ</span>
                                                 : <FiPackage size={10} />}
@@ -243,7 +243,7 @@ const InquiriesPage = () => {
                             <div className="space-y-3">
                                 <h4 className="text-xs font-bold text-gray-400 uppercase">Customer</h4>
                                 <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-md">
-                                    <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center font-bold">
+                                    <div className="w-10 h-10 rounded-full bg-[var(--color-primary)] text-[var(--color-primary-foreground)] flex items-center justify-center font-bold">
                                         {(selectedInquiry.name || 'U')[0].toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
@@ -304,7 +304,7 @@ const InquiriesPage = () => {
                                 <button
                                     onClick={handleSendQuote}
                                     disabled={isSaving}
-                                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-60"
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-bold hover:bg-[var(--color-primary-dark)] transition-all disabled:opacity-60"
                                 >
                                     <FiSend size={15} /> {isSaving ? 'Sending...' : selectedInquiry.status === 'replied' ? 'Update Quote' : 'Send Quote'}
                                 </button>

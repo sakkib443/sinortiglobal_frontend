@@ -79,7 +79,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                                 <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[#1a6b3c] flex items-center justify-center text-white font-black text-sm shadow-md shadow-[var(--color-primary)]/20">
                                     M
                                 </div>
-                                <span className="hidden sm:block text-lg font-bold text-gray-800 group-hover:text-[var(--color-primary)] transition-colors">
+                                <span className="hidden sm:block text-lg font-bold text-gray-800 group-hover:text-[var(--color-text-primary)] transition-colors">
                                     Sinotri Global
                                 </span>
                             </Link>
@@ -87,7 +87,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
 
                         {/* Center: Breadcrumb */}
                         <div className="hidden md:flex items-center gap-2 text-sm text-gray-400">
-                            <Link href="/" className="hover:text-[var(--color-primary)] transition-colors">
+                            <Link href="/" className="hover:text-[var(--color-text-primary)] transition-colors">
                                 <FiHome size={14} />
                             </Link>
                             <FiChevronRight size={12} />

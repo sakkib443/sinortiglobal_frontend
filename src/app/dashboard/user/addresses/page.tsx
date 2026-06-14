@@ -98,7 +98,7 @@ export default function AddressesPage() {
                     </div>
                     <button
                         onClick={openAdd}
-                        className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
+                        className="px-5 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md shadow-[var(--color-primary)]/20 flex items-center gap-2"
                     >
                         <FiPlus size={16} />
                         Add New
@@ -124,7 +124,7 @@ export default function AddressesPage() {
                     <p className="text-sm text-gray-400 mb-4">Add your first shipping address</p>
                     <button
                         onClick={openAdd}
-                        className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md"
+                        className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl font-semibold text-sm hover:bg-[var(--color-primary-dark)] transition-all shadow-md"
                     >
                         Add Address
                     </button>
@@ -142,7 +142,7 @@ export default function AddressesPage() {
                                         {addr.label || 'Home'}
                                     </span>
                                     {addr.isDefault && (
-                                        <span className="px-2.5 py-0.5 bg-[var(--color-primary)]/10 text-[var(--color-primary)] text-xs font-bold rounded-md flex items-center gap-1">
+                                        <span className="px-2.5 py-0.5 bg-[var(--color-primary)]/10 text-[var(--color-text-primary)] text-xs font-bold rounded-md flex items-center gap-1">
                                             <FiCheck size={10} /> Default
                                         </span>
                                     )}
@@ -200,7 +200,7 @@ export default function AddressesPage() {
                                             onClick={() => setForm({ ...form, label })}
                                             className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                                                 form.label === label
-                                                    ? 'bg-[var(--color-primary)] text-white shadow-md'
+                                                    ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-md'
                                                     : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                                             }`}
                                         >
@@ -250,7 +250,7 @@ export default function AddressesPage() {
                                     Cancel
                                 </button>
                                 <button type="submit" disabled={adding || updating}
-                                    className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-xl text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50">
+                                    className="px-6 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-xl text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md disabled:opacity-50">
                                     {adding || updating ? 'Saving...' : editingId ? 'Update' : 'Add Address'}
                                 </button>
                             </div>

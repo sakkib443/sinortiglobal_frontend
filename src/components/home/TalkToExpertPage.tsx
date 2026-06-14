@@ -141,7 +141,7 @@ const TalkToExpertPage: React.FC = () => {
                                 <p className="text-gray-500 text-sm">Our expert team will contact you shortly.</p>
                                 <button
                                     onClick={() => setSubmitted(false)}
-                                    className="mt-6 px-6 py-2.5 border border-[var(--color-primary)] text-[var(--color-primary)] rounded-full text-sm font-semibold hover:bg-[var(--color-primary-lightest)] transition-colors"
+                                    className="mt-6 px-6 py-2.5 border border-[var(--color-primary)] text-[var(--color-text-primary)] rounded-full text-sm font-semibold hover:bg-[var(--color-primary-lightest)] transition-colors"
                                 >
                                     Send another message
                                 </button>
@@ -228,12 +228,12 @@ const TalkToExpertPage: React.FC = () => {
                                         required
                                     />
                                     You agree to our friendly{' '}
-                                    <Link href="/privacy" className="text-[var(--color-primary)] underline">Privacy policy</Link>.
+                                    <Link href="/privacy" className="text-[var(--color-text-primary)] underline">Privacy policy</Link>.
                                 </label>
                                 <button
                                     type="submit"
                                     disabled={submitting}
-                                    className="w-full py-3 bg-[var(--color-primary)] text-white font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                                    className="w-full py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-bold rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
                                 >
                                     {submitting ? 'Sending...' : 'Send Message'}
                                 </button>
@@ -255,7 +255,7 @@ const TalkToExpertPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
                         {features.map((f, i) => (
                             <div key={i} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-lightest)] flex items-center justify-center text-[var(--color-primary)] mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-lightest)] flex items-center justify-center text-[var(--color-text-primary)] mb-4">
                                     {f.icon}
                                 </div>
                                 <h4 className="text-sm font-bold text-gray-800 mb-2">{f.title}</h4>
@@ -301,10 +301,10 @@ const TalkToExpertPage: React.FC = () => {
                             </div>
                             {/* Nav arrows */}
                             <div className="flex gap-2">
-                                <button onClick={prev} className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors">
+                                <button onClick={prev} className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[var(--color-primary)] hover:text-[var(--color-text-primary)] transition-colors">
                                     <FiChevronLeft size={18} />
                                 </button>
-                                <button onClick={next} className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors">
+                                <button onClick={next} className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[var(--color-primary)] hover:text-[var(--color-text-primary)] transition-colors">
                                     <FiChevronRight size={18} />
                                 </button>
                             </div>
@@ -337,7 +337,7 @@ const TalkToExpertPage: React.FC = () => {
                     <Link
                         href="#"
                         onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                        className="inline-flex items-center gap-2 text-[var(--color-primary)] font-semibold hover:underline text-sm"
+                        className="inline-flex items-center gap-2 text-[var(--color-text-primary)] font-semibold hover:underline text-sm"
                     >
                         Talk to The Expert <FiArrowRight size={16} />
                     </Link>

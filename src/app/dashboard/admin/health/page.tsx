@@ -53,14 +53,14 @@ const ApiHealthPage = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900 flex items-center gap-3">
-                        <FiDatabase className="text-[var(--color-primary)]" />
+                        <FiDatabase className="text-[var(--color-text-primary)]" />
                         System Health Monitor
                     </h1>
                     <p className="text-gray-500 mt-1 font-medium italic">Monitoring real-time API connectivity and service status</p>
                 </div>
                 <button
                     onClick={handleRefreshAll}
-                    className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-white rounded-md font-bold hover:scale-105 transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
+                    className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md font-bold hover:scale-105 transition-all shadow-lg shadow-[var(--color-primary)]/20 active:scale-95"
                 >
                     <FiRefreshCw size={18} />
                     Run All Diagnostics
@@ -110,7 +110,7 @@ const ApiHealthPage = () => {
                 {modules.map((module, idx) => (
                     <div key={idx} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all group">
                         <div className="flex items-start justify-between mb-4">
-                            <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-primary)] transition-all">
+                            <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500 group-hover:bg-[var(--color-primary)]/10 group-hover:text-[var(--color-text-primary)] transition-all">
                                 {module.icon}
                             </div>
                             <div className={`w-3 h-3 rounded-full ${module.loading ? 'bg-yellow-400 animate-pulse' : (module.status ? 'bg-emerald-400' : 'bg-red-400')}`}></div>

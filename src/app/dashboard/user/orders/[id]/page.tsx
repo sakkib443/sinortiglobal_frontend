@@ -69,7 +69,7 @@ export default function OrderDetailPage() {
                 <FiPackage size={48} className="mx-auto text-gray-200 mb-4" />
                 <h3 className="text-lg font-bold text-gray-600 mb-1">Order not found</h3>
                 <p className="text-sm text-gray-400 mb-4">The order you&apos;re looking for doesn&apos;t exist</p>
-                <Link href="/dashboard/user/orders" className="text-[var(--color-primary)] font-bold text-sm hover:underline">
+                <Link href="/dashboard/user/orders" className="text-[var(--color-text-primary)] font-bold text-sm hover:underline">
                     ← Back to My Orders
                 </Link>
             </div>
@@ -82,7 +82,7 @@ export default function OrderDetailPage() {
             <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-[var(--color-primary)] mb-4 font-semibold transition-colors"
+                    className="flex items-center gap-2 text-sm text-gray-400 hover:text-[var(--color-text-primary)] mb-4 font-semibold transition-colors"
                 >
                     <FiArrowLeft size={16} />
                     Back to My Orders
@@ -114,7 +114,7 @@ export default function OrderDetailPage() {
                         </span>
                         <button
                             onClick={() => downloadInvoice(order)}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)] shadow-md shadow-[var(--color-primary)]/20 transition-all"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:bg-[var(--color-primary-dark)] shadow-md shadow-[var(--color-primary)]/20 transition-all"
                             title="Download receipt as PDF"
                         >
                             <FiDownload size={15} />
@@ -145,13 +145,13 @@ export default function OrderDetailPage() {
                                 <div key={step} className="flex flex-col items-center relative z-10">
                                     <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
                                         isCompleted
-                                            ? 'bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20'
+                                            ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-md shadow-[var(--color-primary)]/20'
                                             : 'bg-gray-100 text-gray-300'
                                     } ${isCurrent ? 'ring-4 ring-[var(--color-primary)]/10' : ''}`}>
                                         <Icon size={18} />
                                     </div>
                                     <p className={`text-xs mt-2 capitalize font-semibold ${
-                                        isCompleted ? 'text-[var(--color-primary)]' : 'text-gray-300'
+                                        isCompleted ? 'text-[var(--color-text-primary)]' : 'text-gray-300'
                                     }`}>
                                         {step}
                                     </p>
@@ -225,7 +225,7 @@ export default function OrderDetailPage() {
                             )}
                             <div className="flex justify-between text-base pt-2 border-t border-gray-200 mt-2">
                                 <span className="font-bold text-gray-700">Total</span>
-                                <span className="font-bold text-[var(--color-primary)] text-lg">৳{order.total?.toLocaleString()}</span>
+                                <span className="font-bold text-[var(--color-text-primary)] text-lg">৳{order.total?.toLocaleString()}</span>
                             </div>
                         </div>
                     </div>
@@ -236,7 +236,7 @@ export default function OrderDetailPage() {
                     {/* Shipping Address */}
                     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
-                            <FiMapPin size={16} className="text-[var(--color-primary)]" />
+                            <FiMapPin size={16} className="text-[var(--color-text-primary)]" />
                             <h3 className="text-sm font-bold text-gray-800">Shipping Address</h3>
                         </div>
                         {order.shippingAddress ? (
@@ -258,7 +258,7 @@ export default function OrderDetailPage() {
                     {/* Payment Info */}
                     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
-                            <FiCreditCard size={16} className="text-[var(--color-primary)]" />
+                            <FiCreditCard size={16} className="text-[var(--color-text-primary)]" />
                             <h3 className="text-sm font-bold text-gray-800">Payment</h3>
                         </div>
                         <div className="space-y-3">

@@ -37,7 +37,7 @@ const Support: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 border border-gray-100 rounded-xl p-10 bg-gray-50/30 shadow-sm shadow-gray-100/50">
                     {features.map((item) => (
                         <div key={item.id} className="flex items-center gap-5 group transition-all">
-                            <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-xl bg-white border border-gray-100 shadow-sm text-[var(--color-primary)] text-2xl group-hover:bg-[var(--color-primary)] group-hover:text-white group-hover:shadow-lg group-hover:border-[var(--color-primary)] transition-all duration-300">
+                            <div className="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-xl bg-white border border-gray-100 shadow-sm text-[var(--color-text-primary)] text-2xl group-hover:bg-[var(--color-primary)] group-hover:text-[var(--color-primary-foreground)] group-hover:shadow-lg group-hover:border-[var(--color-primary)] transition-all duration-300">
                                 <item.icon />
                             </div>
                             <div>

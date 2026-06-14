@@ -67,7 +67,7 @@ const SelectionBox = ({
         <div className="space-y-2 border border-gray-100 rounded-md p-3 bg-gray-50/30">
             <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-gray-500 uppercase">{label}</label>
-                <span className="text-[10px] font-bold text-[var(--color-primary)] bg-green-50 px-2 py-0.5 rounded-full">
+                <span className="text-[10px] font-bold text-[var(--color-text-primary)] bg-green-50 px-2 py-0.5 rounded-full">
                     {selectedIds.length} Selected
                 </span>
             </div>
@@ -93,7 +93,7 @@ const SelectionBox = ({
                                 type="checkbox"
                                 checked={selectedIds.includes(item._id)}
                                 onChange={() => onToggle(item._id)}
-                                className="w-3.5 h-3.5 text-[var(--color-primary)] border-gray-300 rounded focus:ring-0"
+                                className="w-3.5 h-3.5 text-[var(--color-text-primary)] border-gray-300 rounded focus:ring-0"
                             />
                             <span className="text-xs text-gray-700 truncate">{item.name || item.title}</span>
                         </label>
@@ -256,7 +256,7 @@ const CouponModal = ({
                                         type="button"
                                         onClick={() => setFormData(prev => ({ ...prev, applicableTo: option.id }))}
                                         className={`flex flex-col items-center justify-center p-3 rounded-md border transition-all gap-2 ${formData.applicableTo === option.id
-                                                ? 'bg-green-50 border-[var(--color-primary)] text-[var(--color-primary)] shadow-sm'
+                                                ? 'bg-green-50 border-[var(--color-primary)] text-[var(--color-text-primary)] shadow-sm'
                                                 : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'
                                             }`}
                                     >
@@ -391,7 +391,7 @@ const CouponModal = ({
                             id="isActive"
                             checked={formData.isActive}
                             onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
-                            className="w-4 h-4 text-[var(--color-primary)] rounded focus:ring-0"
+                            className="w-4 h-4 text-[var(--color-text-primary)] rounded focus:ring-0"
                         />
                         <label htmlFor="isActive" className="text-sm font-semibold text-gray-700">Coupon is Active</label>
                     </div>
@@ -400,7 +400,7 @@ const CouponModal = ({
                     <button onClick={onClose} className="px-4 py-2 text-sm font-bold text-gray-500 hover:text-gray-700 transition-colors">Cancel</button>
                     <button
                         onClick={() => onSubmit(formData)}
-                        className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md text-sm font-bold shadow-md hover:bg-[var(--color-primary-dark)] transition-all"
+                        className="px-6 py-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-bold shadow-md hover:bg-[var(--color-primary-dark)] transition-all"
                     >
                         {editingCoupon ? 'Update Coupon' : 'Create Coupon'}
                     </button>
@@ -478,7 +478,7 @@ export default function CouponsPage() {
                     </button>
                     <button
                         onClick={handleCreate}
-                        className="px-4 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-sm"
+                        className="px-4 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] flex items-center gap-2 transition-all shadow-sm"
                     >
                         <FiPlus size={16} />
                         Add Coupon
@@ -529,7 +529,7 @@ export default function CouponsPage() {
                                     <tr key={coupon._id} className="hover:bg-gray-50/50">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center text-[var(--color-primary)]">
+                                                <div className="w-10 h-10 rounded-md bg-green-50 flex items-center justify-center text-[var(--color-text-primary)]">
                                                     <FiTag size={20} />
                                                 </div>
                                                 <div>

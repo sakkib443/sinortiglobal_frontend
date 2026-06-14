@@ -102,7 +102,7 @@ const ApiScannerPage = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900 flex items-center gap-3">
-                        <FiDatabase className="text-[var(--color-primary)]" />
+                        <FiDatabase className="text-[var(--color-text-primary)]" />
                         Full CRUD Diagnostic
                     </h1>
                     <p className="text-gray-500 mt-2 font-medium">Verify data integrity across all system modules in one click.</p>

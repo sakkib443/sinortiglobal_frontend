@@ -177,7 +177,7 @@ export default function OrdersPage() {
                         <FiRefreshCw size={16} className={isLoading ? 'animate-spin' : ''} />
                         Refresh
                     </button>
-                    <button className="px-5 py-2.5 bg-[var(--color-primary)] text-white rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md flex items-center gap-2">
+                    <button className="px-5 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] rounded-md text-sm font-semibold hover:bg-[var(--color-primary-dark)] transition-all shadow-md flex items-center gap-2">
                         <FiDownload size={16} />
                         Export Orders
                     </button>
@@ -283,7 +283,7 @@ export default function OrdersPage() {
                                 orders.map((order: any) => (
                                     <tr key={order._id} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="px-6 py-4">
-                                            <p className="font-semibold text-[var(--color-primary)]">{order.orderId || order.orderNumber}</p>
+                                            <p className="font-semibold text-[var(--color-text-primary)]">{order.orderId || order.orderNumber}</p>
                                             <div className="mt-1">
                                                 <PaymentMethodBadge method={order.paymentMethod} />
                                             </div>
@@ -354,7 +354,7 @@ export default function OrdersPage() {
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
                                                     href={`/dashboard/admin/orders/${order._id}`}
-                                                    className="p-2 hover:bg-white hover:shadow-md rounded-md text-gray-400 hover:text-[var(--color-primary)] transition-all border border-transparent hover:border-gray-100"
+                                                    className="p-2 hover:bg-white hover:shadow-md rounded-md text-gray-400 hover:text-[var(--color-text-primary)] transition-all border border-transparent hover:border-gray-100"
                                                     title="View Details"
                                                 >
                                                     <FiEye size={18} />
@@ -395,7 +395,7 @@ export default function OrdersPage() {
                                     key={i}
                                     onClick={() => setPage(i + 1)}
                                     className={`w-8 h-8 rounded-md text-sm font-medium transition-all ${page === i + 1
-                                            ? 'bg-[var(--color-primary)] text-white shadow-md'
+                                            ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-md'
                                             : 'text-gray-600 hover:bg-gray-100'
                                         }`}
                                 >

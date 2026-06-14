@@ -52,8 +52,8 @@ const PopularProducts: React.FC = () => {
                             key={filter.id}
                             onClick={() => setActiveFilter(filter.id)}
                             className={`px-6 py-2.5 text-[13px] font-bold tracking-wider rounded-md transition-all ${activeFilter === filter.id
-                                ? 'bg-[var(--color-primary)] text-white shadow-xl shadow-[var(--color-primary)]/20'
-                                : 'bg-white text-gray-500 border border-gray-100 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
+                                ? 'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] shadow-xl shadow-[var(--color-primary)]/20'
+                                : 'bg-white text-gray-500 border border-gray-100 hover:border-[var(--color-primary)] hover:text-[var(--color-text-primary)]'
                                 }`}
                         >
                             {filter.label}

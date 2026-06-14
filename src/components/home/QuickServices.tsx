@@ -140,7 +140,7 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                                     <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-amber-50 group-hover:scale-[1.15] transition-transform duration-200">
                                         <div className="qs-icon" style={{ animationDelay: `-${i * 0.5}s` }}>{service.emoji}</div>
                                     </div>
-                                    <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors min-h-[32px] flex items-center justify-center">
+                                    <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-text-primary)] transition-colors min-h-[32px] flex items-center justify-center">
                                         {service.label}
                                     </span>
                                 </button>
@@ -155,7 +155,7 @@ const QuickServices: React.FC<QuickServicesProps> = ({ onCategoryClick }) => {
                                 <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:scale-[1.15] transition-transform duration-200">
                                     <div className="qs-icon" style={{ animationDelay: `-${i * 0.5}s` }}>{service.emoji}</div>
                                 </div>
-                                <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-primary)] transition-colors min-h-[32px] flex items-center justify-center">
+                                <span className="text-[12px] sm:text-[13px] font-semibold text-gray-600 text-center leading-tight group-hover:text-[var(--color-text-primary)] transition-colors min-h-[32px] flex items-center justify-center">
                                     {service.label}
                                 </span>
                             </Link>

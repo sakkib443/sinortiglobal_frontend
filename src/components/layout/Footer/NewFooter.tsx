@@ -75,7 +75,7 @@ const NewFooter: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-2.5">
                                 <FiMail size={14} className="text-gray-400 shrink-0" />
-                                <a href={`mailto:${contactEmail}`} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">{contactEmail}</a>
+                                <a href={`mailto:${contactEmail}`} className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">{contactEmail}</a>
                             </div>
                         </div>
                         {/* Social Icons — dynamic from admin / site-content */}
@@ -90,7 +90,7 @@ const NewFooter: React.FC = () => {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             aria-label={s.label}
-                                            className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] transition-colors"
+                                            className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-[var(--color-primary)] hover:text-[var(--color-primary-foreground)] transition-colors"
                                         >
                                             <Icon size={14} />
                                         </a>
@@ -104,10 +104,10 @@ const NewFooter: React.FC = () => {
                     <div>
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Quick Links</h4>
                         <ul className="space-y-2.5">
-                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Home</Link></li>
-                            <li><Link href="/products" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">All Products</Link></li>
-                            <li><Link href="/services" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Our Services</Link></li>
-                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Contact Us</Link></li>
+                            <li><Link href="/" className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">Home</Link></li>
+                            <li><Link href="/products" className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">All Products</Link></li>
+                            <li><Link href="/services" className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">Our Services</Link></li>
+                            <li><Link href="/contact" className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">Contact Us</Link></li>
                         </ul>
                     </div>
 
@@ -116,15 +116,15 @@ const NewFooter: React.FC = () => {
                         <h4 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wide">Support</h4>
                         <ul className="space-y-2.5">
                             <li>
-                                <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className="flex items-center gap-2 text-sm font-semibold text-[var(--color-primary)] hover:underline">
+                                <a href={`tel:${contactPhone.replace(/\s+/g, '')}`} className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-primary)] hover:underline">
                                     <FiPhone size={14} /> {contactPhone}
                                 </a>
                             </li>
-                            <li><a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Live Chat (WhatsApp)</a></li>
+                            <li><a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">Live Chat (WhatsApp)</a></li>
                             {isAuthenticated ? (
-                                <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">My Account</Link></li>
+                                <li><Link href={user?.role === 'admin' ? '/dashboard/admin' : '/dashboard/user'} className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">My Account</Link></li>
                             ) : (
-                                <li><Link href="/login" className="text-sm text-gray-500 hover:text-[var(--color-primary)] transition-colors">Sign In / Register</Link></li>
+                                <li><Link href="/login" className="text-sm text-gray-500 hover:text-[var(--color-text-primary)] transition-colors">Sign In / Register</Link></li>
                             )}
                         </ul>
                     </div>
@@ -167,11 +167,11 @@ const NewFooter: React.FC = () => {
                             © 2019-{new Date().getFullYear()} Sinotri Global Technologies Ltd. All Rights Reserved.
                         </p>
                         <div className="flex items-center gap-4">
-                            <Link href="/terms" className="text-xs text-gray-400 hover:text-[var(--color-primary)] transition-colors">Terms & Conditions</Link>
+                            <Link href="/terms" className="text-xs text-gray-400 hover:text-[var(--color-text-primary)] transition-colors">Terms & Conditions</Link>
                             <span className="text-gray-300">•</span>
-                            <Link href="/privacy" className="text-xs text-gray-400 hover:text-[var(--color-primary)] transition-colors">Privacy Policy</Link>
+                            <Link href="/privacy" className="text-xs text-gray-400 hover:text-[var(--color-text-primary)] transition-colors">Privacy Policy</Link>
                             <span className="text-gray-300">•</span>
-                            <Link href="/refund" className="text-xs text-gray-400 hover:text-[var(--color-primary)] transition-colors">Refund Policy</Link>
+                            <Link href="/refund" className="text-xs text-gray-400 hover:text-[var(--color-text-primary)] transition-colors">Refund Policy</Link>
                         </div>
                     </div>
                 </div>

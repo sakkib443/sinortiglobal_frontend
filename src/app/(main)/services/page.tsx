@@ -101,7 +101,7 @@ export default function ServicesPage() {
                     </p>
                     <Link
                         href="/contact"
-                        className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-8 py-3 rounded-lg font-semibold text-sm hover:bg-[#093a1d] transition-colors"
+                        className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] px-8 py-3 rounded-lg font-semibold text-sm hover:bg-[#093a1d] transition-colors"
                     >
                         Contact Us →
                     </Link>

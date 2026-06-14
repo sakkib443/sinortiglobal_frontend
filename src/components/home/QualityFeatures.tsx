@@ -47,10 +47,10 @@ const QualityFeatures: React.FC = () => {
         <section className="w-full bg-[var(--color-primary)] py-14 px-4">
             {/* Heading */}
             <div className="text-center mb-10">
-                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-2">
-                    Quality Choices, <span className="text-yellow-300">Affordable Prices!</span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--color-primary-foreground)] mb-2">
+                    Quality Choices, <span className="text-[var(--color-primary-foreground)]">Affordable Prices!</span>
                 </h2>
-                <p className="text-sm text-white/70 max-w-xl mx-auto">
+                <p className="text-sm text-[var(--color-primary-foreground)] opacity-70 max-w-xl mx-auto">
                     Why thousands of customers trust Sinotri Global for their sourcing needs
                 </p>
             </div>
@@ -65,8 +65,8 @@ const QualityFeatures: React.FC = () => {
                         <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 ${item.color} group-hover:scale-110 transition-transform duration-200`}>
                             <item.icon size={26} />
                         </div>
-                        <h4 className="text-[13px] font-bold text-white mb-1.5">{item.title}</h4>
-                        <p className="text-[11px] text-white/65 leading-relaxed">{item.desc}</p>
+                        <h4 className="text-[13px] font-bold text-[var(--color-primary-foreground)] mb-1.5">{item.title}</h4>
+                        <p className="text-[11px] text-[var(--color-primary-foreground)] opacity-65 leading-relaxed">{item.desc}</p>
                     </div>
                 ))}
             </div>
